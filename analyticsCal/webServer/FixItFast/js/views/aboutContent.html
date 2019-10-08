@@ -1,0 +1,88 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+
+<div class="oj-applayout-fixed-top demo-transparent-top">
+  <header role="banner" style="z-index:1" class="oj-flex-bar oj-hybrid-applayout-header oj-sm-align-items-center demo-transparent-header oj-hybrid-applayout-header-no-border">
+    <div class="oj-flex-bar-start">
+      <oj-bind-if test="[[router.stateId() === 'aboutList']]">
+        <oj-button class='demo-hamburger-button' on-oj-action='[[toggleDrawer]]' display='icons' chroming='half' id="startBtn">
+          <span slot='startIcon' class='oj-fwk-icon oj-fwk-icon-hamburger'></span>
+          Navigation Drawer
+        </oj-button>
+      </oj-bind-if>
+
+      <oj-bind-if test="[[router.stateId() === 'aboutDemo']]">
+        <oj-button class='demo-back-button' on-oj-action='[[goBack]]' display='icons' chroming='half' id="startBtn">
+          <span slot='startIcon' class='oj-hybrid-applayout-header-icon-back oj-fwk-icon'></span>
+          Back
+        </oj-button>
+      </oj-bind-if>
+    </div>
+    <div class="oj-flex-bar-end">
+      <oj-bind-if test="[[router.stateId() === 'aboutDemo' || router.stateId() === 'aboutList']]">
+        <oj-button class='demo-social-button' id='profile-action-btn' on-oj-action='[[openPopup]]' display='icons' chroming='half'>
+          <span slot='startIcon' class='oj-fwk-icon demo-icon-font-24 demo-jet-icon-24'></span>
+          Social Links
+        </oj-button>
+      </oj-bind-if>
+    </div>
+  </header>
+</div>
+
+<div class="oj-applayout-content oj-complete">
+  <div role="main" class="oj-hybrid-applayout-content">
+    <div class="oj-flex oj-sm-flex-direction-column oj-hybrid-applayout-page">
+      <div class="demo-about-top-bg">
+        <div class="demo-circle-logo-container" style="margin:auto;">
+          <div class="demo-circle-logo"></div>
+        </div>
+        <h2 class="demo-profile-name">Oracle<span style="font-weight:400;">FixItFast</span></h2>
+      </div>
+      <oj-module class="oj-sm-flex-1" config="[[moduleConfig]]" animation="[[moduleAnimation]]" on-oj-view-disconnected="[[viewDisconnected]]"></oj-module>
+    </div>
+  </div>
+</div>
+
+<div id="popupWrapper">
+  <oj-popup id='aboutPopup' class='demo-popup' tail='none'>
+    <div class="oj-flex oj-flex-items-pad">
+      <div class="oj-sm-4 oj-md-4 oj-lg-4 demo-about-social-item oj-flex-item demo-flex-zero">
+        <a href="https://facebook.com/oraclejet" target="_blank" title="Oracle JET Facebook page">
+          <img src="css/images/spacer.png" class="demo-gplus-icon" alt="Oracle JET Facebook page" title="Facebook" />
+          <h5>Facebook</h5>
+        </a>
+      </div>
+      <div class="oj-sm-4 oj-md-4 oj-lg-4 demo-about-social-item oj-flex-item demo-flex-zero">
+        <a href="https://www.youtube.com/channel/UCcPYy1QhTNyR6fPAGLEsSTw" target="_blank" rel="noopener" title="Oracle JET YouTube channel">
+          <img src="css/images/spacer.png" class="demo-youtube-icon" alt="Oracle JET YouTube channel" title="YouTube" />
+          <h5>Youtube</h5>
+        </a>
+      </div>
+      <div class="oj-sm-4 oj-md-4 oj-lg-4 demo-about-social-item oj-flex-item demo-flex-zero">
+        <a href="https://community.oracle.com/community/development_tools/oracle-jet" target="_blank" title="Oracle JET Forum page" rel="noopener">
+          <img src="css/images/spacer.png" class="demo-chat-icon" alt="Oracle JET Forum page" title="Forums" />
+          <h5>Forums</h5>
+        </a>
+      </div>
+      <div class="oj-sm-4 oj-md-4 oj-lg-4 demo-about-social-item oj-flex-item demo-flex-zero">
+        <a href="https://community.oracle.com/community/development_tools/oracle-jet" target="_blank" title="Oracle JET Blog page" rel="noopener">
+          <img src="css/images/spacer.png" class="demo-rss-icon" alt="Oracle JET Blog page" title="Blogs" />
+          <h5>RSS Feed</h5>
+        </a>
+      </div>
+      <div class="oj-sm-4 oj-md-4 oj-lg-4 demo-about-social-item oj-flex-item demo-flex-zero">
+        <a href="https://twitter.com/oraclejet" target="_blank" title="Oracle JET Twitter page" rel="noopener">
+          <img src="css/images/spacer.png" class="demo-twitter-icon" alt="Oracle JET Twitter page" title="twitter" />
+          <h5>Twitter</h5>
+        </a>
+      </div>
+    </div>
+  </oj-popup>
+</div>
+

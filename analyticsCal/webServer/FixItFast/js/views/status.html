@@ -1,0 +1,24 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<div id="incidentMainPage" role="main" class="oj-applayout-content">
+
+<div aria-label="status">
+  <oj-radioset id='statusRadioSet' class='oj-radioset-no-chrome oj-radioset-input-end'
+        value='{{incidentData().status}}'
+        on-value-changed='[[statusChange]]'
+        disabled='[[isReadOnlyMode]]'>
+    <oj-option id='open' value='open'>
+      <img src='css/images/spacer.png' class='demo-icon-32 demo-status-open-icon' aria-hidden="true" slot='startIcon'></img>Open</oj-option>
+    <oj-option id='accepted' value='accepted'>
+      <img src='css/images/spacer.png' class='demo-icon-32 demo-status-accepted-icon' aria-hidden="true" slot='startIcon'></img>Accepted</oj-option>
+    <oj-option id='closed' value='closed'>
+      <img src='css/images/spacer.png' class='demo-icon-32 demo-status-closed-icon' aria-hidden="true" slot='startIcon'></img>Closed</oj-option>
+  </oj-radioset>
+</div>
+</div>

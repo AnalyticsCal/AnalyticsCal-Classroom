@@ -1,0 +1,30 @@
+.oj-applayout-content:not(.oj-complete){
+  visibility:hidden;
+}
+
+/*
+ * Set height for customer list and indexer
+ */
+.demo-customers-container {
+  height: 100vh;
+}
+
+.demo-private-policy {
+  overflow-x: hidden;
+}
+
+.demo-activity-flexbar {
+  align-items: center;
+  padding: 0.25em 0em;
+  border-width: 1px 0px 0px;
+  border-style: solid;
+  border-color: #dfe0e1;
+}
+
+.demo-activity-flexbar-start {
+  padding-top: 0.4rem;
+}
+
+.demo-pointer-cursor {
+  cursor: pointer;
+}

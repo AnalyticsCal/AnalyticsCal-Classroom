@@ -1,0 +1,46 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<div class="oj-hybrid-applayout-page">
+  <div class="oj-applayout-fixed-top">
+    <header role="banner" >
+      <oj-module id="custAddHeader" class="oj-flex-bar oj-hybrid-applayout-header oj-sm-align-items-center" config="[[custAddHeaderConfig]]"></oj-module>
+    </header>
+  </div>
+
+  <div class="oj-applayout-content">
+    <div role="main" class="oj-hybrid-applayout-content">
+      <input type="file" id="upload-new-customer-pic" class="demo-hide-photo-input" accept="image/*" aria-hidden="true">
+      <div>
+        <div class="demo-profile-top-section demo-profile-top-section-gradient-grey">
+          <div class="demo-profile-photo-container">
+            <img id="cust-add-photo" alt="customer photo" class="demo-profile-photo" :src="[[imgSrc]]">
+          </div>
+          <a id="changePhotoBtn" href="#" on-click="[[changePhoto]]" class="oj-text-sm">Change</a>
+        </div>
+
+        <oj-validation-group id="tracker" valid="{{groupValid}}">
+          <oj-form-layout id="form-container">
+            <oj-input-text id='addFirstNameInput' label-hint='First Name' spellcheck='false' autocorrect='off' autocapitalize='words' value='{{customer.firstName}}' required></oj-input-text>
+            <oj-input-text id='addLastNameInput' label-hint='Last Name' spellcheck='false' autocorrect='off' autocapitalize='words' value='{{customer.lastName}}' required></oj-input-text>
+            <oj-input-text id='addMobileInput' label-hint='Mobile' virtual-keyboard='tel' value='{{customer.mobile}}'></oj-input-text>
+            <oj-input-text id='addHomeInput' label-hint='Home' virtual-keyboard='tel' value='{{customer.home}}'></oj-input-text>
+            <oj-input-text id='addEmailInput' label-hint='Email' virtual-keyboard='email' value='{{customer.email}}'></oj-input-text>
+            <oj-input-text id='addStreet1Input' label-hint='Street Line 1' spellcheck='false' autocorrect='off' value='{{customer.address.street1}}' disabled></oj-input-text>
+            <oj-input-text id='addStreet2Input' label-hint='Street Line 2' spellcheck='false' autocorrect='off' value='{{customer.address.street2}}' disabled></oj-input-text>
+            <oj-input-text id='addCityInput' label-hint='City' spellcheck='false' autocorrect='off' value='{{customer.address.city}}' disabled></oj-input-text>
+            <oj-input-text id='addStateInput' label-hint='State' spellcheck='false' autocorrect='off' value='{{customer.address.state}}' disabled></oj-input-text>
+            <oj-input-text id='addZipInput' label-hint='Zip Code' virtual-keyboard='number' value='{{customer.address.zip}}' disabled></oj-input-text>
+            <oj-input-text id='addCountryInput' label-hint='Country' value='{{customer.address.country}}' disabled></oj-input-text>
+          </oj-form-layout>
+        </oj-validation-group>
+
+      </div>
+    </div>
+  </div>
+</div>

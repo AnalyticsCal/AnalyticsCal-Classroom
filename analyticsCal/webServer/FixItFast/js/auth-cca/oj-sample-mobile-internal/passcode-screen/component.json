@@ -1,0 +1,78 @@
+{
+  "name": "passcode-screen",
+  "pack":"oj-sample-mobile-internal",
+  "displayName": "Passcode based login screen",
+  "description": "Login screen for collecting passcode from user.",
+  "version": "0.0.5",
+  "jetVersion": "^6.0.0",
+  "properties": {
+    "appName": {
+      "description": "Name of the app to be displayed on the login page. Has default value if not configured.",
+      "type": "string"
+    },
+    "companyName": {
+      "description": "Name of the company to be displayed on the login page. Has default value if not configured.",
+      "type": "string"
+    },
+    "passcodeText": {
+      "description": "Text to be used for passcode prompt. Has default value if not configured.",
+      "type": "string"
+    },
+    "goText": {
+      "description": "Text to be used for submit button. Has default value if not configured.",
+      "type": "string"
+    },
+    "deleteText": {
+      "description": "Text to be used for delete button. Has default value if not configured.",
+      "type": "string"
+    },
+    "validatePasscodeLength": {
+      "description": "If passcode length validation should be triggered or not. Defaults to false.",
+      "type": "boolean"
+    },
+    "maxPasscodeLength": {
+      "description": "Maximum length of passcode allowed, defaults to 4.",
+      "type": "number"
+    },
+    "minPasscodeLength": {
+      "description": "Minimum length of passcode allowed, defaults to 12.",
+      "type": "number"
+    }
+  },
+  "methods": {
+    "getPasscode": {
+      "description": "Returns the passcode captured from user."
+    },
+    "clearPasscode": {
+      "description": "Clears the passcode currently held."
+    },
+    "setError": {
+      "description": "Sets error message to be shown to the user.",
+      "params" : [
+        {
+          "description":"Error message to use.",
+          "name" : "error",
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "events": {
+    "ojDone": {
+      "description": "Fired when user clicks on go button to submit the passcode.",
+      "bubbles": true
+    }
+  },
+  "extension": {
+    "catalog": {
+      "category": "Mobile Components",
+      "tags": [
+        "IDM",
+        "authentication",
+        "mobile",
+        "Form Factor: Tablet",
+        "Form Factor: mobile"
+      ]
+    }
+  }
+}

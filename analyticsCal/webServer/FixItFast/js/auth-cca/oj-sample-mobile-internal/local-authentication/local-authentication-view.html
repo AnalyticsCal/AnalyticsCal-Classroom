@@ -1,0 +1,19 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<!--
+  Copyright (c) 2015, 2018, Oracle and/or its affiliates.
+  The Universal Permissive License (UPL), Version 1.0
+-->
+<div :id="[['page_' + uniqueId]]" class="oj-hybrid-applayout-page">
+  <oj-bind-if test='[[isShowingConfigScreen]]'>
+    <div :id="[['header_' + uniqueId]]" class="oj-applayout-fixed-top">
+      <oj-bind-slot name="configHeader">
+      </oj-bind-slot>
+    </div>
+  </oj-bind-if>
+  <div :id="[['content_' + uniqueId]]" class="oj-applayout-content oj-complete">
+    <oj-module :id="[['module_' + uniqueId]]" config="[[moduleConfig]]"/>
+  </div>
+</div>

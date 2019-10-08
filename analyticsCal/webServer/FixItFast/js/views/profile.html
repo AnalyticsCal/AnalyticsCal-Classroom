@@ -1,0 +1,98 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+ <div class="oj-hybrid-applayout-page">
+  <div class="oj-applayout-fixed-top">
+    <header role="banner" >
+      <oj-module class="oj-hybrid-applayout-header" config="[[headerConfig]]"></oj-module>
+    </header>
+  </div>
+
+  <div class="oj-applayout-content">
+    <div role="main" class="oj-hybrid-applayout-content">
+
+      <input type="file" id="upload-profile-pic" class="demo-hide-photo-input" aria-label="upload profile photo" accept="image/*" aria-hidden="true">
+
+      <div>
+
+        <div class="demo-profile-top-section demo-profile-top-section-gradient-blue">
+          <div class="demo-profile-photo-container">
+            <img id="profilePhoto" class="demo-profile-photo" alt="user profile photo" :src="[[userProfileModel().photo]]">
+          </div>
+
+          <oj-bind-if test="[[!editMode()]]">
+            <h2 id="name" class="demo-profile-name">
+              <oj-bind-text value="[[userProfileModel().firstName() + ' ' + userProfileModel().lastName()]]"></oj-bind-text>
+            </h2>
+            <div id="title" class="demo-profile-title oj-text-sm">
+              <oj-bind-text value="[[userProfileModel().role]]"></oj-bind-text>
+            </div>
+          </oj-bind-if>
+
+          <oj-bind-if test="[[editMode()]]">
+            <a id="changePhotoBtn" href="#" on-click="[[changePhoto]]" class="demo-change-photo oj-text-sm">Change</a>
+          </oj-bind-if>
+        </div>
+
+        <oj-bind-if test="[[editMode()]]">
+          <oj-form-layout>
+            <oj-input-text id='firstNameInput' label-hint='First Name' spellcheck='false' autocorrect='off' value='{{userProfileModel().firstName}}' autofocus></oj-input-text>
+            <oj-input-text id='lastNameInput' label-hint='Last Name' spellcheck='false' autocorrect='off' value='{{userProfileModel().lastName}}'></oj-input-text>
+            <oj-input-text id='titleInput' label-hint='Title' value='{{userProfileModel().role}}'></oj-input-text>
+            <oj-input-text id='mobileInput' label-hint='Mobile' virtual-keyboard='tel' value='{{userProfileModel().mobile}}'></oj-input-text>
+            <oj-input-text id='homeInput' label-hint='Home' virtual-keyboard='tel' value='{{userProfileModel().home}}'></oj-input-text>
+            <oj-input-text id='emailInput'  label-hint='Email' value='{{userProfileModel().email}}'></oj-input-text>
+            <oj-input-text id='locationInput' label-hint='Location' spellcheck='false' autocorrect='off' value='{{userProfileModel().location.formattedAddress}}'></oj-input-text>
+          </oj-form-layout>
+        </oj-bind-if>
+
+        <oj-bind-if test="[[!editMode()]]">
+          <oj-form-layout>
+            <div class="oj-flex-bar">
+              <div class="demo-profile-item-icon-wrapper demo-mobile-icon-wrapper">
+                <span id="mobileIcon" class="demo-profile-item-icon demo-mobile-icon"></span>
+              </div>
+              <div>
+                <oj-label id='mobileLabel'>Mobile</oj-label>
+                <span id="mobileSpan"><oj-bind-text value="[[userProfileModel().mobile]]"></oj-bind-text></span>
+              </div>
+            </div>
+            <div class="oj-flex-bar">
+              <div class="demo-profile-item-icon-wrapper demo-office-icon-wrapper">
+                <span id="officeIcon" class="demo-profile-item-icon demo-office-icon"></span>
+              </div>
+              <div>
+                <oj-label id='homeLabel'>Home</oj-label>
+                <span id="officeSpan"><oj-bind-text value="[[userProfileModel().home]]"></oj-bind-text></span>
+              </div>
+            </div>
+            <div class="oj-flex-bar">
+              <div class="demo-profile-item-icon-wrapper demo-email-icon-wrapper">
+                <span id="emailIcon" class="demo-profile-item-icon demo-email-icon"></span>
+              </div>
+              <div>
+                <oj-label id='emailLabel'>Email</oj-label>
+                <span id="emailSpan"><oj-bind-text value="[[userProfileModel().email]]"></oj-bind-text></span>
+              </div>
+            </div>
+            <div class="oj-flex-bar">
+              <div class="demo-profile-item-icon-wrapper demo-address-icon-wrapper">
+                <span id="addressIcon" class="demo-profile-item-icon demo-address-icon"></span>
+              </div>
+              <div>
+                <oj-label id='locationLabel'>Location</oj-label>
+                <span id="locationSpan"><oj-bind-text value="[[userProfileModel().location.formattedAddress]]"></oj-bind-text></span>
+              </div>
+            </div>
+          </oj-form-layout>
+        </oj-bind-if>
+      </div>
+    </div>
+  </div>
+</div>
+  

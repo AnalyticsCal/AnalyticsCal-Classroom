@@ -1,0 +1,55 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<div class="oj-flex-bar oj-sm-align-items-center">
+  <div class="oj-flex-bar-start">
+    <oj-bind-if test="[[addNav()]]">
+      <oj-button display="all" on-oj-action="[[goBack]]">
+        <span slot='startIcon' class="oj-fwk-icon oj-fwk-icon-back"></span>
+        Back
+      </oj-button>
+    </oj-bind-if>
+  </div>
+  <div class="oj-flex-bar-middle" style="margin-left: 20px;">
+    <h1>Local Authentication Component</h1>
+  </div>
+</div>
+<div class="oj-flex oj-flex-items-pad">
+  <oj-bind-if test="[[!plugin]]">
+    <h3>This is a mobile only demo. Ensure that
+      <a target="_blank" href="https://github.com/oracle/cordova-plugin-oracle-idm-auth">cordova-plugin-oracle-idm-auth</a>
+      is installed.</h3>
+  </oj-bind-if>
+  <oj-bind-if test="[[plugin]]">
+    <div class="oj-flex-item oj-panel">
+      <h3>Configuration</h3>
+      <oj-form-layout label-edge="start">
+        <oj-button id="login" on-click='[[login]]' chroming='full'>Login</oj-button>
+        <oj-button id="configure" on-click='[[configure]]' disabled='[[configureBtnDisabled]]' chroming='full'>Configure</oj-button>
+        <oj-switch id="enableResume" value="{{enableResume}}" label-hint="Challenge user when app resumes"></oj-switch>
+        <oj-switch id="showDismiss" value="{{showDismiss}}" label-hint="Show dismiss button on configure screen"></oj-switch>
+      </oj-form-layout>
+      <p> For demo on properties: appName, companyName, minPasscodeLengh and maxPasscodeLength, refer Passcode Screen Component demo.</p>
+    </div>
+    <div class="oj-flex-item oj-panel">
+      <h3>Component</h3>
+      <oj-messages id="messages" 
+        display="notification" 
+        messages="[[messages]]" 
+        position="[[messagePos]]"
+        on-oj-close="[[cancelMessage]]">
+      </oj-messages>
+      <oj-sample-mobile-internal-local-authentication id="localAuth" builder="[[localAuthBuilder]]"
+                            enable-resume-challenge="[[enableResume]]"
+                            show-dismiss-button="[[showDismiss]]"
+                            on-oj-dismissed="[[dismissedConfig]]"
+                            on-oj-message="[[onMessage]]"
+                            app-name="JET Sample"
+                            company-name="ORACLE"
+                            min-passcode-length="4"
+                            max-passcode-length="8">
+      </oj-sample-mobile-internal-local-authentication>
+    </div>
+  </oj-bind-if>
+</div>

@@ -1,0 +1,81 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<!--
+  Copyright (c) 2015, 2018, Oracle and/or its affiliates.
+  The Universal Permissive License (UPL), Version 1.0
+-->
+<div class="dpls">
+  <div class="dpls-container">
+    <div>
+      <h1 class="dpls-appname dpls-white-text"><oj-bind-text value="[[companyName]]"></oj-bind-text>
+        <div><oj-bind-text value="[[appName]]"></oj-bind-text></div>
+      </h1>
+    </div>
+
+    <div class="dpls-passcode-area">
+      <div>
+        <h3 class="dpls-white-text"><oj-bind-text value="[[passcodeText]]"></oj-bind-text></h3>
+        <h4 class="dpls-red-text"><oj-bind-text value="[[errorMsg]]"></oj-bind-text></h4>
+      </div>
+      <div class="dpls-passcode-input-area">
+        <div class="dpls-passcode-input-element">
+          <oj-input-password :id="[['pwdFld_' + $uniqueId]]" value='{{passcode}}' readonly></oj-input-password>
+        </div>
+        <div>
+          <oj-button class="dpls-white-text" chroming="half" on-click='[[submitPin]]'>
+            <span><oj-bind-text value="[[goText]]"></oj-bind-text></span>
+          </oj-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dpls-keypad dpls-white-text">
+      <div class="dpls-keypad-row">
+        <div class="dpls-round-btn" on-click='[[keypadButtonClick]]'>
+          <oj-bind-text value="[[translations.one]]"></oj-bind-text>
+        </div>
+        <div class="dpls-round-btn" on-click='[[keypadButtonClick]]'>
+          <oj-bind-text value="[[translations.two]]"></oj-bind-text>
+        </div>
+        <div class="dpls-round-btn" on-click='[[keypadButtonClick]]'>
+          <oj-bind-text value="[[translations.three]]"></oj-bind-text>
+        </div>
+      </div>
+      <div class="dpls-keypad-row">
+        <div class="dpls-round-btn" on-click='[[keypadButtonClick]]'>
+          <oj-bind-text value="[[translations.four]]"></oj-bind-text>
+        </div>
+        <div class="dpls-round-btn" on-click='[[keypadButtonClick]]'>
+          <oj-bind-text value="[[translations.five]]"></oj-bind-text>
+        </div>
+        <div class="dpls-round-btn" on-click='[[keypadButtonClick]]'>
+          <oj-bind-text value="[[translations.six]]"></oj-bind-text>
+        </div>
+      </div>
+      <div class="dpls-keypad-row">
+        <div class="dpls-round-btn" on-click='[[keypadButtonClick]]'>
+          <oj-bind-text value="[[translations.seven]]"></oj-bind-text>
+        </div>
+        <div class="dpls-round-btn" on-click='[[keypadButtonClick]]'>
+          <oj-bind-text value="[[translations.eight]]"></oj-bind-text>
+        </div>
+        <div class="dpls-round-btn" on-click='[[keypadButtonClick]]'>
+          <oj-bind-text value="[[translations.nine]]"></oj-bind-text>
+        </div>
+      </div>
+      <div class="dpls-keypad-row">
+        <div class="dpls-dummy-btn"></div>
+        <div class="dpls-round-btn" on-click='[[keypadButtonClick]]'>
+          <oj-bind-text value="[[translations.zero]]"></oj-bind-text>
+        </div>
+        <div class="dpls-delete-btn-container">
+          <oj-button class="dpls-white-btn" chroming="half" on-click='[[deleteChar]]'>
+            <span><oj-bind-text value="[[deleteText]]"></oj-bind-text></span>
+          </oj-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

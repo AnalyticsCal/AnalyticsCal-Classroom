@@ -1,0 +1,31 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<div class="oj-hybrid-applayout-page">
+  <div class="dla-config-screen">
+    <oj-label class="oj-label oj-label-inline" for="togglePasscode">
+      <oj-bind-text value="[[translations.enablePasscode]]"></oj-bind-text>
+    </oj-label>
+    <oj-switch :id="[['togglePasscode_' + context.uniqueId]]" value="{{passcodeEnabled}}" on-value-changed="[[optionChanged]]"></oj-switch>
+    <br/>
+    <oj-bind-if test="[[passcodeEnabled]]">
+      <oj-button :id="[['changePasscode_' + context.uniqueId]]" on-click="[[changePasscode]]" chroming="full">
+        <oj-bind-text value="[[translations.changePasscode]]"></oj-bind-text>
+      </oj-button>
+      <br/>
+    </oj-bind-if>
+
+    <oj-label class="oj-label oj-label-inline" for="toggleFingerprint">
+      <oj-bind-text value="[[translations.enableFingerprint]]"></oj-bind-text>
+    </oj-label>
+    <oj-switch :id="[['toggleFingerprint_' + context.uniqueId]]" value="{{fingerprintEnabled}}" on-value-changed="[[optionChanged]]" disabled="[[fingerprintNotAllowed]]"></oj-switch>
+    <br/>
+
+    <oj-bind-if test="[[showDismissButton]]">
+      <oj-button :id="[['done_' + context.uniqueId]]" on-click="[[dismiss]]" chroming="full">
+        <oj-bind-text value="[[translations.done]]"></oj-bind-text>
+      </oj-button>
+    </oj-bind-if>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+{
+    "name": "oj-sample-mobile-internal",
+    "displayName": "oj-sample-mobile JET Pack",
+    "type":"pack",
+    "version": "0.0.11",
+    "description": "A JET Pack containing a set of components specifically intended for use in mobile applications",
+    "license": "https://opensource.org/licenses/UPL",
+    "dependencies": {
+        "oj-sample-mobile-internal-common":"0.0.4",
+        "oj-sample-mobile-internal-passcode-screen":"0.0.5",
+        "oj-sample-mobile-internal-local-authentication":"0.0.5"
+    },
+    "extension": {
+        "catalog": {
+            "coverImage": "coverimage.jpg"
+        }
+    }
+}

@@ -1,0 +1,28 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<div class="oj-hybrid-applayout-page">
+  <div class="oj-applayout-fixed-top">
+    <header role="banner" >
+      <oj-module id="incidentHeader" class="oj-flex-bar oj-hybrid-applayout-header oj-sm-align-items-center" config="[[createIncidentHeaderConfig]]"></oj-module>
+    </header>
+    <div class="demo-train-container demo-flex-zero oj-hybrid-padding-vertical">
+      <oj-train id='train' data-oj-context class='oj-train-stretch'
+        selected-step='{{router.stateId()}}'
+        on-oj-before-select='[[trainBeforeSelect]]'
+        :style.display="[[router.currentValue() && router.currentValue().showTrain ? '' : 'none']]"
+        steps='[[stepArray]]'></oj-train>
+    </div>
+  </div>
+
+  <div class="oj-applayout-content">
+    <div role="main" class="oj-hybrid-applayout-content">
+      <oj-module id="demo-create-incident-page" config="[[moduleConfig]]" on-oj-view-disconnected="[[viewDisconnected]]"></oj-module>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<div class="oj-flex-bar oj-sm-align-items-center">
+  <div class="oj-flex-bar-start">
+    <oj-bind-if test="[[addNav()]]">
+      <oj-button display="all" on-oj-action="[[goBack]]">
+        <span slot='startIcon' class="oj-fwk-icon oj-fwk-icon-back"></span>
+        Back
+      </oj-button>
+    </oj-bind-if>
+  </div>
+  <div class="oj-flex-bar-middle" style="margin-left: 20px;">
+    <h1>Passcode Screen Component</h1>
+  </div>
+</div>
+<div class="oj-flex oj-flex-items-pad">
+    <h3>Configuration</h3>
+    <div class="oj-flex-item oj-panel">
+    <oj-form-layout label-edge="start">
+      <oj-input-text id="companyName" value="{{companyName}}" label-hint="Company Name"></oj-input-text>
+      <oj-input-text id="appName" value="{{appName}}" label-hint="App Name"></oj-input-text>
+      <oj-input-text id="passcodeTxt" value="{{passcodeTxt}}" label-hint="Passcode Text"></oj-input-text>
+      <oj-input-text id="goBtnTxt" value="{{goText}}" label-hint="Go Button Text"></oj-input-text>
+      <oj-input-text id="deleteBtnTxt" value="{{delText}}" label-hint="Delete Button Text"></oj-input-text>
+      <oj-switch id="validateLength" value="{{validateLen}}" label-hint="Validate passcode length"></oj-switch>
+      <oj-input-number id="minLen" value="{{minLen}}" label-hint="Min Passcode Length"></oj-input-number>
+      <oj-input-number id="maxLen" value="{{maxLen}}" label-hint="Max Passcode Length"></oj-input-number>
+      <oj-button id="clear" on-click='[[clear]]' chroming='full'>Clear Passcode</oj-button>
+      <oj-button id="err" on-click='[[customError]]' chroming='full'>Set Custom Error Message</oj-button>
+    </oj-form-layout>
+  </div>
+  <div class="oj-flex-item oj-panel">
+    <oj-sample-mobile-internal-passcode-screen id="passcodeScreen"
+                     on-oj-done="[[done]]"
+                     company-name="[[companyName]]"
+                     app-name="[[appName]]"
+                     passcode-text="[[passcodeTxt]]"
+                     go-text="[[goText]]"
+                     delete-text="[[delText]]"
+                     validate-passcode-length="[[validateLen]]"
+                     max-passcode-length="[[maxLen]]"
+                     min-passcode-length="[[minLen]]"></oj-sample-mobile-internal-passcode-screen>
+  </div>
+  <div class="oj-flex-item oj-panel">
+    <h3>Result</h3>
+    <p>User passcode entered:
+      <oj-bind-text value="[[passcode]]"></oj-bind-text>
+    </p>
+  </div>
+</div>

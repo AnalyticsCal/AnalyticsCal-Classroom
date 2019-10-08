@@ -1,0 +1,130 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+ <div class="oj-hybrid-applayout-page">
+  <div class="oj-applayout-fixed-top" id="customerDetailsTop">
+    <header role="banner" >
+      <oj-module id="custDetailsHeader" class="oj-flex-bar oj-hybrid-applayout-header oj-sm-align-items-center" config="[[headerConfig]]"></oj-module>
+    </header>
+  </div>
+
+  <oj-bind-if test="[[!customerLocationMapVisible()]]">
+    <div class="oj-applayout-content" id="customerDetails">
+      <div role="main" class="oj-hybrid-applayout-content demo-solid-bg">
+
+        <input type="file" id="upload-customer-pic" class="demo-hide-photo-input" aria-label="upload customer profile photo" accept="image/*" aria-hidden="true">
+
+        <oj-bind-if test="[[customerModel() != null]]">
+          <div>
+            <div class="demo-profile-top-section demo-profile-top-section-gradient-grey">
+              <oj-bind-if test="[[!imgSrc()]]">
+                <div class="demo-customer-details-avatar-wrapper" :style.border="[['1px solid ' + appUtilities.formatAvatarColor('Customer', customerModel().id())]]">
+                  <div id="customerAvatar" class="demo-customer-details-avatar" :style.background="[[appUtilities.formatAvatarColor('Customer', customerModel().id())]]">
+                    <oj-bind-text value="[[appUtilities.formatInitials(customerModel().firstName(), customerModel().lastName())]]"></oj-bind-text>
+                  </div>
+                </div>
+              </oj-bind-if>
+              <oj-bind-if test="[[imgSrc()]]">
+                <div class="demo-profile-photo-container">
+                  <img id="customer-photo" class="demo-profile-photo" alt="profile photo" :src="[[imgSrc]]">
+                </div>
+              </oj-bind-if>
+
+              <oj-bind-if test="[[!editMode()]]">
+                <h2 id="customerName" class="demo-customer-name">
+                  <oj-bind-text value="[[customerModel().firstName() + ' ' + customerModel().lastName()]]"></oj-bind-text>
+                </h2>
+              </oj-bind-if>
+
+              <oj-bind-if test="[[editMode()]]">
+                <a id="changePhotoBtn" href="#" on-click="[[changePhoto]]" class="oj-text-sm">Change</a>
+              </oj-bind-if>
+            </div>
+
+            <oj-bind-if test="[[!editMode()]]">
+              <oj-form-layout>
+                <oj-bind-if test="[[customerModel().mobile]]">
+                  <a id="custMobileAnchor" class="oj-flex-bar" href="#" :href="[['tel:' + customerModel().mobile()]]" aria-label="mobile phone number">
+                    <div class="demo-profile-item-icon-wrapper demo-mobile-icon-wrapper">
+                      <span id="mobileIcon" class="demo-profile-item-icon demo-mobile-icon"></span>
+                    </div>
+                    <div>
+                      <oj-label id='customerMobileLabel'>Mobile</oj-label>
+                      <span id="custMobileSpan"><oj-bind-text value="[[customerModel().mobile()]]"></oj-bind-text></span>
+                    </div>
+                  </a>
+                </oj-bind-if>
+                <oj-bind-if test="[[customerModel().home]]">
+                  <a id="custHomeAnchor" class="oj-flex-bar" href="#" :href="[['tel:' + customerModel().home()]]" aria-label="home phone number">
+                    <div class="demo-profile-item-icon-wrapper demo-office-icon-wrapper">
+                      <span id="officeIcon" class="demo-profile-item-icon demo-office-icon"></span>
+                    </div>
+                    <div>
+                      <oj-label id='customerHomeLabel'>Home</oj-label>
+                      <span id="custHomeSpan"><oj-bind-text value="[[customerModel().home()]]"></oj-bind-text></span>
+                    </div>
+                  </a>
+                </oj-bind-if>
+                <oj-bind-if test="[[customerModel().email]]">
+                  <a id="custEmailAnchor" class="oj-flex-bar" href="#" :href="[['mailto:' + customerModel().email()]]" aria-label="email">
+                    <div class="demo-profile-item-icon-wrapper demo-email-icon-wrapper">
+                      <span id="emailIcon" class="demo-profile-item-icon demo-email-icon"></span>
+                    </div>
+                    <div>
+                      <oj-label id='customerEmailLabel'>Email</oj-label>
+                      <span id="custEmailSpan"><oj-bind-text value="[[customerModel().email]]"></oj-bind-text></span>
+                    </div>
+                  </a>
+                </oj-bind-if>
+                <oj-bind-if test="[[customerHasAddress]]">
+                  <a id="custAddressAnchor" class="oj-flex-bar" href="#" on-click="[[showCustomerLocationMap]]" aria-label="address">
+                    <div class="demo-profile-item-icon-wrapper demo-address-icon-wrapper">
+                      <span id="addressIcon" class="demo-profile-item-icon demo-address-icon"></span>
+                    </div>
+                    <div>
+                      <oj-label id="customerAddressLabel">Address</oj-label>
+                      <span id="custAddressSpan"><oj-bind-text value="[[customerModel().address.formattedAddress]]"></oj-bind-text></span>
+                    </div>
+                  </a>
+                </oj-bind-if>
+              </oj-form-layout>
+            </oj-bind-if>
+
+            <oj-bind-if test="[[editMode()]]">
+              <oj-validation-group id="tracker" valid="{{groupValid}}">
+                <oj-form-layout>
+                  <oj-input-text id='customerFirstNameInput' label-hint='First Name' value='{{customerModel().firstName}}' spellcheck='false' autocorrect='off' autocapitalize=words autofocus required></oj-input-text>
+                  <oj-input-text id='customerLastNameInput' label-hint='Last Name' value='{{customerModel().lastName}}' spellcheck='false' autocorrect='off' autocapitalize=words required></oj-input-text>
+                  <oj-input-text id='customerMobileInput' label-hint='Mobile' virtual-keyboard='tel' value='{{customerModel().mobile}}'></oj-input-text>
+                  <oj-input-text id='customerHomeInput' label-hint='Home' virtual-keyboard='tel' value='{{customerModel().home}}'></oj-input-text>
+                  <oj-input-text id='customerEmailInput' label-hint='Email' virtual-keyboard='email' value='{{customerModel().email}}'></oj-input-text>
+                  <oj-input-text id='customerStreet1Input' label-hint='Street Line 1' disabled value='{{customerModel().address.street1}}'></oj-input-text>
+                  <oj-input-text id='customerStreet2Input' label-hint='Street Line 2' disabled value='{{customerModel().address.street2}}'></oj-input-text>
+                  <oj-input-text id='customerCityInput' label-hint='City' disabled value='{{customerModel().address.city}}'></oj-input-text>
+                  <oj-input-text id='customerStateInput' label-hint='State' disabled value='{{customerModel().address.state}}'></oj-input-text>
+                  <oj-input-text id='customerZipInput' label-hint='Zip Code' disabled value='{{customerModel().address.zip}}'></oj-input-text>
+                  <oj-input-text id='customerCountryInput' label-hint='Country' disabled value='{{customerModel().address.country}}'></oj-input-text>
+                </oj-form-layout>
+              </oj-validation-group>
+            </oj-bind-if>
+
+            <oj-bind-if test="[[contactsPluginSupported() && !editMode()]]">
+              <div style="text-align: center;padding-bottom: 10px;">
+                <oj-button id='addToContactsBtn' on-oj-action='[[addToContacts]]'>Add to Contacts</oj-button>
+              </div>
+            </oj-bind-if>
+          </div>
+        </oj-bind-if>
+      </div>
+    </div>
+  </oj-bind-if>
+  
+  <oj-bind-if test="[[customerLocationMapVisible()]]">
+    <oj-module id="customerLocMap" config="[[mapConfig]]"></oj-module>
+  </oj-bind-if>
+</div>

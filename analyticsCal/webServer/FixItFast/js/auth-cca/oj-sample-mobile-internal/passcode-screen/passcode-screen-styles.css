@@ -1,0 +1,115 @@
+oj-sample-mobile-internal-passcode-screen * {
+  box-sizing: border-box;
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls {
+  background-color:#3C72CE;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-container {
+  width:390px; /* Fix the width for the center passcode content */
+  display: flex;
+  flex-direction: column;
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-appname {
+  font-size: 3rem;
+  text-align:center;
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-appname > div {
+  font-weight: 400;
+  padding-top: 4px;
+
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-passcode-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-passcode-input-area {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-passcode-input-element {
+  width: 75%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-passcode-input-element .oj-inputpassword.oj-read-only .oj-inputpassword-input {
+  letter-spacing: 20px;
+  color: white;
+  font-size: 1.5rem;
+  text-align:center;
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-keypad {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-keypad-row {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: nowrap;
+  width: 100%;
+  margin: 10px;
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-dummy-btn {
+  height: 80px;
+  width: 70px; /* Find out why this has to be 10 px less */
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-round-btn {
+  border: solid 1px;
+  border-color: #82B9E7;
+  border-radius: 50%;
+  font-size: 2.5rem;
+  cursor:default;
+  height: 80px;
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-round-btn:hover {
+  background-color:#76b8e1;
+  border-color: white;
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-delete-btn-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-white-text {
+  color:white;
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-red-text {
+  color:#cc0000;
+}
+
+oj-sample-mobile-internal-passcode-screen .dpls-white-text .oj-button-button > .oj-button-label > .oj-button-text {
+  color:white;
+}
+
+

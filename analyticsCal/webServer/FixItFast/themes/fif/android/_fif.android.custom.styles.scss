@@ -1,0 +1,15 @@
+@import "../common/fif.common.custom.styles";
+
+.demo-nav-tabs {
+  text-transform: uppercase;
+}
+
+
+/*
+ * This is to bring the glasspane on top of header (with z-index 100) when the navdrawer is active.
+ * It's not required in ios theme because the navdrawer is having push effect
+ * and the glasspane is already covering the header part also.
+ */
+.demo-offcanvas-outer-wrapper > .oj-offcanvas-glasspane {
+  z-index: 101;
+}

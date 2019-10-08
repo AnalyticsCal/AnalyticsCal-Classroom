@@ -1,0 +1,125 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+
+<div class="oj-applayout-content">
+  <div role="main" class="oj-hybrid-applayout-content">
+    <oj-button id='addIncident' class='demo-fab' on-oj-action='[[goToAddIncident]]' chroming='half' display='icons'>
+      <span slot='startIcon' class='oj-fwk-icon demo-add-icon'></span>
+      Add Incident
+    </oj-button>
+    <oj-refresher id="refresher" refresh-content="[[refreshIncidents]]" text="Checking for new incidents...">
+      <oj-list-view id='incidentsListView' data-oj-context class='demo-no-padding-li' aria-label='incidents list'
+        scroll-policy-options.scroller='[[scrollElem]]'
+        data='[[incidentsTableData]]'
+        selection-mode='single'
+        item.selectable="[[incidentSelectable]]"
+        on-selection-changed='[[incidentSelected]]'
+        scroll-top='[[scrollTop]]'
+        translations.msg-fetching-data=''
+        translations.msg-no-data=''>
+          <template slot="itemTemplate" data-oj-as="item">
+            <li class="demo-incident-list-item oj-swipeactions-container" :id="[[item.data.id]]" :class="[[{'demo-item-marker':true, 'demo-item-not-cached': !item.data.cached}]]">
+              <oj-swipe-actions on-oj-action="[[handleAction]]">
+                <div class="oj-offcanvas-outer-wrapper demo-overflow-control">
+                  <div class="oj-offcanvas-inner-wrapper">
+                    <div class="oj-flex-bar oj-sm-flex-wrap-nowrap oj-hybrid-padding">
+                      <div class="oj-flex-bar-start demo-incidents-list-item-start oj-sm-justify-content-center oj-sm-align-items-center demo-flex-zero oj-sm-flex-direction-column">
+                        <img src="css/images/spacer.png" :id="[[item.data.id + 'Icon']]" :class="[['demo-category-' + item.data.category + '-' + item.data.priority + ' demo-incident-icon svg demo-priority-' + item.data.priority]]"
+                            :title="[[item.data.priority + ' priority ' + item.data.category + ' incident']]" :alt="[[item.data.priority + ' priority ' + item.data.category + ' incident']]"/>
+                        <div :id="[[item.data.id + 'PriorityLabel']]" class="demo-incidents-list-item-priority">
+                          <oj-bind-text value="[[item.data.priority]]"></oj-bind-text>
+                        </div>
+                      </div>
+                      <div class="oj-flex-bar-middle oj-flex oj-sm-flex-direction-column oj-sm-flex-wrap-nowrap oj-sm-justify-content-center demo-flex-bar-no-overflow">
+                          <div class="oj-flex-bar">
+                            <div class="oj-flex-bar-start demo-incidents-list-item-problem demo-ellipsis-word-truncation" :id="[[item.data.id+'Problem']]" :style="[[{'fontWeight': item.data.read ? 'normal' : 'bold'}]]">
+                              <oj-bind-text value="[[item.data.problem]]"></oj-bind-text>
+                            </div>
+                            <div class="oj-flex-bar-end demo-incidents-list-item-status demo-flex-zero" :id="[[item.data.id+'Status']]">
+                              <oj-bind-text value="[[item.data.statusObservable().toUpperCase()]]"></oj-bind-text>
+                            </div>
+                          </div>
+                          <div class="oj-flex-bar">
+                            <div class="oj-flex-bar-start demo-incidents-list-item-customer demo-ellipsis-word-truncation" :id="[[item.data.id+'Customer']]">
+                              <oj-bind-text value="[[item.data.customer.firstName + ' ' + item.data.customer.lastName]]"></oj-bind-text>
+                            </div>
+                            <div class="oj-flex-bar-end demo-incidents-list-item-customer demo-flex-zero" :id="[[item.data.id+'TimeStamp']]">
+                              <oj-bind-text value="[[item.data.formattedCreatedOn]]"></oj-bind-text>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <template slot="end">
+                  <oj-bind-if test="[[item.data.statusObservable() === 'accepted']]">
+                    <oj-option class="oj-swipeactions-attention" value="open">
+                      <span>RETURN</span>
+                    </oj-option>
+                  </oj-bind-if>
+                  <oj-bind-if test="[[item.data.statusObservable() === 'fixed']]">
+                    <oj-option class="oj-swipeactions-neutral" value="open">
+                      <span>OPEN</span>
+                    </oj-option>
+                  </oj-bind-if>
+                  <oj-bind-if test="[[item.data.statusObservable() === 'accepted']]">
+                    <oj-option class="oj-swipeactions-danger" value="closed">
+                      <span>CLOSE</span>
+                    </oj-option>
+                  </oj-bind-if>
+                  <oj-bind-if test="[[item.data.statusObservable() === 'open']]">
+                    <oj-option value="accepted" style="width: 150px">
+                      <span>ACCEPT</span>
+                    </oj-option>
+                  </oj-bind-if>
+                </template>
+              </oj-swipe-actions>
+            </li>
+          </template>
+      </oj-list-view>
+    </oj-refresher>
+
+    <div id="popupWrapper">
+      <oj-popup id='filterpopup' class='demo-filter-popup demo-popup' tail='none' chrome='none'>
+        <div class="oj-flex-bar">
+          <div class="oj-flex-bar-end oj-hybrid-padding">
+            <a id="closeFilterBtn" href="#" on-click="[[closePopup]]">Done</a>
+          </div>
+        </div>
+        <oj-form-layout>
+          <oj-label id='priorityLabel' class='demo-filter-form-category-label oj-hybrid-padding-start'>PRIORITY</oj-label>
+          <oj-checkboxset aria-labelledby='priorityLabel' value='{{priorityFilterArr}}' class='oj-checkboxset-no-chrome oj-checkboxset-input-end'>
+            <oj-option id='highopt' value='high'>
+              <img src='css/images/spacer.png' class='demo-icon-32 demo-priority-high-icon' slot='startIcon'></img>
+              High
+            </oj-option>
+            <oj-option id='normalopt' value='normal'>
+              <img src='css/images/spacer.png' class='demo-icon-32 demo-priority-normal-icon' slot='startIcon'></img>
+              Normal
+            </oj-option>
+            <oj-option id='lowopt' value='low'>
+              <img src='css/images/spacer.png' class='demo-icon-32 demo-priority-low-icon' slot='startIcon'></img>
+              Low
+            </oj-option>
+          </oj-checkboxset>
+          <oj-label id='statusLabel' class='demo-filter-form-category-label oj-hybrid-padding-start'>STATUS</oj-label>
+          <oj-checkboxset aria-labelledby='statusLabel' value='{{statusFilterArr}}' class='oj-checkboxset-no-chrome oj-checkboxset-input-end'>
+            <oj-option id='openopt' value='open'>
+              <img src='css/images/spacer.png' class='demo-icon-32 demo-status-open-icon' slot='startIcon'></img>Open</oj-option>
+            <oj-option id='acceptedopt' value='accepted'>
+              <img src='css/images/spacer.png' class='demo-icon-32 demo-status-accepted-icon' slot='startIcon'></img>Accepted</oj-option>
+            <oj-option id='closedopt' value='closed'>
+              <img src='css/images/spacer.png' class='demo-icon-32 demo-status-closed-icon' slot='startIcon'></img>Closed</oj-option>
+          </oj-checkboxset>
+        </oj-form-layout>
+      </oj-popup>
+    </div>
+
+  </div>
+</div>

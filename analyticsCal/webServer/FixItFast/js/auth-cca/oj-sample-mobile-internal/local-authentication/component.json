@@ -1,0 +1,103 @@
+{
+  "name": "local-authentication",
+  "pack":"oj-sample-mobile-internal",
+  "displayName": "Local authenticator",
+  "description": "Component to implement local authentication on mobile devices using IDM plugin.",
+  "version": "0.0.5",
+  "jetVersion": "^6.0.0",
+  "license": "https://opensource.org/licenses/UPL",
+  "dependencies": {
+    "oj-sample-mobile-internal-common":"0.0.4",
+    "oj-sample-mobile-internal-passcode-screen":"0.0.5",
+    "oj-ref-cordova-plugin-oracle-idm-auth": "^1.1.1"
+  },
+  "properties": {
+    "builder": {
+      "description": "Builder for local auth.",
+      "type": "object",
+      "required": true
+    },
+    "showDismissButton": {
+      "description": "If the done button to dismiss the configure screen should be shown or not. Defaults to false.",
+      "type": "boolean"
+    },
+    "enableResumeChallenge": {
+      "description": "If enabled, user will be challenged when app is restored to foreground from background. Defaults to false.",
+      "type": "boolean"
+    },
+    "maxPasscodeLength": {
+      "description": "Maximum length of passcode allowed, defaults to 4. This property is passed on to oj-sample-mobile-passcode-screen component that is internally used.",
+      "type": "number"
+    },
+    "minPasscodeLength": {
+      "description": "Minimum length of passcode allowed, defaults to 12. This property is passed on to oj-sample-mobile-passcode-screen component that is internally used.",
+      "type": "number"
+    },
+    "appName": {
+      "description": "Name of the app to be displayed on the passcode page. Has default value if not configured. This property is passed on to oj-sample-mobile-passcode-screen component that is internally used.",
+      "type": "string"
+    },
+    "companyName": {
+      "description": "Name of the company to be displayed on the passcode page. Has default value if not configured. This property is passed on to oj-sample-mobile-passcode-screen component that is internally used.",
+      "type": "string"
+    }
+  },
+  "methods": {
+    "getFlowPromise": {
+      "description": "Returns a promise which provides the authentication flow when it resolves."
+    },
+    "launchConfigureScreen": {
+      "description": "Display the configure screen."
+    },
+    "dismissConfigureScreen": {
+      "description": "Dismiss the configure screen. Can be used for dismissing programmatically when showDismissButton is set to false."
+    }
+  },
+  "events": {
+    "ojDismissed": {
+      "description": "Fired when the configuration screen is dismissed. This can be used to restore app content once use has exited the config screen.",
+      "bubbles": true
+    },
+    "ojResumeStart": {
+      "description": "Fired when onResume login is triggered.",
+      "bubbles": true
+    },
+    "ojResumeEnd": {
+      "description": "Fired when onResume login ends.",
+      "bubbles": true,
+      "detail": {
+        "success": {
+          "description": "If authentication was successful or not.",
+          "type": "boolean"
+        }
+      }
+    },
+    "ojMessage": {
+      "description": "Fires when there is a message to be displayed to the user.",
+      "bubbles": true,
+      "detail": {
+        "message": {
+          "description": "Object that contains details of the message. This can be used directly with oj-messages.",
+          "type": "object"
+        }
+      }
+    }
+  },
+  "slots": {
+    "configHeader": {
+      "description": "Slot for header section of configure screen."
+    }
+  },
+  "extension": {
+    "catalog": {
+      "category": "Mobile Components",
+      "tags": [
+        "IDM",
+        "authentication",
+        "mobile",
+        "Form Factor: Tablet",
+        "Form Factor: mobile"
+      ]
+    }
+  }
+}

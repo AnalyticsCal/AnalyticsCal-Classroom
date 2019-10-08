@@ -1,0 +1,39 @@
+@import "../common/fif.common.custom.styles";
+
+// ios semi-tranpsparent navbar
+.demo-ios-semi-transparent-bg {
+  background-color: hsla($neutralHue, $neutralSaturation, 95%, 0.2);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+// ios form has a left padding and it prevents the label background to stretch full container width
+.demo-popup.demo-filter-popup .demo-filter-form {
+  padding-left: 0;
+}
+
+.demo-signin-appname {
+  padding-left: 0.775rem;
+}
+
+.demo-signin-form-container {
+  padding-left: 1.4rem;
+}
+
+// in ios the customers list items are overlapping on top of the sticky header during scroll
+.demo-customers-container .oj-sticky {
+  z-index: 1;
+}
+
+// Needed to counter the status bar padding for iOS.
+.demo-navdrawer-footer {
+  padding-bottom: 20px;
+}
+
+
+// When Keyboard plugin is enabled and webview is shrunk
+// position: fixed which is applied on footer misbehaves.
+// Fix that by providing position: absolute
+.demo-activity-footer {
+  position: absolute;
+}

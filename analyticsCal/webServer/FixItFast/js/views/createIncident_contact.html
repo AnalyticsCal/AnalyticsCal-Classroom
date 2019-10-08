@@ -1,0 +1,35 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<div>
+
+  <div class="oj-hybrid-padding">Please select a customer from the list:</div>
+
+  <div aria-label="customers" style="overflow: auto;">
+    <oj-radioset id="customerSelectionRadioSet" class="oj-radioset-input-end"
+          value='{{newIncidentModel().customerId}}'
+          on-value-changed='[[customerSelectionChange]]'
+          required='true'
+          display-options.messages='notewindow'>
+      <oj-bind-for-each data="[[allCustomers]]">
+        <template>
+          <oj-option class='demo-incident-radioset-item' :id="[[$current.data.id]]" :value="[[$current.data.id]]">
+             <div slot="startIcon" class="demo-customer-avatar-wrapper oj-flex oj-sm-align-items-center" :style.border="[['1px solid ' + appUtilities.formatAvatarColor('Customer', $current.data.id)]]">
+               <div class="demo-customer-avatar" :style.background="[[appUtilities.formatAvatarColor('Customer', $current.data.id)]]" :id="[[$current.data.id+'Avatar']]">
+                 <oj-bind-text value="[[appUtilities.formatInitials($current.data.firstName, $current.data.lastName)]]"></oj-bind-text>
+               </div>
+             </div>
+             <span class="oj-sm-margin-2x-start" :for="[[$current.data.id]]" :id="[[$current.data.id+'Name']]">
+               <oj-bind-text value="[[$current.data.firstName + ' ' + $current.data.lastName]]"></oj-bind-text>
+             </span>
+          </oj-option>
+        </template>
+      </oj-bind-for-each>
+    </oj-radioset>
+  </div>
+</div>

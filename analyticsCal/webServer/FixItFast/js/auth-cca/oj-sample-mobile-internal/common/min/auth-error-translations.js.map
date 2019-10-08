@@ -1,0 +1,16 @@
+{
+  "version": 3,
+  "sources": [
+    "common/resources/nls/auth-error-translations-strings.js",
+    "ojL10n!oj-sample-mobile-internal/common/resources/nls/auth-error-translations-strings",
+    "common/auth-error-translations.js"
+  ],
+  "names": [],
+  "mappings": "AAAA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA,ACRA;AACA,ACDA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA",
+  "file": "auth-error-translations.js",
+  "sourcesContent": [
+    "/**\n  Copyright (c) 2015, 2018, Oracle and/or its affiliates.\n  The Universal Permissive License (UPL), Version 1.0\n*/\ndefine('oj-sample-mobile-internal/common/resources/nls/auth-error-translations-strings',{\n  \"root\": true\n});\n\n",
+    "\n",
+    "/**\n  Copyright (c) 2015, 2018, Oracle and/or its affiliates.\n  The Universal Permissive License (UPL), Version 1.0\n*/\n'use strict';\ndefine('oj-sample-mobile-internal/common/auth-error-translations',['ojL10n!./resources/nls/auth-error-translations-strings'],\n  function (translations) {\n    function ErrorTranslationsModel() {\n      this.translations = translations;\n    }\n\n    /**\n     * Method to convert error object to translated error message.\n     * @param {object} error \n     */\n    ErrorTranslationsModel.prototype.getTranslationForError = function(error) {\n      if (error.errorSource === 'system')\n        return error.translatedErrorMessage;\n\n      var message = this.translations.errorMessages[error.errorCode];\n      if (!message)\n        return this.translations.errorMessages.unknownErrorCode + error.errorCode;\n      return message;\n    };\n\n    return new ErrorTranslationsModel();\n  }\n);\n"
+  ]
+}

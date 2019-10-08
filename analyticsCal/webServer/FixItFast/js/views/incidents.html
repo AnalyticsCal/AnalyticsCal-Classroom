@@ -1,0 +1,43 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<div>
+  <div class="oj-applayout-fixed-top">
+    <header role="banner" >
+      <oj-module class="oj-hybrid-applayout-header-no-border demo-ios-semi-transparent-bg" config="[[headerConfig]]"></oj-module>
+    </header>
+
+    <div role="navigation" class="oj-hybrid-applayout-navbar-page demo-ios-semi-transparent-bg tabbarcontainer">
+      <oj-tab-bar id='incidentsNavTabs' data-oj-context class='demo-nav-tabs'
+          selection='{{router.stateId}}'
+          edge='top'
+          on-selection-changed='[[navBarChange]]'>
+        <ul>
+          <li id="analyticsCalDashboard">
+            <a href="#">Analytics Cal Dashboard</a>
+          </li>
+          <li id="incidentsTabDashboard">
+            <a href="#">Dashboard</a>
+          </li>
+          <li id="incidentsTabList">
+            <a href="#">List</a>
+          </li>
+          <li id="incidentsTabMap">
+            <a href="#">Map</a>
+          </li>
+        </ul>
+      </oj-tab-bar>
+    </div>
+
+  </div>
+
+
+  <!-- Incidents View Content -->
+  <oj-module class="oj-hybrid-applayout-page" config="[[moduleConfig]]" animation="[[moduleAnimation]]"
+            on-oj-view-disconnected="[[viewDisconnected]]"></oj-module>
+</div>

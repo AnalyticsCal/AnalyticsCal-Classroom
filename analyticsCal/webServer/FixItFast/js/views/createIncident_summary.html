@@ -1,0 +1,18 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+ <oj-form-layout>
+  <oj-input-text label-hint="Problem" placeholder='Please enter the problem.' value='[[newIncidentModel().problem]]' readonly></oj-input-text>
+  <oj-input-text label-hint="Category" value='[[categoryLabel(newIncidentModel().category())]]' readonly></oj-input-text>
+  <oj-input-text label-hint="Priority" value='[[priorityLabel(newIncidentModel().priority())]]' readonly></oj-input-text>
+  <oj-input-text label-hint="Customer" placeholder='Please select a customer.' value='[[newIncidentModel().customerName]]' readonly></oj-input-text>
+  <oj-bind-if test="[[newIncidentModel().picture()]]">
+    <oj-label id='summaryPhotoLabel'>Photo</oj-label>
+    <img aria-labelledby="summaryPhotoLabel" :src="[[newIncidentModel().picture()]]" style="width: 100%;" alt="incident photo">
+  </oj-bind-if>
+ </oj-form-layout>

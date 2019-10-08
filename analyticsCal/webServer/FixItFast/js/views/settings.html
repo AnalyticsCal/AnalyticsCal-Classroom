@@ -1,0 +1,32 @@
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<!--
+ Copyright (c) 2014, 2019, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+<div class="oj-hybrid-applayout-page">
+  <div class="oj-applayout-fixed-top">
+    <header role="banner" >
+      <oj-module class="oj-flex-bar oj-hybrid-applayout-header oj-sm-align-items-center" config="[[headerConfig]]"></oj-module>
+    </header>
+  </div>
+
+  <div class="oj-applayout-content">
+    <div role="main" class="oj-hybrid-applayout-content">
+      <div style="padding: 10px;">
+        <h4>CONNECTIONS</h4>
+        <oj-form-layout label-edge="top">
+          <oj-switch id='backendSwitch' value='{{usingMobileBackend}}' label-hint="Mobile Hub"
+              help-hints.definition='Provides data from Oracle Mobile Hub when enabled. Uses local data when disabled.'>
+          </oj-switch>
+          <oj-bind-if test='[[window.cordova && window.cordova.plugins && window.cordova.plugins.IdmAuthFlows]]'>
+            <oj-button id='localAuthConfig' on-oj-action='[[configureLocalAuth]]'>Configure Local Authentication</oj-button>
+          </oj-bind-if>
+        </oj-form-layout>
+      </div>
+    </div>
+  </div>
+</div>
+
