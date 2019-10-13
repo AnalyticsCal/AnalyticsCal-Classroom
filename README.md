@@ -10,13 +10,13 @@ Module contain a class NonLinearRegression which has method for each type of non
 Currently we support following kinds of non linear model.
 
 1. Polynomial Model 
-    - Equation: B0+B1*X+B2*X^2+B3*X^3 + -- + --
+    - Equation: ```Y = B0+B1*X+B2*X^2+B3*X^3 + -- + --```
     - Any order of polynomial regression can be performed.
 2. Sinusoidal Model 
-    - Equation: B0 * Sin(B1*X+B2)+B3 . 
+    - Equation: ```Y = B0 * Sin(B1*X+B2)+B3```
     - Order for this regression is fixed to 4.
 3. Exponential Model
-    - Equation: B0 * (1-exp^B1x) . 
+    - Equation: ```Y = B0 * (1-exp^B1x)```
     - Order for this regression is fixed to 2
 
 - linear_algebra.py : This module has all Matrix related operations such as finding inverse, tranpose, multiplication etc operations of matrix.
