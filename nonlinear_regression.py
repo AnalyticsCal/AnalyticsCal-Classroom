@@ -1,6 +1,5 @@
 from linear_algebra import LinearAlgebra
 from gauss_newton import GaussNewton
-from gauss_newton_nlr import gauss_newton_method
 from sympy import *
 
 
