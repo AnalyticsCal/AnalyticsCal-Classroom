@@ -14,10 +14,10 @@ Currently we support following kinds of non linear model.
     - Any order of polynomial regression can be performed.
 2. Sinusoidal Model 
     - Equation: ```Y = B0 * Sin(B1*X+B2)+B3```
-    - Order for this regression is fixed to 4.
+    - Order for this model is fixed to 4.
 3. Exponential Model
     - Equation: ```Y = B0 * (1-exp^B1x)```
-    - Order for this regression is fixed to 2
+    - Order for this model is fixed to 2
 
 - linear_algebra.py : This module has all Matrix related operations such as finding inverse, tranpose, multiplication etc operations of matrix.
     -   Used internally by nonlinear_regression.py 
