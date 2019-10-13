@@ -20,8 +20,9 @@ print('coefficient::', coefficient)
 
 #print(Ycap)
 x = np.linspace(-5,5,100)
+print 'x', x
 y = x**(size-4)*coefficient[size-4]+x**(size-3)*coefficient[size-3]+x**(size-2)*coefficient[size-2]+x**(size-1)*coefficient[size-1]
-print y
+print 'Y', y
 plt.plot(x, y, '-r', label='y=B0+x^1*B1+x^2*B2+x^3*B3+B4*x^4')
 plt.title('Graph of y=B0+x^1*B1+x^2*B2+x^3*B3+B4*x^4')
 plt.xlabel('x', color='#1C2833')
