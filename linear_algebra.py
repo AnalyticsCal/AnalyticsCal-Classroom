@@ -6,7 +6,6 @@ class LinearAlgebra(object):
     def get_cofactor(arr, temp, p, q, n):
         i = 0
         j = 0
-
         for row in range(n):
             for col in range(n):
                 if row != p and col != q:
@@ -51,6 +50,7 @@ class LinearAlgebra(object):
 
         for i in range(self.N):
             for j in range(self.N):
+
                 self.get_cofactor(arr, temp, i, j, self.N)
 
                 sign = 1 if ((i + j) % 2 == 0) else -1

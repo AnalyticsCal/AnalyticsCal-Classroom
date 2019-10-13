@@ -1,7 +1,5 @@
 from linear_algebra import LinearAlgebra
 from gauss_newton import GaussNewton
-from gauss_newton_nlr import gauss_newton_method
-from sympy import *
 
 
 class NonLinearRegression(object):
@@ -52,6 +50,7 @@ class NonLinearRegression(object):
             arr.append(temp)
 
         N = degree_of_x + 1
+        algebra_obj.N = N
         adj = []
         inverse = []
 
@@ -104,7 +103,10 @@ class NonLinearRegression(object):
                 for k in range(len(sigma_XY_Transpose)):
                     coefficient_list[i][j] += inverse[i][k] * sigma_XY_Transpose[k][j]
 
-        return coefficient_list
+
+        # clean up the coefficient list
+        return [coefficient[0] for coefficient in coefficient_list]
+        #return coefficient_list
 
     def sinusoidal(self, order):
         """
@@ -112,6 +114,13 @@ class NonLinearRegression(object):
         :return: list of coefficient - [B0, B1, B3 .. etc].
          Length of coefficient list is same as order
         """
+
+        # check the order
+        if order != 4:
+            return 'Permissible valued of order for sinusoidal model is 4'
+
+        from sympy import symbols,sin
+
         symbol_list = []
         init_coeff = []
 
@@ -136,6 +145,12 @@ class NonLinearRegression(object):
         :return: list of coefficient - [B0, B1, B3 .. etc].
          Length of coefficient list is same as order
         """
+        # check the order
+        if order != 2:
+            return 'Permissible valued of order for sinusoidal model is 2'
+
+        from sympy import symbols, exp
+
         symbol_list = []
         init_coeff = []
 
@@ -156,6 +171,8 @@ class NonLinearRegression(object):
         return coefficient
 
     def polynomial_using_gauss_newton(self, order):
+        from sympy import symbols
+
         symbol_list = []
         init_coeff = []
 
