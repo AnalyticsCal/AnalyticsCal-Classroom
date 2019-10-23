@@ -45,7 +45,7 @@ class Wheather:
 
     def create_data_table(self, column_name):
         columns = " DOUBLE,".join(column_name) + " DOUBLE"
-        create_table_str = "CREATE TABLE IF NOT EXISTS " + dataset_name + "(id int  NOT NULL AUTO_INCREMENT," + columns + ",PRIMARY KEY (id));"
+        create_table_str = "CREATE TABLE IF NOT EXISTS " + dataset_name + "(id int  NOT NULL AUTO_INCREMENT," + columns + ",outlier BOOL, PRIMARY KEY (id));"
         print ("create table query : "+create_table_str)
         cursor.execute(create_table_str)
 
@@ -68,9 +68,11 @@ if __name__ == '__main__':
     column_name, structured_data = my_weather.create_structured_data(row_data)
     print("column name " + str(column_name))
     if (my_weather.check_if_exists()):
-        print("The table already exists. Overwriting content ...")
-    else:
-        my_weather.create_data_table(column_name)
-        print("Table created: " + dataset_name)
+        print("The table already exists. Droping table "+dataset_name)
+        drop_str = "DROP TABLE "+dataset_name
+        cursor.execute(drop_str)
+    
+    my_weather.create_data_table(column_name)
+    print("Table created: " + dataset_name)
     inserted_rows_count = my_weather.insert_data_to_db(structured_data, column_name)
     print("Number of rows inserted :" + str(inserted_rows_count))
