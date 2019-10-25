@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
 
+
 import stats_team3 as st
 import data_load as load
 import file_upload as upload
@@ -46,7 +47,8 @@ def reg_plot(x_plot,y_plot,y_predicted, equation_str, title, x_label, y_label, c
     plt.title(title)					
     plt.xlabel(x_label)					
     plt.ylabel(y_label)
-    plt.legend((raw_plot, predict_plot),('Raw Data', 'Prediction equation = ' + equation_str),loc=(-0.05,-0.12), scatterpoints=1, ncol=3, fontsize=8)
+    plt.legend((raw_plot, predict_plot),('Raw Data', 'Prediction equation = ' + equation_str),loc=(-0.05,-0.20), scatterpoints=1, ncol=3, fontsize=8)
+    plt.tight_layout()
     plt.show()
     
     
@@ -113,17 +115,17 @@ mighty.grid(column=0, row=0, padx=8, pady=4)
 
 # LabelFrame using tab1 as the parent - for output console
 mighty1 = ttk.LabelFrame(tab1, text=' Output Console')
-mighty1.grid(column=1, row=0,sticky="E", padx=8, pady=4)
+mighty1.grid(column=1, row=0,sticky=tk.N+tk.S, padx=8, pady=4, columnspan=3, rowspan = 6)
 
 mighty2 = ttk.LabelFrame(tab1, text=' Non Linear Regression ')
-mighty2.grid(column = 0, row=1, padx=8, pady=4)
+mighty2.grid(column = 0, row=1, padx=2, pady=1)
 #mighty2.grid_columnconfigure(0, weight=1)
 
 # Add big textbox
-text_h= 8
+text_h= 12
 text_w = 30
 textBox = tk.Text(mighty1, height = text_h, width = text_w,wrap=tk.WORD)
-textBox.grid(column=0, row=5, sticky='E', columnspan=3)
+textBox.grid(column=0, row=5, sticky=tk.N+tk.S)
 
 def create_data_list():
     global x,y,X,Y, data
@@ -147,6 +149,7 @@ def create_instance():
     X.var()
     Y.var()
     data.corr_coeff()
+    data.nlr_coef()
     
 
 
@@ -182,10 +185,18 @@ def log_plot():
     Y_log = [math.log(i) for i in Y.values]
     print(X_log)
     print(Y_log)
-    plt.scatter(X_log, Y_log,)
-    plt.title('Scatter plot of log_y & log_x')					
-    plt.xlabel('x_log')					
-    plt.ylabel('y_log')					
+    fig, (ax1, ax2) = plt.subplots(2)
+    #fig.suptitle('Raw plot vs Log plots')
+    ax1.scatter(X_log, Y_log,color = 'r')
+    ax1.set_title('Scatter plot of log_y & log_x')					
+    ax1.set(xlabel='Log(X)', ylabel='Log(Y)')
+    ax2.scatter(X.values, Y.values)
+    #plt.scatter(X_log, Y_log,)
+    ax2.set_title('Scatter plot of Y & X')
+    ax2.set(xlabel='X', ylabel='Y')
+    #plt.xlabel('x')					
+    #plt.ylabel('y')
+    plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
     plt.show()
     """
     fig = Figure(figsize=(12, 8), facecolor = 'white')
@@ -218,21 +229,60 @@ def _destroyWindow():
     root.destroy()  
 
 """
+mighty_width = 26
 # Add button to output basic statistics
-Statistics = ttk.Button(mighty, text="Statistics", command= lambda : click_stats(textBox), width = 20)   
+Statistics = ttk.Button(mighty, text="Statistics", command= lambda : click_stats(textBox), width = mighty_width)   
 Statistics.grid(column=0, row=0, sticky='W')
-
-# Modified Button Click Function
-def click_me(): 
-    action.configure(text='Hello ' + name.get() + ' ' + 
-                     number_chosen.get())
-# Add button for ANOVA
-plot = ttk.Button(mighty, text="Plot", command=click_me, width = 20)   
+#----------------------------------------------------------------------Basic Plot
+# Modified Button Click Plot
+def click_plot():
+    global X, Y
+    plt.scatter(X.values, Y.values,alpha=1)					
+    plt.title('Scatter plot of x and y')					
+    plt.xlabel('x')					
+    plt.ylabel('y')
+    plt.tight_layout()
+    plt.show()
+# Add button for plot
+plot = ttk.Button(mighty, text="Plot", command=click_plot, width = mighty_width)   
 plot.grid(column=0, row=1, sticky='W')
+#----------------------------------------------------------------------Linear Regression
+def click_linear_regression():
+    global X,Y, data
+    regression = nlr(X.values,Y.values)
+    coefficient = regression.polynomial(1)
+    coeff_list =copy.deepcopy(coefficient)
+    Y_predicted = form_eqn(copy.deepcopy(coefficient))
+    coefficient_str = ''
+    n = len(coefficient)
+    for i in range(len(coefficient)):
+        if(coefficient[n - i -1] > 0):
+            coefficient_str += '+'
+            
+        coefficient_str += str(round(coefficient[n - i - 1], 4))
+        if(i == (n - 2)):
+            coefficient_str += 'x '
+        elif(i != (n - 1)):
+            coefficient_str += 'x'+ str(n - i - 1).translate(SUP) +' '
 
+        else:
+            coefficient_str += str(n - i - 1)
+    equation_str = str(coefficient_str)
+    if(equation_str[0] == '+'):
+        temp = list(equation_str)
+        del(temp[0])
+        equation_str = "".join(temp)
+        
+    textBox.delete(1.0, tk.END)
+    textBox.insert(tk.INSERT, equation_str)
+    title= "predicted vs actual"					
+    x_label= 'X'					
+    y_label= 'Y'
+    reg_plot(X.values, Y.values, Y_predicted, equation_str, title, x_label, y_label, 'g')
+    plt.show()
 
 # Add button to Regression
-linear_Regression = ttk.Button(mighty, text="Linear Regression", command=click_me,width = 20)   
+linear_Regression = ttk.Button(mighty, text="Linear Regression", command=click_linear_regression,width = mighty_width)   
 linear_Regression.grid(column=0, row=2, sticky='W')
 
 #-----------------------------------------------------------------------Non Linear Regerssion
@@ -267,12 +317,14 @@ def click_nlr_poly():
         temp = list(equation_str)
         del(temp[0])
         equation_str = "".join(temp)
+    data.poly_coeff = []
+    data.poly_coeff = [round(coefficient[n - i - 1], 4) for i in range(n)]
         
     textBox.delete(1.0, tk.END)
     textBox.insert(tk.INSERT, equation_str)
-    raw_plot = plt.scatter(X.values, Y.values, color = 'r')
+    #raw_plot = plt.scatter(X.values, Y.values, color = 'r')
     #plt.plot(X.values, round (coeff_list[0] + (coeff_list[1]*X.values) + (coeff_list[2]*(X.values**2))+ (coeff_list[3]*(X.values**3)), 4),'-')
-    predict_plot = plt.plot(X.values, Y_predicted, '-')
+    #predict_plot = plt.plot(X.values, Y_predicted, '-')
     title= "predicted vs actual"					
     x_label= 'X'					
     y_label= 'Y'
@@ -354,101 +406,14 @@ number_chosen_exp.current(0)
 """
 #--------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------ANOVA
+
+def click_anova():
+    global X,Y,data
+    anova(X.values, Y.values,data.poly_coeff)
+    ...
 # Add button for ANOVA
-anova = ttk.Button(mighty, text="ANOVA", command=click_me,width = 20)   
+anova = ttk.Button(mighty, text="ANOVA", command=click_anova,width = mighty_width)   
 anova.grid(column=0, row=4, sticky='W')
-"""
-
-# Modified Button Click Function
-def click_me(): 
-    action.configure(text='Hello ' + name.get() + ' ' + 
-                     number_chosen.get())
-
-# Adding a Textbox Entry widget
-name = tk.StringVar()
-name_entered = ttk.Entry(mighty, width=12, textvariable=name)
-name_entered.grid(column=0, row=1, sticky='W')               # align left/West
-
-# Adding a Button
-action = ttk.Button(mighty, text="Click Me!", command=click_me)   
-action.grid(column=2, row=1)                                
-
-# Creating three checkbuttons
-ttk.Label(mighty, text="Choose a number:").grid(column=1, row=0)
-number = tk.StringVar()
-number_chosen = ttk.Combobox(mighty, width=12, textvariable=number, state='readonly')
-number_chosen['values'] = (1, 2, 4, 42, 100)
-number_chosen.grid(column=1, row=1)
-number_chosen.current(0)
-
-chVarDis = tk.IntVar()
-check1 = tk.Checkbutton(mighty, text="Disabled", variable=chVarDis, state='disabled')
-check1.select()
-check1.grid(column=0, row=4, sticky=tk.W)                   
-
-chVarUn = tk.IntVar()
-check2 = tk.Checkbutton(mighty, text="UnChecked", variable=chVarUn)
-check2.deselect()
-check2.grid(column=1, row=4, sticky=tk.W)                   
-
-chVarEn = tk.IntVar()
-check3 = tk.Checkbutton(mighty, text="Enabled", variable=chVarEn)
-check3.deselect()
-check3.grid(column=2, row=4, sticky=tk.W)                     
-
-# GUI Callback function 
-def checkCallback(*ignoredArgs):
-    # only enable one checkbutton
-    if chVarUn.get(): check3.configure(state='disabled')
-    else:             check3.configure(state='normal')
-    if chVarEn.get(): check2.configure(state='disabled')
-    else:             check2.configure(state='normal') 
-
-# trace the state of the two checkbuttons
-chVarUn.trace('w', lambda unused0, unused1, unused2 : checkCallback())    
-chVarEn.trace('w', lambda unused0, unused1, unused2 : checkCallback())   
-
-
-# Using a scrolled Text control    
-scrol_w  = 30
-scrol_h  =  3
-scr = scrolledtext.ScrolledText(mighty, width=scrol_w, height=scrol_h, wrap=tk.WORD)
-scr.grid(column=0, row=5, sticky='WE', columnspan=3)                    
-
-
-# First, we change our Radiobutton global variables into a list
-colors = ["Blue", "Gold", "Red"]   
-
-# We have also changed the callback function to be zero-based, using the list 
-# instead of module-level global variables 
-# Radiobutton Callback
-def radCall():
-    radSel=radVar.get()
-    if   radSel == 0: win.configure(background=colors[0])  # zero-based
-    elif radSel == 1: win.configure(background=colors[1])  # using list
-    elif radSel == 2: win.configure(background=colors[2])
-
-# create three Radiobuttons using one variable
-radVar = tk.IntVar()
-
-# Next we are selecting a non-existing index value for radVar
-radVar.set(99)                                 
- 
-# Now we are creating all three Radiobutton widgets within one loop
-for col in range(3):                             
-    curRad = tk.Radiobutton(mighty, text=colors[col], variable=radVar, 
-                            value=col, command=radCall)          
-    curRad.grid(column=col, row=5, sticky=tk.W)             # row=5 ... SURPRISE!
-
-# Create a container to hold labels
-buttons_frame = ttk.LabelFrame(mighty, text=' Labels in a Frame ')
-buttons_frame.grid(column=0, row=7)        
- 
-# Place labels into the container element
-ttk.Label(buttons_frame, text="Label1").grid(column=0, row=0, sticky=tk.W)
-ttk.Label(buttons_frame, text="Label2").grid(column=1, row=0, sticky=tk.W)
-ttk.Label(buttons_frame, text="Label3").grid(column=2, row=0, sticky=tk.W)
-"""
 
 #name_entered.focus()      # Place cursor into name Entry
 #======================
