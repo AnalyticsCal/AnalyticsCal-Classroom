@@ -1,6 +1,8 @@
 import stats_team3 as st
 import data_load as load
 import file_upload as upload
+from nonlinear_regression import NonLinearRegression as nlr
+import math
 
 class IndivModel:
     def __init__(self, values):
@@ -54,10 +56,18 @@ class DataModel(IndivModel):
 
     def corr_coeff(self):
         self.corr_coeff = st.correlationCoefficient(self.x.values,self.y.values)
+        self.threshold = 1.96/ math.sqrt(len(self.x.values))
         return self.corr_coeff
-    
+
+    #def coeff(self, order):
+        
+        
+
+"""
+    def nlr_coeff(self):
+        self.nlr_coeff = 
     def anova(self):
         ...
-
+"""
 #t = DataModel(x, y)
 

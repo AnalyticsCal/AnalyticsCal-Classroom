@@ -81,7 +81,7 @@ class LinearAlgebra(object):
                 inverse[i][j] = adj[i][j] / float(determinant)
 
     def transposeMatrix(self, m):
-        return map(list, zip(*m))
+        return list(map(list, zip(*m)))
 
     def getMatrixMinor(self, m, i, j):
         return [row[:j] + row[j + 1:] for row in (m[:i] + m[i + 1:])]
@@ -119,8 +119,8 @@ class LinearAlgebra(object):
 
     def getMatrixMultiplication(self, m, n):
         mul = []
-        print 'm:', m
-        print 'n:', n
+        #print 'm:', m
+        #print 'n:', n
         for i in m:
             a = 0
             for j, k in zip(i, n):

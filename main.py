@@ -1,6 +1,6 @@
 from nonlinear_regression import NonLinearRegression
 
-
+"""
 # Test data for polynomial coefficient
 Xin = [0.00000,0.01000,0.02000,0.03000,0.04000,0.05000,0.06000,0.07000,0.08000,0.09000]
 Yin = [21.77708100,19.40222517,19.18090854,19.19352492,19.81404233,17.81336663,20.21334141,19.12742415,19.27651467,17.61981982]
@@ -9,6 +9,7 @@ Yin = [21.77708100,19.40222517,19.18090854,19.19352492,19.81404233,17.81336663,2
 regression = NonLinearRegression(Xin, Yin)
 coefficient = regression.polynomial(2)
 print coefficient
+"""
 """
 # One more sample data for polynomial coefficient
 Xin =[0.00,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1,0.11,0.12,0.13,0.14,0.15,0.16,
@@ -37,15 +38,17 @@ regression = NonLinearRegression(Xin, Yin)
 coefficient = regression.polynomial(4)
 print coefficient
 
-
+#"""
 # data for exponential expression
-Xin = [0.25, 0.75, 1.25, 1.75, 2.25]
-Yin = [0.28, 0.57, 0.68, 0.74, 0.79]
+#Xin = [0.25, 0.75, 1.25, 1.75, 2.25]
+#Yin = [0.28, 0.57, 0.68, 0.74, 0.79]
+
+Xin = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0]
 
 regression = NonLinearRegression(Xin, Yin)
 coefficient = regression.exponential(2)
-print coefficient
-"""
+print (coefficient)
+#"""
 """
 ## data for sin
 Xin = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]

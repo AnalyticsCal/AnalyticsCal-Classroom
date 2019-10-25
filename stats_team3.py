@@ -43,7 +43,7 @@ def covariance(x, mean_x, y, mean_y):
         covar = 0.0
         for i in range(len(x)):
                 covar += (x[i] - mean_x) * (y[i] - mean_y)
-        return covar / n - 1
+        return covar / (n - 1)
 
 #mean_x, mean_y = mean(x), mean(y)
 #covar = covariance(x, mean_x, y, mean_y)
