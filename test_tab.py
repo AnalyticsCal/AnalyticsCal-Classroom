@@ -27,6 +27,7 @@ import file_upload as upload
 from ac_classes import IndivModel as imodel
 from ac_classes import DataModel as dmodel
 from nonlinear_regression import NonLinearRegression as nlr
+from anova import main as anova_main
 
 # Create instance
 win = tk.Tk()   
@@ -150,6 +151,7 @@ def create_instance():
     Y.var()
     data.corr_coeff()
     data.nlr_coef()
+    data.anova()
     
 
 
@@ -272,6 +274,8 @@ def click_linear_regression():
         temp = list(equation_str)
         del(temp[0])
         equation_str = "".join(temp)
+    data.poly_coeff = []
+    data.poly_coeff = [round(coefficient[n - i - 1], 4) for i in range(n)]
         
     textBox.delete(1.0, tk.END)
     textBox.insert(tk.INSERT, equation_str)
@@ -409,8 +413,22 @@ number_chosen_exp.current(0)
 
 def click_anova():
     global X,Y,data
-    anova(X.values, Y.values,data.poly_coeff)
-    ...
+    anova_dict = anova_main(X.values, Y.values,data.poly_coeff)
+    data.msr = anova_dict['msr']
+    data.mse = anova_dict['mse']
+    data.ssr = anova_dict['ssr']
+    data.sse = anova_dict['sse']
+    data.f = anova_dict['f']
+    data.p = anova_dict['p']
+    textBox.delete(1.0, tk.END)
+    textBox.insert(tk.INSERT, 'ANOVA'+ '\n')
+    textBox.insert(tk.INSERT, 'msr = '+ str(round(data.msr, 4)) + '\n')
+    textBox.insert(tk.INSERT, 'mse = '+ str(round(data.mse, 4))+ '\n')
+    textBox.insert(tk.INSERT, 'ssr = '+ str(round(data.ssr, 4)) + '\n')
+    textBox.insert(tk.INSERT, 'sse = '+ str(round(data.sse,4)) + '\n')
+    textBox.insert(tk.INSERT, 'p = '+ str(round(data.p,4)) + '\n')
+    textBox.insert(tk.INSERT, 'f = '+ str(round(data.f, 4))  + '\n')
+
 # Add button for ANOVA
 anova = ttk.Button(mighty, text="ANOVA", command=click_anova,width = mighty_width)   
 anova.grid(column=0, row=4, sticky='W')

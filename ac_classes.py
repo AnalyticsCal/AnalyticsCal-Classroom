@@ -63,6 +63,14 @@ class DataModel(IndivModel):
         self.poly_coeff = []
         self.exp_coeff = []
         self.sin_coeff = []
+
+    def anova(self):
+        self.msr = None
+        self.mse = None
+        self.ssr = None
+        self.sse = None
+        self.f = None
+        self.p = None
         
         
        
