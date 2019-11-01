@@ -66,6 +66,7 @@ def open_file():
     file = fd.askopenfile(mode='r', filetypes=[('CSV Files', '*.csv')]) # gets the filename as string
     if file:
         file_name = file.name
+    print(file_name)
     csvHeader, csvList = upload.preprocess_csv(file_name)
     create_data_list() # creates a separate 
     """
