@@ -34,8 +34,6 @@ def cal_average():
 def cal_y_cap():
     """Calculates y_cap for given value of x"""
     coefficients = anova['coefficients']
-    # for index in range(len(coefficients)):
-    #     print(index)
     y_cap_list = []
     x_list = anova.get('x')
     for x in x_list:
@@ -98,7 +96,8 @@ def main(x, y, coefficients):
     anova['x'] = x
     anova['y'] = y
     anova['coefficients'] = coefficients
-    anova['degrees_of_freedom'] = len(coefficients)
+    anova['degrees_of_freedom'] = 2
+    # Should update based on data being multi-variate
 
     cal_average()
     cal_y_cap()
