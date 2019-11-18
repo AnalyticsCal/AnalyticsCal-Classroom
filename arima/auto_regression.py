@@ -1,4 +1,5 @@
-from numpy.linalg import inv
+import matplotlib.pyplot as plt
+from linear_algebra import LinearAlgebra
 from arima.utils import correlation, toeplitz
 
 
@@ -15,7 +16,7 @@ class AutoRegression:
 		else:
 			raise ValueError('Provide input for index as list')
 
-		self.output = []
+		self.phi_estimates = []
 
 	def __str__(self):
 		print(self.output)
@@ -41,6 +42,11 @@ class AutoRegression:
 		for cur_lag in range(num_lags):
 			corr_values.append(correlation(self.lag(cur_lag), self.lag(-1 * cur_lag)))
 		return corr_values
+
+	def difference(self, n):
+		a = self.data
+		b = [0]*n + a[n:]
+		return [(x - y) for x, y in zip(a, b)]
 
 	def seasonal_difference(self, time_period=None):
 		"""
@@ -71,8 +77,22 @@ class AutoRegression:
 		ac = self.auto_correlation(p + 1)
 		r_upper = toeplitz(ac[:p])
 		r = ac[1: p+1]
-		phi = inv(r_upper).dot(r)
+		la = LinearAlgebra(len(r_upper))
+		r_upper_inv = la.getMatrixInverse(r_upper)
+		phi = la.getMatrixMultiplication(r_upper_inv, r)
 		return phi
+
+	def plot(self, x, y, plot_type='line', significance=None):
+		if plot_type == 'line':
+			plt.plot(x, y)
+		elif plot_type == 'bar':
+			plt.bar(x, y)
+
+		if significance:
+			plt.axhline(y=significance)
+			plt.axhline(y=-significance)
+
+		plt.show()
 
 	def fit(self):
 		pass
@@ -80,17 +100,20 @@ class AutoRegression:
 
 def test():
 	import pandas as pd
-	import matplotlib.pyplot as plt
 	df = pd.read_csv('/home/vishnudev/Documents/khanapur_flow.csv')
 	df['date'] = df['Year'].astype(str) + '-' + df['Month'].astype(str)
 	ar = AutoRegression(index=df['date'].to_list(), data=df['Avg Discharge'].to_list())
+	values = ar.auto_correlation(num_lags=40)
+	ar.plot(range(len(values)), values, 'bar')
 	ar.data = ar.seasonal_difference(time_period=12)
-	phi = ar.yule_walker_phi_estimate(3)
-	print(phi)
-	from statsmodels.tsa.arima_model import ARIMA
-	order = (3, 0, 0)
-	ars = ARIMA(ar.data, order)
-	# values = ar.auto_correlation(num_lags=40)
+	significance = 1.96 / len(ar.data) ** 0.5
+	values = ar.auto_correlation(num_lags=40)
+	ar.plot(range(len(values)), values, 'bar', significance)
+	ar.data = ar.difference(1)
+	values = ar.auto_correlation(num_lags=40)
+	ar.plot(range(len(values)), values, 'bar', significance)
+	# phi = ar.yule_walker_phi_estimate(3)
+	# print(phi)
 	# plt.bar(range(len(values)), values)
 	# significance = 1.96 / len(ar.data) ** 0.5
 	# plt.axhline(y=significance)
