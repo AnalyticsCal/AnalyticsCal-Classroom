@@ -22,6 +22,7 @@ import matplotlib.patches as mpatches
 
 
 import stats_team3 as st
+import multilinear_regression as mlr
 import data_load as load
 import file_upload as upload
 from ac_classes import IndivModel as imodel
@@ -132,13 +133,21 @@ textBox.grid(column=0, row=5, sticky=tk.N+tk.S)
 def create_data_list():
     global x,y,X,Y, data
     if csvList != []:
-        x = [float(i) for i in csvList[0]]
-        y = [float(i) for i in csvList[1]]
-        # Create classes
-        X = imodel(x)
-        Y = imodel(y)
-        data = dmodel(X, Y)
-        create_instance()
+        if len(csvList) <= 2:
+            x = [float(i) for i in csvList[0]]
+            y = [float(i) for i in csvList[-1]]
+            # Create classes
+            X = imodel(x)
+            Y = imodel(y)
+            data = dmodel(X, Y)
+            create_instance()
+        elif len(csvList) > 2:
+            X = []
+            for idx,i in enumerate(csvList):
+                if idx != 0:
+                    temp = [float(j) for j in i]
+                    X.append(temp)
+            Y = [float(i) for i in csvList[0]]
     else:
         print('No Data :(')
 
@@ -252,39 +261,47 @@ plot.grid(column=0, row=1, sticky='W')
 #----------------------------------------------------------------------Linear Regression
 def click_linear_regression():
     global X,Y, data
-    regression = nlr(X.values,Y.values)
-    coefficient = regression.polynomial(1)
-    coeff_list =copy.deepcopy(coefficient)
-    Y_predicted = form_eqn(copy.deepcopy(coefficient))
-    coefficient_str = ''
-    n = len(coefficient)
-    for i in range(len(coefficient)):
-        if(coefficient[n - i -1] > 0):
-            coefficient_str += '+'
-            
-        coefficient_str += str(round(coefficient[n - i - 1], 4))
-        if(i == (n - 2)):
-            coefficient_str += 'x '
-        elif(i != (n - 1)):
-            coefficient_str += 'x'+ str(n - i - 1).translate(SUP) +' '
+    if len(csvHeader) > 2:
+        print("This is MultiRegression")
+        coeff = mlr.multi_linear_regression(X, Y)
+        textBox.delete(1.0, tk.END)
+        textBox.insert(tk.INSERT, str(coeff))
+    else:
 
-        else:
-            coefficient_str += str(n - i - 1)
-    equation_str = str(coefficient_str)
-    if(equation_str[0] == '+'):
-        temp = list(equation_str)
-        del(temp[0])
-        equation_str = "".join(temp)
-    data.poly_coeff = []
-    data.poly_coeff = [round(coefficient[n - i - 1], 4) for i in range(n)]
-        
-    textBox.delete(1.0, tk.END)
-    textBox.insert(tk.INSERT, equation_str)
-    title= "predicted vs actual"					
-    x_label= 'X'					
-    y_label= 'Y'
-    reg_plot(X.values, Y.values, Y_predicted, equation_str, title, x_label, y_label, 'g')
-    plt.show()
+        regression = nlr(X.values,Y.values)
+        coefficient = regression.polynomial(1)
+        coeff_list =copy.deepcopy(coefficient)
+        Y_predicted = form_eqn(copy.deepcopy(coefficient))
+        coefficient_str = ''
+        n = len(coefficient)
+        for i in range(len(coefficient)):
+            if(coefficient[n - i -1] > 0):
+                coefficient_str += '+'
+                
+            coefficient_str += str(round(coefficient[n - i - 1], 4))
+            if(i == (n - 2)):
+                coefficient_str += 'x '
+            elif(i != (n - 1)):
+                coefficient_str += 'x'+ str(n - i - 1).translate(SUP) +' '
+
+            else:
+                coefficient_str += str(n - i - 1)
+        equation_str = str(coefficient_str)
+        if(equation_str[0] == '+'):
+            temp = list(equation_str)
+            del(temp[0])
+            equation_str = "".join(temp)
+        data.poly_coeff = []
+        data.poly_coeff = [round(coefficient[n - i - 1], 4) for i in range(n)]
+            
+        textBox.delete(1.0, tk.END)
+        textBox.insert(tk.INSERT, equation_str)
+        title= "predicted vs actual"					
+        x_label= 'X'					
+        y_label= 'Y'
+        reg_plot(X.values, Y.values, Y_predicted, equation_str, title, x_label, y_label, 'g')
+        plt.show()
+    
 
 # Add button to Regression
 linear_Regression = ttk.Button(mighty, text="Linear Regression", command=click_linear_regression,width = mighty_width)   
@@ -427,8 +444,9 @@ def click_anova():
     textBox.insert(tk.INSERT, 'mse = '+ str(round(data.mse, 4))+ '\n')
     textBox.insert(tk.INSERT, 'ssr = '+ str(round(data.ssr, 4)) + '\n')
     textBox.insert(tk.INSERT, 'sse = '+ str(round(data.sse,4)) + '\n')
-    textBox.insert(tk.INSERT, 'p = '+ str(round(data.p,4)) + '\n')
     textBox.insert(tk.INSERT, 'f = '+ str(round(data.f, 4))  + '\n')
+    textBox.insert(tk.INSERT, 'p = '+ str(round(data.p,4)) + '\n')
+    
 
 # Add button for ANOVA
 anova = ttk.Button(mighty, text="ANOVA", command=click_anova,width = mighty_width)   
