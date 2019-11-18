@@ -1,0 +1,72 @@
+
+def mean(x):
+    """
+    Calculate the mean of a array of numbers
+    :param x: Input array of numbers
+    :return: Mean
+    """
+    return sum(x) / len(x)
+
+
+def sd(x):
+    """
+    Calculate standard deviation of an array
+    :param x: Input array of numbers
+    :return: Standard deviation
+    """
+    x_mean = mean(x)
+    return (
+               sum((x_i - x_mean) ** 2 for x_i in x) / (len(x) - 1)
+           ) ** 0.5
+
+
+def toeplitz(x):
+    """
+    The Toeplitz matrix has constant diagonals.
+    :param x: Input row array
+    :return: toeplitz matrix
+    """
+    t = []
+    for i in range(len(x)):
+        row = []
+        for j in range(len(x)):
+            if i < j:
+                row.append(x[j-i])
+            elif i == j:
+                row.append(x[0])
+            else:
+                row.append(x[i-j])
+        t.append(row)
+    return t
+
+
+def covariance(x, y):
+    """
+    Calculate the joint variability of two variables i.e. covariance
+    :param x: Input array x
+    :param y: Input array y
+    :return: Covariance value
+    """
+    x_mean = mean(x)
+    y_mean = mean(y)
+    diff_x_mean = (x_i - x_mean for x_i in x)
+    diff_y_mean = (y_i - y_mean for y_i in y)
+    sum_xy_diff = sum(a * b for a, b in zip(diff_x_mean, diff_y_mean))
+    return sum_xy_diff / (len(x) - 1)
+
+
+def correlation(x, y):
+    """
+    Calculate Correlation Coefficient between two variables
+    :return: Value of correlation coefficient that lies between -1 and +1
+    """
+    return covariance(x, y) / (sd(x) * sd(y))
+
+
+def test():
+    x = [1, 2, 3, 4]
+    print(toeplitz(x))
+
+
+if __name__ == '__main__':
+    test()
