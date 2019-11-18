@@ -22,7 +22,8 @@ anova = {
     'msr': None,
     'mse': None,
     'f': None,
-    'p': None
+    'p': None,
+    'confidence': None
 }
 
 
@@ -34,8 +35,6 @@ def cal_average():
 def cal_y_cap():
     """Calculates y_cap for given value of x"""
     coefficients = anova['coefficients']
-    # for index in range(len(coefficients)):
-    #     print(index)
     y_cap_list = []
     x_list = anova.get('x')
     for x in x_list:
@@ -44,7 +43,7 @@ def cal_y_cap():
             if index == 0:
                 intermediate_sum += coefficients[index]
             else:
-                intermediate_sum += (x ** index) * coefficients[index]
+                intermediate_sum += ((x ** index) * coefficients[index])
 
         y_cap_list.append(intermediate_sum)
     anova['y_cap'] = y_cap_list
@@ -88,17 +87,20 @@ def cal_f_and_p():
     degrees_of_freedom = anova['degrees_of_freedom']
     f = anova['msr']/anova['mse']
     anova['f'] = f
-    val_required_by_lib = (degrees_of_freedom-1)/(len(anova.get('y'))-degrees_of_freedom)
-    p = stats.f.sf(val_required_by_lib, (degrees_of_freedom-1), (len(anova.get('y'))-degrees_of_freedom))
+    p = stats.f.sf(f, (degrees_of_freedom-1), (len(anova.get('y'))-degrees_of_freedom))
     anova['p'] = p
+    anova['confidence'] = (1 - p) * 100
 
 
 def main(x, y, coefficients):
     # Update the starter dictionary with actual data to start with
     anova['x'] = x
     anova['y'] = y
-    anova['coefficients'] = coefficients
-    anova['degrees_of_freedom'] = len(coefficients)
+    anova['coefficients'] = coefficients[::-1]
+    # The coefficients are reversed here in order to get it in the right form
+    # Actual line : anova['coefficients'] = coefficients
+    anova['degrees_of_freedom'] = 2
+    # Should update if its multi-variate
 
     cal_average()
     cal_y_cap()

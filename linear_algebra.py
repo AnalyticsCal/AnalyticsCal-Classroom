@@ -114,7 +114,7 @@ class LinearAlgebra(object):
         cofactors = self.transposeMatrix(cofactors)
         for r in range(len(cofactors)):
             for c in range(len(cofactors)):
-                cofactors[r][c] = cofactors[r][c] / determinant
+                cofactors[r][c] = float(cofactors[r][c]) / float(determinant)
         return cofactors
 
     def getMatrixMultiplication(self, m, n):
