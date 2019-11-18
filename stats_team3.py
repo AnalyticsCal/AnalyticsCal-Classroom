@@ -25,9 +25,9 @@ def mean(values):
 #print("mean of y: ",mean_y)
 
 
-def variance(values, mean):
+def variance(values):
         n = len(values)
-        return sum([(x - mean) ** 2 for x in values]) / (n - 1)# n - 1: is used as sample data points are considered
+        return sum([(x - mean(values)) ** 2 for x in values]) / (n - 1)# n - 1: is used as sample data points are considered
 
 
 #mean_x, mean_y = mean(x), mean(y)

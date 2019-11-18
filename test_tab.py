@@ -26,7 +26,8 @@ import multilinear_regression as mlr
 import data_load as load
 import file_upload as upload
 from ac_classes import IndivModel as imodel
-from ac_classes import DataModel as dmodel
+from ac_classes import BiDataModel as bdmodel
+from ac_classes import MultiDataModel as mdmodel
 from nonlinear_regression import NonLinearRegression as nlr
 from anova import main as anova_main
 
@@ -36,7 +37,7 @@ win = tk.Tk()
 # Add a title       
 win.title("AnalyticsCal")
 
-global csvList,x, y,X,Y,data
+global csvList,x, y,X,Y,data,multi_data
 global csvHeader
 global file_name
 
@@ -131,52 +132,61 @@ textBox = tk.Text(mighty1, height = text_h, width = text_w,wrap=tk.WORD)
 textBox.grid(column=0, row=5, sticky=tk.N+tk.S)
 
 def create_data_list():
-    global x,y,X,Y, data
+    global x,y,X,Y, data, multi_data
     if csvList != []:
-        if len(csvList) <= 2:
+        if len(csvHeader) <= 2:
             x = [float(i) for i in csvList[0]]
             y = [float(i) for i in csvList[-1]]
             # Create classes
             X = imodel(x)
             Y = imodel(y)
-            data = dmodel(X, Y)
+            data = bdmodel(X, Y)
             create_instance()
-        elif len(csvList) > 2:
+        elif len(csvHeader) > 2:
             X = []
             for idx,i in enumerate(csvList):
                 if idx != 0:
                     temp = [float(j) for j in i]
                     X.append(temp)
-            Y = [float(i) for i in csvList[0]]
+            y = [float(i) for i in csvList[0]]
+            Y = imodel(y)
+            multi_data = mdmodel(X, Y.values)
+            create_instance()
+            
     else:
         print('No Data :(')
 
 # to create instance immediately after fetching data
 def create_instance():
-    global X, Y, data
-
-    X.mean()
-    Y.mean()
-    X.var()
-    Y.var()
-    data.corr_coeff()
-    data.nlr_coef()
-    data.anova()
-    
+    global X, Y, data, multi_data
+    if len(csvHeader) <=2 :
+        X.mean()
+        Y.mean()
+        X.var()
+        Y.var()
+        data.corr_coeff()
+        data.nlr_coef()
+        data.anova()
+    else:
+        multi_data.x_stats()
+        multi_data.y_stats()
+        multi_data.linear_regression_coeff()
+        
 
 
 # Modified Button statistics Function
 def click_stats(textBox):
     global X,Y, data
+    precision = 2
     textBox.delete(1.0, tk.END) # clear anything previously present
     textBox.insert(tk.INSERT, 'x_bar ='+ str(X.mean)+'\n')
-    textBox.insert(tk.INSERT, 'x_var ='+ str(round(X.var,4))+'\n')
-    textBox.insert(tk.INSERT, 'x_standard_dev ='+ str(round(math.sqrt(X.var), 4))+'\n')
+    textBox.insert(tk.INSERT, 'x_var ='+ str(round(X.var,precision))+'\n')
+    textBox.insert(tk.INSERT, 'x_standard_dev ='+ str(round(math.sqrt(X.var), precision))+'\n')
     textBox.insert(tk.INSERT, 'y_bar ='+ str(Y.mean)+'\n')
-    textBox.insert(tk.INSERT, 'y_var ='+ str(round(Y.var, 4))+'\n')
-    textBox.insert(tk.INSERT, 'y_standard_dev ='+ str(round(math.sqrt(Y.var),4))+'\n')
+    textBox.insert(tk.INSERT, 'y_var ='+ str(round(Y.var, precision))+'\n')
+    textBox.insert(tk.INSERT, 'y_standard_dev ='+ str(round(math.sqrt(Y.var),precision))+'\n')
     #textBox.insert(tk.INSERT, 'Cov(x, y) ='+ str(data.cov())+'\n')
-    textBox.insert(tk.INSERT, 'Correlation coeeficient ='+ str(round(data.corr_coeff, 4))+'\n')
+    textBox.insert(tk.INSERT, 'Correlation coeeficient ='+ str(round(data.corr_coeff, precision))+'\n')
     if data.corr_coeff < data.threshold:
         _stats_msgBox()
 
@@ -261,13 +271,49 @@ plot.grid(column=0, row=1, sticky='W')
 #----------------------------------------------------------------------Linear Regression
 def click_linear_regression():
     global X,Y, data
+    roundoff = 2
     if len(csvHeader) > 2:
         print("This is MultiRegression")
         coeff = mlr.multi_linear_regression(X, Y)
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT, str(coeff))
     else:
+        
+        coeff = mlr.multi_linear_regression([X.values], Y.values)
+        textBox.delete(1.0, tk.END)
+        textBox.insert(tk.INSERT, str(coeff))
+        coeff_list =copy.deepcopy(coeff)
+        Y_predicted = form_eqn(copy.deepcopy(coeff))
+        coefficient_str = ''
+        n = len(coeff)
+        for i in range(len(coeff)):
+            if(coeff[n - i -1] > 0):
+                coefficient_str += '+'
+                
+            coefficient_str += str(round(coeff[n - i - 1], roundoff))
+            if(i == (n - 2)):
+                coefficient_str += 'x '
+            elif(i != (n - 1)):
+                coefficient_str += 'x'+ str(n - i - 1).translate(SUP) +' '
 
+            else:
+                coefficient_str += str(n - i - 1)
+        equation_str = str(coefficient_str)
+        if(equation_str[0] == '+'):
+            temp = list(equation_str)
+            del(temp[0])
+            equation_str = "".join(temp)
+        data.poly_coeff = []
+        data.poly_coeff = [round(coeff[i], roundoff) for i in range(n)]
+            
+        textBox.delete(1.0, tk.END)
+        textBox.insert(tk.INSERT, equation_str)
+        title= "predicted vs actual"					
+        x_label= 'X'					
+        y_label= 'Y'
+        reg_plot(X.values, Y.values, Y_predicted, equation_str, title, x_label, y_label, 'g')
+        plt.show()
+"""
         regression = nlr(X.values,Y.values)
         coefficient = regression.polynomial(1)
         coeff_list =copy.deepcopy(coefficient)
@@ -301,7 +347,7 @@ def click_linear_regression():
         y_label= 'Y'
         reg_plot(X.values, Y.values, Y_predicted, equation_str, title, x_label, y_label, 'g')
         plt.show()
-    
+"""    
 
 # Add button to Regression
 linear_Regression = ttk.Button(mighty, text="Linear Regression", command=click_linear_regression,width = mighty_width)   
@@ -316,6 +362,7 @@ def click_nlr_poly():
     SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉") # For printing subscript
     SUP = str.maketrans("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")
     global X,Y, data
+    precision = 2
     regression = nlr(X.values,Y.values)
     coefficient = regression.polynomial(int(number_chosen_poly.get()))
     coeff_list =copy.deepcopy(coefficient)
@@ -326,7 +373,7 @@ def click_nlr_poly():
         if(coefficient[n - i -1] > 0):
             coefficient_str += '+'
             
-        coefficient_str += str(round(coefficient[n - i - 1], 4))
+        coefficient_str += str(round(coefficient[n - i - 1], precision))
         if(i == (n - 2)):
             coefficient_str += 'x '
         elif(i != (n - 1)):
@@ -340,7 +387,8 @@ def click_nlr_poly():
         del(temp[0])
         equation_str = "".join(temp)
     data.poly_coeff = []
-    data.poly_coeff = [round(coefficient[n - i - 1], 4) for i in range(n)]
+    #data.poly_coeff = [round(coefficient[n - i - 1], precision) for i in range(n)]
+    data.poly_coeff = [round(coefficient[i], precision) for i in range(n)]
         
     textBox.delete(1.0, tk.END)
     textBox.insert(tk.INSERT, equation_str)
