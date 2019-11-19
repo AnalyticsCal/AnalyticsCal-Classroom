@@ -621,6 +621,92 @@ def click_anova():
 anova = ttk.Button(mighty, text="ANOVA", command=click_anova,width = mighty_width)   
 anova.grid(column=0, row=4, sticky='W')
 
+#----------------------------------------------------------------------------------------------------TIMESERIES
+# LabelFrame using tab2 as the parent - for Time series plot
+mighty_t1 = ttk.LabelFrame(tab2, text=' PLOT')
+mighty_t1.grid(column=0, row=0, padx=8, pady=4)
+
+# LabelFrame using tab2 as the parent - for ARMA/ARIMA
+mighty_t2 = ttk.LabelFrame(tab2, text=' ARMA/ARIMA')
+mighty_t2.grid(column=0, row=1, padx=8, pady=4)
+
+# LabelFrame using tab2 as the parent - for ARIMA
+#mighty_t3 = ttk.LabelFrame(tab2, text=' ARIMA')
+#mighty_t3.grid(column=0, row=2, padx=8, pady=4)
+
+# LabelFrame using tab2 as the parent - for output console
+mighty_t3 = ttk.LabelFrame(tab2, text=' Output Console')
+mighty_t3.grid(column=1, row=0,sticky=tk.N+tk.S, padx=8, pady=4, columnspan=3, rowspan = 6)
+
+def click_Line_Plot():
+    ...
+mighty_width = 18
+# Add buttons for RAW Line Plot
+Line_Plot = ttk.Button(mighty_t1, text="Line Plot", command= lambda : click_Line_Plot(), width = mighty_width)   
+Line_Plot.grid(column=0, row=0, sticky='W')
+
+def click_ACF_Plot():
+    ...
+mighty_width = 18
+# Add buttons for ACF Bar Plot
+ACF_Plot = ttk.Button(mighty_t1, text="ACF Plot", command= lambda : click_ACF_Plot(), width = mighty_width)   
+ACF_Plot.grid(column=0, row=1, sticky='W')
+
+def ARMA():
+    ...
+# Textbox to input seanonal difference value
+ttk.Label(mighty_t2, text="N:  ").grid(column=0, row=0)
+
+# Adding a Text box Entry widget
+N_Value = tk.StringVar()
+N_Value_entered = ttk.Entry(mighty_t2, width=8, textvariable=N_Value)
+N_Value_entered.grid(column=1, row=0)
+
+# Textbox to input P value
+ttk.Label(mighty_t2, text="P:  ").grid(column=0, row=1)
+
+# Adding a Text box Entry widget
+P_Value = tk.StringVar()
+P_Value_entered = ttk.Entry(mighty_t2, width=8, textvariable=P_Value)
+P_Value_entered.grid(column=1, row=1)
+
+# Textbox to input D value
+ttk.Label(mighty_t2, text="D:  ").grid(column=0, row=2)
+
+# Adding a Text box Entry widget
+D_Value = tk.StringVar()
+D_Value_entered = ttk.Entry(mighty_t2, width=8, textvariable=D_Value)
+D_Value_entered.grid(column=1, row=2)
+
+# Textbox to input Q value
+ttk.Label(mighty_t2, text="Q:  ").grid(column=0, row=3)
+
+# Adding a Text box Entry widget
+Q_Value = tk.StringVar()
+Q_Value_entered = ttk.Entry(mighty_t2, width=8, textvariable=Q_Value)
+Q_Value_entered.grid(column=1, row=3)
+
+#Adding a button to submit the values
+def click_Calculate_ARMA():
+    ...
+#mighty_width = 18
+# Add button for ARMA
+Calculate_ARMA = ttk.Button(mighty_t2, text="ARMA", command= lambda : click_Calculate_ARMA(), width = 8)   
+Calculate_ARMA.grid(column=0, row=4, sticky='W')
+
+def click_Calculate_ARIMA():
+    ...
+#mighty_width = 18
+# Add button for ARIMA
+Calculate_ARIMA = ttk.Button(mighty_t2, text="ARIMA", command= lambda : click_Calculate_ARIMA(), width = 8)   
+Calculate_ARIMA.grid(column=1, row=4, sticky='W')
+
+# Add big textbox
+text_h= 35
+text_w = 75
+textBox = tk.Text(mighty_t3, height = text_h, width = text_w,wrap=tk.WORD)
+textBox.grid(column=0, row=5, sticky=tk.N+tk.S)
+
 #name_entered.focus()      # Place cursor into name Entry
 #======================
 # Start GUI
