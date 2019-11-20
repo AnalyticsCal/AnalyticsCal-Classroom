@@ -1,76 +1,25 @@
-From 00218a779af90bb43633916ceb781dad0a7dacf9 Mon Sep 17 00:00:00 2001
+From 074a6d487f0c1b949ef4ef69c60cd97678f9e9ff Mon Sep 17 00:00:00 2001
 From: knn <kn.neelalohitha@gmail.com>
-Date: Wed, 20 Nov 2019 12:31:00 +0530
+Date: Wed, 20 Nov 2019 12:44:02 +0530
 Subject: [PATCH] Update test-tab.py
 
 Signed-off-by: knn <kn.neelalohitha@gmail.com>
 ---
- test_tab.py | 38 ++++++++++++++++++++++----------------
- 1 file changed, 22 insertions(+), 16 deletions(-)
+ test_tab.py | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/test_tab.py b/test_tab.py
-index 8630e9d..6e2f20a 100644
+index 6e2f20a..42c7cb4 100644
 --- a/test_tab.py
 +++ b/test_tab.py
-@@ -207,7 +207,7 @@ def click_stats(textBox):
-         textBox.insert(tk.INSERT, 'y_bar ='+ str(round(multi_data.y_mean,precision))+'\n')
-         textBox.insert(tk.INSERT, 'y_var ='+ str(round(multi_data.y_var, precision))+'\n')
-         textBox.insert(tk.INSERT, 'y_standard_dev ='+ str(round(multi_data.y_std_dev,precision))+'\n')
--"""
-+        """
-         # Create list for table
-         mean_table = ["Mean"]
-         mean_table.extend(round_off_list(multi_data.x_mean,precision))
-@@ -230,6 +230,7 @@ def click_stats(textBox):
-         table.append(variance_table)
-         table.append(std_dev_table)
- 
-+        textBox.delete(1.0, tk.END) # clear anything previously present
-         textBox.insert(tk.INSERT,tabulate(table,headers,tablefmt="fancy_grid", floatfmt=".2f"))
+@@ -546,6 +546,7 @@ def click_nlr_poly():
+         reg_plot(X.values, Y.values, Y_predicted, equation_str, title, x_label, y_label, 'r')
+         plt.show()
+     else:
++        global multi_data
+         textBox.delete(1.0, tk.END)
+         textBox.insert(tk.INSERT, "Polynomial Regression works for bivariate data only\n")
          
-         
-@@ -633,21 +634,26 @@ number_chosen_exp.current(0)
- 
- def click_anova():
-     global X,Y,data
--    anova_dict = anova_main(X.values, Y.values,data.poly_coeff)
--    data.msr = anova_dict['msr']
--    data.mse = anova_dict['mse']
--    data.ssr = anova_dict['ssr']
--    data.sse = anova_dict['sse']
--    data.f = anova_dict['f']
--    data.p = anova_dict['p']
--    textBox.delete(1.0, tk.END)
--    textBox.insert(tk.INSERT, 'ANOVA'+ '\n')
--    textBox.insert(tk.INSERT, 'msr = '+ str(round(data.msr, 4)) + '\n')
--    textBox.insert(tk.INSERT, 'mse = '+ str(round(data.mse, 4))+ '\n')
--    textBox.insert(tk.INSERT, 'ssr = '+ str(round(data.ssr, 4)) + '\n')
--    textBox.insert(tk.INSERT, 'sse = '+ str(round(data.sse,4)) + '\n')
--    textBox.insert(tk.INSERT, 'f = '+ str(round(data.f, 4))  + '\n')
--    textBox.insert(tk.INSERT, 'p = '+ str(round(data.p,4)) + '\n')
-+    if len(csvHeader) <= 2:
-+        anova_dict = anova_main(X.values, Y.values,data.poly_coeff)
-+        data.msr = anova_dict['msr']
-+        data.mse = anova_dict['mse']
-+        data.ssr = anova_dict['ssr']
-+        data.sse = anova_dict['sse']
-+        data.f = anova_dict['f']
-+        data.p = anova_dict['p']
-+        textBox.delete(1.0, tk.END)
-+        textBox.insert(tk.INSERT, 'ANOVA'+ '\n')
-+        textBox.insert(tk.INSERT, 'msr = '+ str(round(data.msr, 4)) + '\n')
-+        textBox.insert(tk.INSERT, 'mse = '+ str(round(data.mse, 4))+ '\n')
-+        textBox.insert(tk.INSERT, 'ssr = '+ str(round(data.ssr, 4)) + '\n')
-+        textBox.insert(tk.INSERT, 'sse = '+ str(round(data.sse,4)) + '\n')
-+        textBox.insert(tk.INSERT, 'f = '+ str(round(data.f, 4))  + '\n')
-+        textBox.insert(tk.INSERT, 'p = '+ str(round(data.p,4)) + '\n')
-+    else:
-+        # Add the code for multiple linear regression
-+        
-+        ...
-     
- 
- # Add button for ANOVA
 -- 
 2.19.0.windows.1
 
