@@ -1,0 +1,25 @@
+From 074a6d487f0c1b949ef4ef69c60cd97678f9e9ff Mon Sep 17 00:00:00 2001
+From: knn <kn.neelalohitha@gmail.com>
+Date: Wed, 20 Nov 2019 12:44:02 +0530
+Subject: [PATCH] Update test-tab.py
+
+Signed-off-by: knn <kn.neelalohitha@gmail.com>
+---
+ test_tab.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/test_tab.py b/test_tab.py
+index 6e2f20a..42c7cb4 100644
+--- a/test_tab.py
++++ b/test_tab.py
+@@ -546,6 +546,7 @@ def click_nlr_poly():
+         reg_plot(X.values, Y.values, Y_predicted, equation_str, title, x_label, y_label, 'r')
+         plt.show()
+     else:
++        global multi_data
+         textBox.delete(1.0, tk.END)
+         textBox.insert(tk.INSERT, "Polynomial Regression works for bivariate data only\n")
+         
+-- 
+2.19.0.windows.1
+
