@@ -666,6 +666,7 @@ def click_anova():
         data.f = anova_dict['f']
         data.p = anova_dict['p']
         textBox.delete(1.0, tk.END)
+        """
         textBox.insert(tk.INSERT, 'ANOVA'+ '\n')
         textBox.insert(tk.INSERT, 'msr = '+ str(round(data.msr, 4)) + '\n')
         textBox.insert(tk.INSERT, 'mse = '+ str(round(data.mse, 4))+ '\n')
@@ -673,6 +674,10 @@ def click_anova():
         textBox.insert(tk.INSERT, 'sse = '+ str(round(data.sse,4)) + '\n')
         textBox.insert(tk.INSERT, 'f = '+ str(round(data.f, 4))  + '\n')
         textBox.insert(tk.INSERT, 'p = '+ str(round(data.p,4)) + '\n')
+        """
+        table=[["msr",data.msr],["mse",data.mse],["ssr",data.ssr],["sse",data.sse],["f",data.f],["p",data.p]]
+        headers= ["ANOVA","Values"]
+        textBox.insert(tk.INSERT,tabulate(table,headers,tablefmt="fancy_grid",floatfmt=".2f"))
 
         if reg_order == 2:
             #str_2 = '\n'.join(list(chunkstring(equation_str, 12)))
