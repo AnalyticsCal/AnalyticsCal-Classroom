@@ -743,8 +743,14 @@ def click_comparison():
         textBox.delete(1.0, tk.END) # clear anything previously present
         textBox.insert(tk.INSERT,tabulate(table,headers,tablefmt="fancy_grid", floatfmt=".2f"))
 
+        print(f_table)
+        model_choice = ["","Linear Model", "Polynomial model of order 2","Polynomial model of order 3",
+                        "Polynomial model of order 4"]
+        textBox.insert(tk.INSERT,"\n CONCLUSION: \n" + model_choice[f_table.index(max(f_table[1:]))] + " : ("+\
+                       eqn_table[f_table.index(max(f_table[1:]))].replace('\n','')+ " ) " + " is better fit for given data.\n" +\
+                       model_choice[f_table.index(max(f_table[1:]))] + " : (" + eqn_table[f_table.index(max(f_table[1:]))].replace('\n','')+\
+                       " )"+" is chosen for Prediction")
         
-        ...
     else:
         ...
 
