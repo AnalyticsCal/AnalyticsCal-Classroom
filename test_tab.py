@@ -127,7 +127,7 @@ mighty2.grid(column = 0, row=1, padx=2, pady=1)
 
 # Add big textbox
 text_h= 35
-text_w = 75
+text_w = 90
 textBox = tk.Text(mighty1, height = text_h, width = text_w,wrap=tk.WORD)
 textBox.grid(column=0, row=5, sticky=tk.N+tk.S)
 
@@ -167,6 +167,7 @@ def create_instance():
         data.corr_coeff()
         data.nlr_coef()
         data.anova()
+        data.models()
     else:
         multi_data.x_stats()
         multi_data.y_stats()
@@ -174,6 +175,9 @@ def create_instance():
         
 def round_off_list(my_list, precision):
     return [round(_, precision) for _ in my_list]
+
+def chunkstring(string, length):
+    return (string[0+i:length+i] for i in range(0, len(string), length))
 
 # Modified Button statistics Function
 def click_stats(textBox):
@@ -330,17 +334,21 @@ def click_linear_regression():
     roundoff = 2
     precision = roundoff
     if len(csvHeader) > 2:
+        global multi_data
         print("This is MultiRegression")
         coeff = mlr.multi_linear_regression(copy.deepcopy(multi_data.x), copy.deepcopy(multi_data.y))
         equation_str = stats_display(round_off_list(coeff, precision))
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT, equation_str)
+        
 
     else:
+        global reg_order
+        reg_order =1 
         coeff = mlr.multi_linear_regression([X.values], Y.values)
         equation_str = stats_display(round_off_list(coeff, precision))
         textBox.delete(1.0, tk.END)
-        print(eqn_str)
+        print(equation_str)
         textBox.insert(tk.INSERT, equation_str)
         """coeff_list =copy.deepcopy(coeff)
         Y_predicted = form_eqn(copy.deepcopy(coeff))
@@ -474,13 +482,14 @@ def stats_display(coeff):
         data.poly_coeff = [round(coeff[i],roundoff ) for i in range(n)]
             
         textBox.delete(1.0, tk.END)
-        textBox.insert(tk.INSERT, equation_str)
+        textBox.insert(tk.INSERT,'The linear model is \n' + equation_str)
+        data.linear['eqn'] = equation_str
         title= "predicted vs actual"					
         x_label= 'X'					
         y_label= 'Y'
         reg_plot(X.values, Y.values, Y_predicted, equation_str, title, x_label, y_label, 'g')
         plt.show()
-        
+        return equation_str
     
 
 def form_eqn_mlr(coeff):
@@ -507,7 +516,9 @@ def click_nlr_poly():
         global X,Y, data
         precision = 2
         regression = nlr(X.values,Y.values)
-        coefficient = regression.polynomial(int(number_chosen_poly.get()))
+        global reg_order
+        reg_order = int(number_chosen_poly.get())
+        coefficient = regression.polynomial(reg_order)
         coeff_list =copy.deepcopy(coefficient)
         Y_predicted = form_eqn(copy.deepcopy(coefficient))
         coefficient_str = ''
@@ -529,12 +540,22 @@ def click_nlr_poly():
             temp = list(equation_str)
             del(temp[0])
             equation_str = "".join(temp)
+        
         data.poly_coeff = []
         #data.poly_coeff = [round(coefficient[n - i - 1], precision) for i in range(n)]
         data.poly_coeff = [round(coefficient[i], precision) for i in range(n)]
             
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT, equation_str)
+        if reg_order == 2:
+            str_2 = '\n'.join(list(chunkstring(equation_str, 14)))
+            data.poly_2['eqn'] = str_2 # 12 harcoded for this textbox width = 90
+        elif reg_order == 3:
+            str_3 = '\n'.join(list(chunkstring(equation_str, 14)))
+            data.poly_3['eqn'] = str_3
+        elif reg_order == 4:
+            str_4 = '\n'.join(list(chunkstring(equation_str, 14)))
+            data.poly_4['eqn'] = str_4
         #raw_plot = plt.scatter(X.values, Y.values, color = 'r')
         #plt.plot(X.values, round (coeff_list[0] + (coeff_list[1]*X.values) + (coeff_list[2]*(X.values**2))+ (coeff_list[3]*(X.values**3)), 4),'-')
         #predict_plot = plt.plot(X.values, Y_predicted, '-')
@@ -634,7 +655,8 @@ number_chosen_exp.current(0)
 #---------------------------------------------------------------------------------ANOVA
 
 def click_anova():
-    global X,Y,data
+    global X,Y,data,reg_order
+    precision = 2
     if len(csvHeader) <= 2:
         anova_dict = anova_main(X.values, Y.values,data.poly_coeff)
         data.msr = anova_dict['msr']
@@ -651,6 +673,25 @@ def click_anova():
         textBox.insert(tk.INSERT, 'sse = '+ str(round(data.sse,4)) + '\n')
         textBox.insert(tk.INSERT, 'f = '+ str(round(data.f, 4))  + '\n')
         textBox.insert(tk.INSERT, 'p = '+ str(round(data.p,4)) + '\n')
+
+        if reg_order == 2:
+            #str_2 = '\n'.join(list(chunkstring(equation_str, 12)))
+            data.poly_2['f'] = round(data.f, precision)  
+            data.poly_2['p'] = round(data.p, precision) 
+        elif reg_order == 3:
+            #str_3 = '\n'.join(list(chunkstring(equation_str, 12)))
+            data.poly_3['f'] = round(data.f, precision)  
+            data.poly_3['p'] = round(data.p, precision) 
+        
+        elif reg_order == 4:
+            #str_4 = '\n'.join(list(chunkstring(equation_str, 14)))
+            data.poly_4['f'] = round(data.f, precision)    
+            data.poly_4['p'] = round(data.p, precision) 
+
+        elif reg_order == 1:
+            data.linear['f'] = round(data.f, precision)  
+            data.linear['p'] = round(data.p, precision) 
+        
     else:
         # Add the code for multiple linear regression
         
@@ -660,6 +701,50 @@ def click_anova():
 # Add button for ANOVA
 anova = ttk.Button(mighty, text="ANOVA", command=click_anova,width = mighty_width)   
 anova.grid(column=0, row=4, sticky='W')
+
+#------------------------------------------------------------------------------Comparison
+
+def click_comparison():
+    if len(csvHeader) <= 2:
+
+        eqn_table = ["Equation"]
+        eqn_table.append(data.linear['eqn'])
+        eqn_table.append(data.poly_2['eqn'])
+        eqn_table.append(data.poly_3['eqn'])
+        eqn_table.append(data.poly_4['eqn'])
+
+        f_table = ["f"]
+        f_table.append(data.linear['f'])
+        f_table.append(data.poly_2['f'])
+        f_table.append(data.poly_3['f'])
+        f_table.append(data.poly_4['f'])
+
+        p_table = ["p"]
+        p_table.append(data.linear['p'])
+        p_table.append(data.poly_2['p'])
+        p_table.append(data.poly_3['p'])
+        p_table.append(data.poly_4['p'])
+
+        table = []
+        table.append(eqn_table)
+        table.append(f_table)
+        table.append(p_table)
+
+        headers = ["Linear \n Model", "Polynomial \n Degree 2", "Polynomial \n Degree 3","Polynomial \n Degree 4"]
+        #headers.extend(csvHeader[1:])
+        #headers.append(csvHeader[0])
+
+
+        textBox.delete(1.0, tk.END) # clear anything previously present
+        textBox.insert(tk.INSERT,tabulate(table,headers,tablefmt="fancy_grid", floatfmt=".2f"))
+
+        
+        ...
+    else:
+        ...
+
+comparison_button = ttk.Button(mighty, text="Compare Models", command=click_comparison,width = mighty_width)   
+comparison_button.grid(column=0, row=5, sticky='W')
 
 #----------------------------------------------------------------------------------------------------TIMESERIES
 # LabelFrame using tab2 as the parent - for Time series plot
