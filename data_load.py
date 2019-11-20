@@ -1,5 +1,5 @@
 import csv
-import pymysql
+# import pymysql
 import os
 
 # # global variable
