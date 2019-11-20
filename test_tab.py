@@ -18,7 +18,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-
+from tabulate import tabulate   # for table
 
 
 import stats_team3 as st
@@ -182,24 +182,57 @@ def click_stats(textBox):
     if len(csvHeader) <= 2:
         
         textBox.delete(1.0, tk.END) # clear anything previously present
-        textBox.insert(tk.INSERT, 'x_bar ='+ str(X.mean)+'\n')
+        """
+        textBox.insert(tk.INSERT, 'x_bar ='+ str(round(X.mean, precision))+'\n')
         textBox.insert(tk.INSERT, 'x_var ='+ str(round(X.var,precision))+'\n')
         textBox.insert(tk.INSERT, 'x_standard_dev ='+ str(round(math.sqrt(X.var), precision))+'\n')
-        textBox.insert(tk.INSERT, 'y_bar ='+ str(Y.mean)+'\n')
+        textBox.insert(tk.INSERT, 'y_bar ='+ str(round(Y.mean, precision))+'\n')
         textBox.insert(tk.INSERT, 'y_var ='+ str(round(Y.var, precision))+'\n')
         textBox.insert(tk.INSERT, 'y_standard_dev ='+ str(round(math.sqrt(Y.var),precision))+'\n')
         #textBox.insert(tk.INSERT, 'Cov(x, y) ='+ str(data.cov())+'\n')
         textBox.insert(tk.INSERT, 'Correlation coeeficient ='+ str(round(data.corr_coeff, precision))+'\n')
+        """
+        table=[["Mean",round(X.mean, precision),round(Y.mean, precision)],["Variance",round(X.var,precision),round(Y.var, precision)],["Std.Deviation",round(math.sqrt(X.var), precision),round(math.sqrt(Y.var),precision)],["Corel Coeff(X,Y)",round(data.corr_coeff, precision)]]
+        headers= ["","X","Y"]
+        textBox.insert(tk.INSERT,tabulate(table,headers,tablefmt="fancy_grid", floatfmt=".2f")) # decimal precision 2
+
         if data.corr_coeff < data.threshold:
             _stats_msgBox()
     else:
+        """
         textBox.delete(1.0, tk.END) # clear anything previously present
         textBox.insert(tk.INSERT, 'X_mean = '+ str(round_off_list(multi_data.x_mean,precision))+'\n')
         textBox.insert(tk.INSERT, 'x_var ='+ str(round_off_list(multi_data.x_var, precision))+'\n')
         textBox.insert(tk.INSERT, 'x_standard_dev ='+ str(round_off_list(multi_data.x_std_dev, precision))+'\n')
         textBox.insert(tk.INSERT, 'y_bar ='+ str(round(multi_data.y_mean,precision))+'\n')
-        textBox.insert(tk.INSERT, 'y_var ='+ str(round(multi_data.y_var , precision))+'\n')
+        textBox.insert(tk.INSERT, 'y_var ='+ str(round(multi_data.y_var, precision))+'\n')
         textBox.insert(tk.INSERT, 'y_standard_dev ='+ str(round(multi_data.y_std_dev,precision))+'\n')
+"""
+        # Create list for table
+        mean_table = ["Mean"]
+        mean_table.extend(round_off_list(multi_data.x_mean,precision))
+        mean_table.append(round(multi_data.y_mean,precision))
+
+        variance_table = ["Variance"]
+        variance_table.extend(round_off_list(multi_data.x_var, precision))
+        variance_table.append(round(multi_data.y_var, precision))
+
+        std_dev_table = ["Std.Deviation"]
+        std_dev_table.extend(round_off_list(multi_data.x_std_dev, precision))
+        std_dev_table.append(round(multi_data.y_std_dev,precision))
+
+        headers = [""]
+        headers.extend(csvHeader[1:])
+        headers.append(csvHeader[0])
+
+        table = []
+        table.append(mean_table)
+        table.append(variance_table)
+        table.append(std_dev_table)
+
+        textBox.insert(tk.INSERT,tabulate(table,headers,tablefmt="fancy_grid", floatfmt=".2f"))
+        
+        
         #textBox.insert(tk.INSERT, 'Cov(x, y) ='+ str(data.cov())+'\n')
         #textBox.insert(tk.INSERT, 'Correlation coeeficient ='+ str(round(data.corr_coeff, precision))+'\n')
         #if data.corr_coeff < data.threshold:
@@ -701,11 +734,11 @@ def click_Calculate_ARIMA():
 Calculate_ARIMA = ttk.Button(mighty_t2, text="ARIMA", command= lambda : click_Calculate_ARIMA(), width = 8)   
 Calculate_ARIMA.grid(column=1, row=4, sticky='W')
 
-# Add big textbox
+# Add big textbox for time series
 text_h= 35
 text_w = 75
-textBox = tk.Text(mighty_t3, height = text_h, width = text_w,wrap=tk.WORD)
-textBox.grid(column=0, row=5, sticky=tk.N+tk.S)
+textBox_t1 = tk.Text(mighty_t3, height = text_h, width = text_w,wrap=tk.WORD)
+textBox_t1.grid(column=0, row=5, sticky=tk.N+tk.S)
 
 #name_entered.focus()      # Place cursor into name Entry
 #======================
