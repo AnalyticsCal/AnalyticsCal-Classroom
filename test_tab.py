@@ -331,7 +331,7 @@ def click_linear_regression():
     precision = roundoff
     if len(csvHeader) > 2:
         print("This is MultiRegression")
-        coeff = mlr.multi_linear_regression(copy.deepcopy(multi_data.x), multi_data.y)
+        coeff = mlr.multi_linear_regression(copy.deepcopy(multi_data.x), copy.deepcopy(multi_data.y))
         equation_str = stats_display(round_off_list(coeff, precision))
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT, equation_str)
