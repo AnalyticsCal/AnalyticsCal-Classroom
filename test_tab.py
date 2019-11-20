@@ -546,6 +546,7 @@ def click_nlr_poly():
         reg_plot(X.values, Y.values, Y_predicted, equation_str, title, x_label, y_label, 'r')
         plt.show()
     else:
+        global multi_data
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT, "Polynomial Regression works for bivariate data only\n")
         
