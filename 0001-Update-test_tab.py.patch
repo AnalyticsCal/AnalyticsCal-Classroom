@@ -1,0 +1,26 @@
+From 0cfbd43743434746606b38d4e40f6c7139c895e9 Mon Sep 17 00:00:00 2001
+From: knn <kn.neelalohitha@gmail.com>
+Date: Wed, 20 Nov 2019 12:49:49 +0530
+Subject: [PATCH] Update test_tab.py
+
+Signed-off-by: knn <kn.neelalohitha@gmail.com>
+---
+ test_tab.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/test_tab.py b/test_tab.py
+index 42c7cb4..52795d3 100644
+--- a/test_tab.py
++++ b/test_tab.py
+@@ -331,7 +331,7 @@ def click_linear_regression():
+     precision = roundoff
+     if len(csvHeader) > 2:
+         print("This is MultiRegression")
+-        coeff = mlr.multi_linear_regression(multi_data.x, multi_data.y)
++        coeff = mlr.multi_linear_regression(copy.deepcopy(multi_data.x), multi_data.y)
+         equation_str = stats_display(round_off_list(coeff, precision))
+         textBox.delete(1.0, tk.END)
+         textBox.insert(tk.INSERT, equation_str)
+-- 
+2.19.0.windows.1
+
