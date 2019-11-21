@@ -82,7 +82,6 @@ class BiDataModel(IndivModel):
         self.poly_2 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None}
         self.poly_3 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None}
         self.poly_4 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None}        
-
        
 
 """
