@@ -2,8 +2,9 @@ import stats_team3 as st
 import data_load as load
 import file_upload as upload
 from nonlinear_regression import NonLinearRegression as nlr
-import math
 
+import math
+from collections import namedtuple
 class IndivModel:
     def __init__(self, values):
         self.values = values
@@ -75,6 +76,12 @@ class BiDataModel(IndivModel):
         self.t_m=None
         self.t_c=None
         
+
+    def models(self):
+        self.linear = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None}
+        self.poly_2 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None}
+        self.poly_3 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None}
+        self.poly_4 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None}        
        
 
 """
