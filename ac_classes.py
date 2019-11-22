@@ -73,6 +73,10 @@ class BiDataModel(IndivModel):
         self.f = None
         self.p = None
 
+        self.model_confidence = None
+        self.t_m=None
+        self.t_c=None
+      
     def models(self):
         self.linear = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None}
         self.poly_2 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None}
@@ -112,6 +116,15 @@ class MultiDataModel():
 
     def linear_regression_coeff(self):
         self.lin_reg_coeff = []
+
+    def anova(self):
+        self.msr = None
+        self.mse = None
+        self.ssr = None
+        self.sse = None
+        self.f = None
+        self.p = None
+        self.model_confidence = None
         
         
         

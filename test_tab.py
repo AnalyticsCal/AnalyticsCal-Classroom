@@ -29,7 +29,9 @@ from ac_classes import IndivModel as imodel
 from ac_classes import BiDataModel as bdmodel
 from ac_classes import MultiDataModel as mdmodel
 from nonlinear_regression import NonLinearRegression as nlr
-from anova import main as anova_main
+from anova import Anova
+from anova_CI import AnovaConfidenceInterval
+
 
 # Create instance
 win = tk.Tk()   
@@ -37,10 +39,10 @@ win = tk.Tk()
 # Add a title       
 win.title("AnalyticsCal")
 
-global csvList,x, y,X,Y,data,multi_data
+global csvList,x, y,X,Y,data,multi_data,Y_predicted,is_simple_linear_equations
 global csvHeader
 global file_name
-
+is_simple_linear_equations=False
 #-------------------------------------------------------------------------Plots
 
 def reg_plot(x_plot,y_plot,y_predicted, equation_str, title, x_label, y_label, color = None):
@@ -330,7 +332,7 @@ plot = ttk.Button(mighty, text="Plot", command=click_plot, width = mighty_width)
 plot.grid(column=0, row=1, sticky='W')
 #----------------------------------------------------------------------Linear Regression
 def click_linear_regression():
-    global X,Y, data
+    global X,Y, data,Y_predicted,is_simple_linear_equations,coeff
     roundoff = 2
     precision = roundoff
     if len(csvHeader) > 2:
@@ -338,18 +340,22 @@ def click_linear_regression():
         print("This is MultiRegression")
         coeff = mlr.multi_linear_regression(copy.deepcopy(multi_data.x), copy.deepcopy(multi_data.y))
         equation_str = stats_display(round_off_list(coeff, precision))
+        Y_predicted = form_eqn_mlr(copy.deepcopy(coeff))
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT, equation_str)
-        
+     
 
     else:
         global reg_order
         reg_order =1 
+        is_simple_linear_equations=True
         coeff = mlr.multi_linear_regression([X.values], Y.values)
+        Y_predicted = form_eqn(copy.deepcopy(coeff))
         equation_str = stats_display(round_off_list(coeff, precision))
         textBox.delete(1.0, tk.END)
         print(equation_str)
         textBox.insert(tk.INSERT, equation_str)
+
         """coeff_list =copy.deepcopy(coeff)
         Y_predicted = form_eqn(copy.deepcopy(coeff))
         coefficient_str = ''
@@ -510,6 +516,8 @@ linear_Regression.grid(column=0, row=2, sticky='W')
 
 # Poly_reg:Modified Button Click Function
 def click_nlr_poly():
+    global Y_predicted,is_simple_linear_equations
+    is_simple_linear_equations=False
     if len(csvHeader) <= 2:
         SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉") # For printing subscript
         SUP = str.maketrans("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")
@@ -568,6 +576,7 @@ def click_nlr_poly():
         plt.show()
     else:
         global multi_data
+        Y_predicted=[]
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT, "Polynomial Regression works for bivariate data only\n")
         
@@ -655,52 +664,74 @@ number_chosen_exp.current(0)
 #---------------------------------------------------------------------------------ANOVA
 
 def click_anova():
-    global X,Y,data,reg_order
+    global Y_predicted,coeff
     precision = 2
-    if len(csvHeader) <= 2:
-        anova_dict = anova_main(X.values, Y.values,data.poly_coeff)
-        data.msr = anova_dict['msr']
-        data.mse = anova_dict['mse']
-        data.ssr = anova_dict['ssr']
-        data.sse = anova_dict['sse']
-        data.f = anova_dict['f']
-        data.p = anova_dict['p']
-        textBox.delete(1.0, tk.END)
-        """
-        textBox.insert(tk.INSERT, 'ANOVA'+ '\n')
-        textBox.insert(tk.INSERT, 'msr = '+ str(round(data.msr, 4)) + '\n')
-        textBox.insert(tk.INSERT, 'mse = '+ str(round(data.mse, 4))+ '\n')
-        textBox.insert(tk.INSERT, 'ssr = '+ str(round(data.ssr, 4)) + '\n')
-        textBox.insert(tk.INSERT, 'sse = '+ str(round(data.sse,4)) + '\n')
-        textBox.insert(tk.INSERT, 'f = '+ str(round(data.f, 4))  + '\n')
-        textBox.insert(tk.INSERT, 'p = '+ str(round(data.p,4)) + '\n')
-        """
-        table=[["msr",data.msr],["mse",data.mse],["ssr",data.ssr],["sse",data.sse],["f",data.f],["p",data.p]]
-        headers= ["ANOVA","Values"]
-        textBox.insert(tk.INSERT,tabulate(table,headers,tablefmt="fancy_grid",floatfmt=".2f"))
+    try:
+        if(len(Y_predicted)<=0):
+            textBox.delete(1.0,tk.END)
+            textBox.insert(tk.INSERT,"Y Predicted is empty, can calcuate ANOVA values.")
+            return
+        
+        anova =Anova(Y.values, Y_predicted, len(csvHeader))
+        if len(csvHeader) <= 2:
+            data.msr = anova.msr
+            data.mse = anova.mse
+            data.ssr = anova.ssr
+            data.sse = anova.sse
+            data.f = anova.f
+            data.p = anova.p
+            data.model_confidence=anova.model_confidence
+            if(is_simple_linear_equations):
+                anova_CI=AnovaConfidenceInterval(X.values,Y.values,Y_predicted,len(csvHeader))
+                ci_rtn=anova_CI.cal_CI_tm_tc(95)
+                data.t_m=ci_rtn["tm"]
+                data.t_c=ci_rtn["tc"]
 
-        if reg_order == 2:
+            if reg_order == 2:
             #str_2 = '\n'.join(list(chunkstring(equation_str, 12)))
-            data.poly_2['f'] = round(data.f, precision)  
-            data.poly_2['p'] = round(data.p, precision) 
-        elif reg_order == 3:
+                data.poly_2['f'] = round(data.f, precision)  
+                data.poly_2['p'] = round(data.p, precision) 
+            elif reg_order == 3:
             #str_3 = '\n'.join(list(chunkstring(equation_str, 12)))
-            data.poly_3['f'] = round(data.f, precision)  
-            data.poly_3['p'] = round(data.p, precision) 
+                data.poly_3['f'] = round(data.f, precision)  
+                data.poly_3['p'] = round(data.p, precision) 
         
-        elif reg_order == 4:
+            elif reg_order == 4:
             #str_4 = '\n'.join(list(chunkstring(equation_str, 14)))
-            data.poly_4['f'] = round(data.f, precision)    
-            data.poly_4['p'] = round(data.p, precision) 
+                data.poly_4['f'] = round(data.f, precision)    
+                data.poly_4['p'] = round(data.p, precision) 
 
-        elif reg_order == 1:
-            data.linear['f'] = round(data.f, precision)  
-            data.linear['p'] = round(data.p, precision) 
-        
-    else:
-        # Add the code for multiple linear regression
-        
-        ...
+            elif reg_order == 1:
+                data.linear['f'] = round(data.f, precision)  
+                data.linear['p'] = round(data.p, precision) 
+
+        else:
+            multi_data.msr = anova.msr
+            multi_data.mse = anova.mse
+            multi_data.ssr = anova.ssr
+            multi_data.sse = anova.sse
+            multi_data.f = anova.f
+            multi_data.p = anova.p
+            multi_data.model_confidence=anova.model_confidence
+
+        textBox.insert(tk.INSERT,"\n\n\n Anova Values: \n")
+        table=[ ["Regression",anova.ssr_drg_of_freedom,round(anova.ssr,4),round(anova.msr,4),round(anova.f,4),str(round(anova.p,4))],
+                ["Error",anova.sse_dgr_pf_freedom,round(anova.sse,4),round(anova.mse,4),None,None],
+                ["Total",anova.sse_dgr_pf_freedom+anova.ssr_drg_of_freedom,round(anova.sse + anova.ssr,4),None,None,None]
+            ]
+        table.append([])
+        textBox.insert(tk.INSERT,tabulate(table,['Source','df','SS','MS','F','P'],tablefmt="fancy_grid", floatfmt=".2f")) 
+        textBox.insert(tk.INSERT, "\n")
+
+        if(is_simple_linear_equations):
+            textBox.insert(tk.INSERT, "\n\n Confidence Interval:\n")
+            ci_table=[
+                        ["m",str(round(coeff[1] - data.t_m,4)),str(round(coeff[1] + data.t_m,4))],
+                        ["c",str(round(coeff[0] - data.t_c,4)),str(round(coeff[0] + data.t_c,4))]
+                    ]
+            textBox.insert(tk.INSERT,tabulate(ci_table,["Coeffient","min","max"],tablefmt="fancy_grid", floatfmt=".2f"))
+    except:
+          textBox.insert(tk.INSERT, "\nSomething went wrong ANOVA can't be calculated.")
     
 
 # Add button for ANOVA
