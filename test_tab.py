@@ -19,6 +19,10 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from tabulate import tabulate   # for table
+import pandas as pd
+import seaborn as sns
+import numpy as np
+from scipy import stats
 
 
 import stats_team3 as st
@@ -65,11 +69,17 @@ def open_file():
     global csvList
     global file_name
     global csvHeader
+    global multi_df
     file = fd.askopenfile(mode='r', filetypes=[('CSV Files', '*.csv')]) # gets the filename as string
     if file:
         file_name = file.name
     print(file_name)
     csvHeader, csvList = upload.preprocess_csv(file_name)
+    if len(csvHeader) > 2: # Multinomial
+        multi_df = pd.read_csv(file_name)
+        print(multi_df[~multi_df.applymap(np.isreal).all(1)])
+        null_columns=multi_df.columns[multi_df.isnull().any()]
+        print(multi_df[multi_df.isnull().any(axis=1)][null_columns].head())
     create_data_list() # creates a separate 
     """
     database function has to be called here instead of the one in line 66
@@ -225,6 +235,7 @@ def click_stats(textBox):
         std_dev_table.extend(round_off_list(multi_data.x_std_dev, precision))
         std_dev_table.append(round(multi_data.y_std_dev,precision))
 
+        #correlation_coeff_table = ["Correlation Coeffecient"]
         headers = [""]
         headers.extend(csvHeader[1:])
         headers.append(csvHeader[0])
@@ -312,7 +323,7 @@ Statistics.grid(column=0, row=0, sticky='W')
 #----------------------------------------------------------------------Basic Plot
 # Modified Button Click Plot
 def click_plot():
-    global X, Y,multi_data
+    global X, Y,multi_data, multi_df
     if len(csvHeader) <= 2:
         plt.scatter(X.values, Y.values,alpha=1)					
         plt.title('Scatter plot of x and y')					
@@ -321,13 +332,38 @@ def click_plot():
         plt.tight_layout()
         plt.show()
     else:
+        """
         jet=plt.get_cmap('jet')
         for i in multi_data.x:
             plt.scatter(i, multi_data.y , alpha = 1)
-
+        """
+        #Piarplot Data Visualization, type this code and see the output
+        #sns.set(style="white")
+        colors = ['red','green', 'blue', 'orange','purple']
+        #labels1 = [0,1,2,3,4]
+        #labels = []
+        #for i in range(len(multi_data.y)):
+        #    labels.append(labels1[i % 5])
+        
+        #g = pd.plotting.scatter_matrix(multi_df, figsize=(10,10), marker = 'o', hist_kwds = {'bins': 10}, s = 60, alpha = 0.8,cmap=matplotlib.colors.ListedColormap(colors),c = labels)
+        g = pd.plotting.scatter_matrix(multi_df, figsize=(10,10), marker = 'o', hist_kwds = {'bins': 10}, s = 60, alpha = 0.8)
+        plt.suptitle('Scatter Matrix')
+        #plt.tight_layout()
+        #plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=-1.0)
+        plt.show()
+        #sns.pairplot(multi_df, diag_kind ='kde')
 # Add button for plot
 plot = ttk.Button(mighty, text="Plot", command=click_plot, width = mighty_width)   
 plot.grid(column=0, row=1, sticky='W')
+
+# Multi plot
+"""
+fig = create_plot()
+
+canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
+canvas.draw()
+canvas.get_tk_widget().pack()
+"""
 #----------------------------------------------------------------------Linear Regression
 def click_linear_regression():
     global X,Y, data
