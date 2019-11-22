@@ -74,10 +74,13 @@ class BiDataModel(IndivModel):
         self.p = None
 
     def models(self):
-        self.linear = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None}
-        self.poly_2 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None}
-        self.poly_3 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None}
-        self.poly_4 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None}        
+        self.linear = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None,'coeff':None}
+        self.poly_2 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None,'coeff':None}
+        self.poly_3 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None,'coeff':None}
+        self.poly_4 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None,'coeff':None}
+
+    def pred_model(self):
+        self.pred_model = []
        
 
 """

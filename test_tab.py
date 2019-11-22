@@ -135,6 +135,9 @@ mighty2 = ttk.LabelFrame(tab1, text=' Non Linear Regression ')
 mighty2.grid(column = 0, row=1, padx=2, pady=1)
 #mighty2.grid_columnconfigure(0, weight=1)
 
+mighty3 = ttk.LabelFrame(tab1,text='Prediction')
+mighty3.grid(column=0,row=2,padx=2,pady=1)
+
 # Add big textbox
 text_h= 35
 text_w = 90
@@ -382,6 +385,7 @@ def click_linear_regression():
         global reg_order
         reg_order =1 
         coeff = mlr.multi_linear_regression([X.values], Y.values)
+        data.linear['coeff'] = [round(coeff[i], precision) for i in range(len(coeff))]
         equation_str = stats_display(round_off_list(coeff, precision))
         textBox.delete(1.0, tk.END)
         print(equation_str)
@@ -586,12 +590,15 @@ def click_nlr_poly():
         if reg_order == 2:
             str_2 = '\n'.join(list(chunkstring(equation_str, 14)))
             data.poly_2['eqn'] = str_2 # 12 harcoded for this textbox width = 90
+            data.poly_2['coeff'] = [round(coefficient[i], precision) for i in range(n)]
         elif reg_order == 3:
             str_3 = '\n'.join(list(chunkstring(equation_str, 14)))
             data.poly_3['eqn'] = str_3
+            data.poly_3['coeff'] = [round(coefficient[i], precision) for i in range(n)]
         elif reg_order == 4:
             str_4 = '\n'.join(list(chunkstring(equation_str, 14)))
             data.poly_4['eqn'] = str_4
+            data.poly_4['coeff'] = [round(coefficient[i], precision) for i in range(n)]
         #raw_plot = plt.scatter(X.values, Y.values, color = 'r')
         #plt.plot(X.values, round (coeff_list[0] + (coeff_list[1]*X.values) + (coeff_list[2]*(X.values**2))+ (coeff_list[3]*(X.values**3)), 4),'-')
         #predict_plot = plt.plot(X.values, Y_predicted, '-')
@@ -785,13 +792,48 @@ def click_comparison():
         textBox.insert(tk.INSERT,"\n CONCLUSION: \n" + model_choice[f_table.index(max(f_table[1:]))] + " : ("+\
                        eqn_table[f_table.index(max(f_table[1:]))].replace('\n','')+ " ) " + " is better fit for given data.\n" +\
                        model_choice[f_table.index(max(f_table[1:]))] + " : (" + eqn_table[f_table.index(max(f_table[1:]))].replace('\n','')+\
-                       " )"+" is chosen for Prediction")
+                       " )"+ " is chosen for Prediction")
+        
+        predict_model = ["",'linear','poly_2','poly_3', 'poly_4']
+        if(f_table.index(max(f_table[1:])) == 1):
+            data.pred_model = data.linear['coeff']
+        elif(f_table.index(max(f_table[1:])) == 2):
+            data.pred_model = data.poly_2['coeff']
+        elif(f_table.index(max(f_table[1:])) == 3):
+            data.pred_model = data.poly_3['coeff']
+        elif(f_table.index(max(f_table[1:])) == 4):
+            data.pred_model = data.poly_4['coeff']
         
     else:
         ...
 
 comparison_button = ttk.Button(mighty, text="Compare Models", command=click_comparison,width = mighty_width)   
 comparison_button.grid(column=0, row=5, sticky='W')
+
+#------------------------------------------------------------------------------------------------Prediction
+lab=ttk.Label(mighty3,text="Enter Value for Prediction")
+lab.grid()
+E1=ttk.Entry(mighty3)
+E1.grid()
+var=tk.StringVar()
+"""
+lab1=ttk.Label(mighty3,text="Enter MultiValue for Prediction")
+lab1.grid()
+E2=ttk.Entry(mighty3,textvariable=var)
+E2.grid()
+"""
+def predict_value():
+    value=E1.get()
+    v1=var.get()
+    if value != '':
+        coeff_list = copy.deepcopy(data.pred_model)
+        pred_x=float(value)
+        pred_y= round (coeff_list[0] + (coeff_list[1]*pred_x) + (coeff_list[2]*(pred_x**2))+ (coeff_list[3]*(pred_x**3)), 2)
+        textBox.delete(1.0, tk.END)
+        textBox.insert(tk.INSERT, str(pred_y))
+
+predict = ttk.Button(mighty3,text="Predict",command=predict_value,width= 26)
+predict.grid(column=0,row=2,sticky='w')
 
 #----------------------------------------------------------------------------------------------------TIMESERIES
 # LabelFrame using tab2 as the parent - for Time series plot
