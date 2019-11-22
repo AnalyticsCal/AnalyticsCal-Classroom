@@ -1,5 +1,10 @@
+import numpy as np
 from matplotlib import pyplot as plt
+from statsmodels.tsa.ar_model import AR
+from statsmodels.tsa.stattools import innovations_algo, acovf
+
 from arima.auto_regression import AutoRegression
+from arima.moving_average import MovingAverage
 from data_load import load_csv_file
 
 
@@ -81,7 +86,7 @@ def do_diff(ar, period):
 		plt_type='bar',
 		significance=(1.96 / (len(diffed)) ** 0.5)
 	)
-	return diffed
+	return ar, diffed
 
 
 def run(csv_list):
@@ -100,7 +105,7 @@ def run(csv_list):
 
 	period = check_seasonality()
 	if period:
-		non_seasonal = do_diff(ar, period)
+		ar, non_seasonal = do_diff(ar, period)
 	else:
 		non_seasonal = ar.data
 
@@ -110,17 +115,43 @@ def run(csv_list):
 		is_needed = check_diff()
 		if is_needed:
 			d += 1
-			diff = do_diff(ar, 1)
+			ar, diff = do_diff(ar, 1)
 		else:
 			break
 
+	ar.data = diff
+
 	pacf = ar.yule_walker_pacf()
 	data_plot(
-		range(len(pacf)), pacf, 'Lags', 'Correlation', 'PACF', n=10, plt_type='bar', significance=(1.96 / (len(pacf)) ** 0.5)
+		range(len(pacf)), pacf, 'Lags', 'Correlation', 'PACF', plt_type='bar', significance=(1.96 / (len(pacf)) ** 0.5)
 	)
 
 	p = int(input('Enter value of p: '))
-	print(ar.yule_walker_estimate(p))
+	phi = ar.yule_walker_estimate(p)
+	print(f'The AR({p}) equation is')
+	print(' + '.join([f'({round(phi_i, 4)}) * y(t-{i+1})' for i, phi_i in enumerate(phi)]), '+ residues')
+
+	out = ar.predict(phi)
+	print(len(data), len(out))
+
+	out = out + [0] * (len(data) - len(out))
+
+	plt.plot(time, data)
+	plt.plot(time, out)
+	plt.show()
+
+	# o = AR(data, time)
+	# ou = o.fit()
+	# print(ou.params)
+	# plt.plot(time, data)
+	# plt.plot(time, list(o.predict(ou.params)) + [0] * 15)
+	# plt.show()
+
+	# ma = MovingAverage(time, data, 100)
+	# theta = ma.innovations_algorithm(3)
+	# ma_params = [theta[i, :i] for i in range(1, 3 + 1)]
+	# print(ma_params)
+
 
 csv = load_csv_file('/home/vishnudev/Desktop/khanapur_flow.csv')
 run(csv)

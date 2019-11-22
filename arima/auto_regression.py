@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from numpy.linalg import inv
 
 from linear_algebra import LinearAlgebra
-from arima.utils import correlation, toeplitz
+from arima.utils import correlation, toeplitz, lag
 
 
 class AutoRegression:
@@ -31,19 +31,6 @@ class AutoRegression:
 	def __str__(self):
 		print(self.output)
 
-	@staticmethod
-	def lag(data, num=None):
-		"""
-		Generate nth lag of the time series data
-		:param data: Input data
-		:param num: Number of the lag needed
-		:return: Time series lagged num times
-		"""
-		if isinstance(num, int):
-			return data[num:] if num >= 0 else data[:num]
-		else:
-			raise ValueError('Pass value of lag number as integer')
-
 	def auto_correlation(self, data, lags):
 		"""
 		Compute Auto Correlation on the data
@@ -52,7 +39,7 @@ class AutoRegression:
 		"""
 		corr_values = []
 		for cur_lag in range(lags):
-			corr_values.append(correlation(self.lag(data, cur_lag), self.lag(data, -1 * cur_lag)))
+			corr_values.append(correlation(lag(data, cur_lag), lag(data, -1 * cur_lag)))
 		return corr_values
 
 	def difference(self, n):
@@ -102,21 +89,12 @@ class AutoRegression:
 		# return phi
 		return inv(r_upper).dot(r)
 
-	@staticmethod
-	def plot(self, x, y, plot_type='line', significance=None):
-		if plot_type == 'line':
-			plt.plot(x, y)
-		elif plot_type == 'bar':
-			plt.bar(x, y)
-
-		if significance:
-			plt.axhline(y=significance)
-			plt.axhline(y=-significance)
-
-		plt.show()
-
-	def fit(self):
-		pass
+	def predict(self, phi):
+		value = []
+		for i, phi_i in enumerate(phi):
+			value.append([phi_i * x for x in lag(self.data, i+1)])
+		output = [sum(elements) for elements in zip(*value)]
+		return output
 
 
 def test():

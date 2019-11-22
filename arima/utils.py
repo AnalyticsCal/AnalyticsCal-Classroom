@@ -63,6 +63,18 @@ def correlation(x, y):
     return covariance(x, y) / (sd(x) * sd(y))
 
 
+def lag(data, num=None):
+    """
+    Generate nth lag of the time series data
+    :param data: Input data
+    :param num: Number of the lag needed
+    :return: Time series lagged num times
+    """
+    if isinstance(num, int):
+        return data[num:] if num >= 0 else data[:num]
+    else:
+        raise ValueError('Pass value of lag number as integer')
+
 def test():
     x = [1, 2, 3, 4]
     print(toeplitz(x))
