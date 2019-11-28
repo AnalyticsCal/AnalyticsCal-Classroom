@@ -1,5 +1,8 @@
+from tkinter import simpledialog
+
 import numpy as np
 from matplotlib import pyplot as plt
+from statsmodels.regression import yule_walker
 from statsmodels.tsa.ar_model import AR
 from statsmodels.tsa.stattools import innovations_algo, acovf
 
@@ -23,6 +26,7 @@ def get_data(csv_list, precision=3):
 
 def init_ar(time, data):
 	print(f'Number of data points are {len(data)}')
+	# lags = int(simpledialog.askstring('Enter number of lags to consider: '))
 	# lags = int(input('Enter number of lags to consider: '))
 	lags = 100
 	if 0 <= lags <= len(data):
@@ -121,23 +125,23 @@ def run(csv_list):
 
 	ar.data = diff
 
-	pacf = ar.yule_walker_pacf()
+	pacf = ar.yule_walker_pacf(100)
 	data_plot(
-		range(len(pacf)), pacf, 'Lags', 'Correlation', 'PACF', plt_type='bar', significance=(1.96 / (len(pacf)) ** 0.5)
+		range(len(pacf)), pacf, 'Lags', 'Correlation', 'PACF', plt_type='bar', n=40, significance=(1.96 / (len(pacf)) ** 0.5)
 	)
 
 	p = int(input('Enter value of p: '))
-	phi = ar.yule_walker_estimate(p)
+	phi = pacf[:p]
 	print(f'The AR({p}) equation is')
 	print(' + '.join([f'({round(phi_i, 4)}) * y(t-{i+1})' for i, phi_i in enumerate(phi)]), '+ residues')
 
-	out = ar.predict(phi)
+	ar.data = ar.predict(phi)
+	out = ar.difference(period, rev=True)
+
 	print(len(data), len(out))
 
-	out = out + [0] * (len(data) - len(out))
-
-	plt.plot(time, data)
-	plt.plot(time, out)
+	plt.plot(time[:len(out)], data[:len(out)])
+	plt.plot(time[:len(out)], out)
 	plt.show()
 
 	# o = AR(data, time)

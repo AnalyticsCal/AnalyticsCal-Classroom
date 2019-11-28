@@ -75,6 +75,21 @@ def lag(data, num=None):
     else:
         raise ValueError('Pass value of lag number as integer')
 
+
+def auto_covariance(data, lags=None):
+    """
+    Compute Auto Correlation on the data
+    :param data: Input data to find correlations on
+    :param lags: Number of lags to limit output
+    :return: Auto correlations
+    """
+    lags = lags if lags else len(data) - 1
+    cov_values = []
+    for cur_lag in range(lags):
+        cov_values.append(covariance(lag(data, cur_lag), lag(data, -1 * cur_lag)))
+    return cov_values
+
+
 def test():
     x = [1, 2, 3, 4]
     print(toeplitz(x))
