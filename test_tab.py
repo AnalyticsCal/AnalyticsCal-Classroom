@@ -28,6 +28,7 @@ from scipy import stats
 import stats_team3 as st
 import multilinear_regression as mlr
 import data_load as load
+from computed_values import Computed as computedmodel
 import file_upload as upload
 from ac_classes import IndivModel as imodel
 from ac_classes import BiDataModel as bdmodel
@@ -46,6 +47,8 @@ win.title("AnalyticsCal")
 global csvList,x, y,X,Y,data,multi_data,Y_predicted,is_simple_linear_equations
 global csvHeader
 global file_name
+global computed
+global cursor
 is_simple_linear_equations=False
 #-------------------------------------------------------------------------Plots
 
@@ -72,22 +75,22 @@ def open_file():
     global file_name
     global csvHeader
     global multi_df
+    global cursor
     file = fd.askopenfile(mode='r', filetypes=[('CSV Files', '*.csv')]) # gets the filename as string
     if file:
         file_name = file.name
     print(file_name)
+    cursor = load.get_connection()
     csvHeader, csvList = upload.preprocess_csv(file_name)
     if len(csvHeader) > 2: # Multinomial
         multi_df = pd.read_csv(file_name)
         print(multi_df[~multi_df.applymap(np.isreal).all(1)])
         null_columns=multi_df.columns[multi_df.isnull().any()]
         print(multi_df[multi_df.isnull().any(axis=1)][null_columns].head())
+    load.load_and_filter_data_opeartion(cursor,file_name)
     create_data_list() # creates a separate 
-    """
-    database function has to be called here instead of the one in line 66
-    """
-    #csvList = load.load_csv_file(file_name)
 
+    
 # Exit GUI cleanly
 def _quit():
     win.quit()
@@ -147,8 +150,9 @@ textBox = tk.Text(mighty1, height = text_h, width = text_w,wrap=tk.WORD)
 textBox.grid(column=0, row=5, sticky=tk.N+tk.S)
 
 def create_data_list():
-    global x,y,X,Y, data, multi_data
+    global x,y,X,Y, data, multi_data,computed
     if csvList != []:
+        computed = computedmodel(file_name, cursor)
         if len(csvHeader) <= 2:
             x = [float(i) for i in csvList[0]]
             y = [float(i) for i in csvList[-1]]
@@ -175,11 +179,16 @@ def create_data_list():
 def create_instance():
     global X, Y, data, multi_data
     if len(csvHeader) <=2 :
-        X.mean()
-        Y.mean()
-        X.var()
-        Y.var()
-        data.corr_coeff()
+        x_mean = X.mean()
+        computed.save_computed("imodel_X_mean",x_mean)
+        y_mean =  Y.mean()
+        computed.save_computed("imodel_Y_mean",y_mean)
+        x_var = X.var()
+        computed.save_computed("imodel_X_var",x_var)
+        y_var = Y.var()
+        computed.save_computed("imodel_Y_var",y_var)
+        data_corr_coeff = data.corr_coeff()
+        computed.save_computed("bmodel_data_corr_coeff",data_corr_coeff)
         data.nlr_coef()
         data.anova()
         data.models()
@@ -425,6 +434,8 @@ def click_linear_regression():
         title= "predicted vs actual"					
         x_label= 'X'					
         y_label= 'Y'
+        computed.save_computed("Y_predicted",Y_predicted)
+        
         reg_plot(X.values, Y.values, Y_predicted, equation_str, title, x_label, y_label, 'g')
         plt.show()
         
@@ -714,18 +725,28 @@ def click_anova():
         anova_dict = anova_main(X.values, Y.values,data.poly_coeff)
         anova_class_2 = Anova_class(Y.values, Y_predicted, len(csvHeader))
         data.msr = anova_dict['msr']
+        computed.save_computed("data_msr", data.msr)
         data.mse = anova_dict['mse']
+        computed.save_computed("data_mse", data.mse)
         data.ssr = anova_dict['ssr']
+        computed.save_computed("data_ssr", data.ssr)
         data.sse = anova_dict['sse']
+        computed.save_computed("data_sse", data.sse)
         data.f = anova_dict['f']
+        computed.save_computed("data_f", data.f)
         data.p = anova_dict['p']
+        computed.save_computed("data_p", data.p)
+        
         
         data.model_confidence=anova_class_2.model_confidence
+        computed.save_computed("data_model_confidence", data.model_confidence)
         if(is_simple_linear_equations):
             anova_CI=AnovaConfidenceInterval(X.values,Y.values,Y_predicted,len(csvHeader))
             ci_rtn=anova_CI.cal_CI_tm_tc(95)
             data.t_m=ci_rtn["tm"]
             data.t_c=ci_rtn["tc"]
+            computed.save_computed("data_t_m", data.t_m)
+            computed.save_computed("data_t_c", data.t_c)
             textBox.insert(tk.INSERT, "\n\n Confidence Interval:\n")
             ci_table=[
                         ["m",str(round(coeff[1] - data.t_m,4)),str(round(coeff[1] + data.t_m,4))],
@@ -779,12 +800,19 @@ def click_anova():
         # Add the code for multiple linear regression
         anova_class_2 = Anova_class(Y.values, Y_predicted, len(csvHeader))
         multi_data.msr = anova_class_2.msr
+        computed.save_computed("multi_data_msr",multi_data.msr)
         multi_data.mse = anova_class_2.mse
+        computed.save_computed("multi_data_mse",multi_data.mse)
         multi_data.ssr = anova_class_2.ssr
+        computed.save_computed("multi_data_ssr",multi_data.ssr)
         multi_data.sse = anova_class_2.sse
+        computed.save_computed("multi_data_sse",multi_data.sse)
         multi_data.f = anova_class_2.f
+        computed.save_computed("multi_data_f",multi_data.f)
         multi_data.p = anova_class_2.p
+        computed.save_computed("multi_data_p",multi_data.p)
         multi_data.model_confidence=anova_class_2.model_confidence
+        computed.save_computed("multi_data_model_confidence",multi_data.model_confidence)
 
         textBox.insert(tk.INSERT,"\n\n\n Anova Values: \n")
         table=[ ["Regression",anova_class_2.ssr_drg_of_freedom,round(anova_class_2.ssr,4),round(anova_class_2.msr,4),round(anova_class_2.f,4),str(round(anova_class_2.p,4))],
