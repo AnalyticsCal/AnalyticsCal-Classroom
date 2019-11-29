@@ -26,6 +26,7 @@ from scipy import stats
 
 
 import stats_team3 as st
+#import Partial_Correlation_Coeff_XYZ as pcc_xyz
 import multilinear_regression as mlr
 import data_load as load
 from computed_values import Computed as computedmodel
@@ -89,7 +90,6 @@ def open_file():
         print(multi_df[multi_df.isnull().any(axis=1)][null_columns].head())
     load.load_and_filter_data_opeartion(cursor,file_name)
     create_data_list() # creates a separate 
-
     
 # Exit GUI cleanly
 def _quit():
@@ -116,7 +116,40 @@ menu_bar.add_cascade(label="Help", menu=help_menu)
 
 #-----------------------------------------------------------------------
 
-#-----------------------------------------------------------------------
+#-----------------------------------------------------------------------Team2 -Outlier
+def median(a, l, r): 
+    n1 = r - l + 1
+    n1 = (n1 + 1)/ 2 - 1; 
+    return int(n1 + l) 
+
+def get_outLiers(x1):
+    n=len(x1)  
+    x1.sort() 
+    mid_index = median(x1, 0, n) 
+    Q1 = x1[median(x1, 0, mid_index)] 
+    Q3 = x1[median(x1, mid_index + 1, n)] 
+    IQR= Q3 - Q1
+    Lower_bound = Q1 -(1.5 * IQR) 
+    Upper_bound = Q3 +(1.5 * IQR) 
+    print(Lower_bound,Upper_bound)
+    outlier_list = list(filter(lambda i: float(i) >Upper_bound or float(i)<Lower_bound, x1))
+    return outlier_list
+
+def display_outliers():
+    global data
+    outlier_list_x = get_outLiers(copy.deepcopy(data.x.values))
+    data.outlier_x = outlier_list_x
+    outlier_list_y = get_outLiers(copy.deepcopy(data.y.values))
+    data.outlier_y = outlier_list_y
+    textBox.delete(1.0, tk.END)
+    #textBox.insert(tk.INSERT, 'Outliers for x'+ str(data.outlier_x)+'\n')
+    display_list_out = list(zip(data.outlier_x, data.outlier_y))
+    if display_list_out != []:
+        textBox.insert(tk.INSERT, 'Outliers are '+ str(display_list_out)+'\n')
+    else:
+        """No outliers"""
+        ...
+#-----------------------------------------------------------------------team 3
 basic_statistics = []
 
 tabControl = ttk.Notebook(win)          # Create Tab Control
@@ -160,6 +193,7 @@ def create_data_list():
             X = imodel(x)
             Y = imodel(y)
             data = bdmodel(X, Y)
+
             create_instance()
         elif len(csvHeader) > 2:
             X = []
@@ -192,6 +226,8 @@ def create_instance():
         data.nlr_coef()
         data.anova()
         data.models()
+        data.pred_model()
+        data.outliers()
     else:
         multi_data.x_stats()
         multi_data.y_stats()
@@ -220,6 +256,7 @@ def click_stats(textBox):
         #textBox.insert(tk.INSERT, 'Cov(x, y) ='+ str(data.cov())+'\n')
         textBox.insert(tk.INSERT, 'Correlation coeeficient ='+ str(round(data.corr_coeff, precision))+'\n')
         """
+        display_outliers()
         table=[["Mean",round(X.mean, precision),round(Y.mean, precision)],["Variance",round(X.var,precision),round(Y.var, precision)],["Std.Deviation",round(math.sqrt(X.var), precision),round(math.sqrt(Y.var),precision)],["Corel Coeff(X,Y)",round(data.corr_coeff, precision)]]
         headers= ["","X","Y"]
         textBox.insert(tk.INSERT,tabulate(table,headers,tablefmt="fancy_grid", floatfmt=".2f")) # decimal precision 2
@@ -248,6 +285,9 @@ def click_stats(textBox):
         std_dev_table = ["Std.Deviation"]
         std_dev_table.extend(round_off_list(multi_data.x_std_dev, precision))
         std_dev_table.append(round(multi_data.y_std_dev,precision))
+
+        #pcc_table = ["Partial \n Correlation\n Coeff ryx,"]
+        #pcc_table.append(pcc_xyz.PartialcorrelationCoefficientXY_Z(multi_data.x[0]))
 
         #correlation_coeff_table = ["Correlation Coeffecient"]
         headers = [""]
@@ -358,7 +398,7 @@ def click_plot():
         #labels = []
         #for i in range(len(multi_data.y)):
         #    labels.append(labels1[i % 5])
-        
+            
         #g = pd.plotting.scatter_matrix(multi_df, figsize=(10,10), marker = 'o', hist_kwds = {'bins': 10}, s = 60, alpha = 0.8,cmap=matplotlib.colors.ListedColormap(colors),c = labels)
         g = pd.plotting.scatter_matrix(multi_df, figsize=(10,10), marker = 'o', hist_kwds = {'bins': 10}, s = 60, alpha = 0.8)
         plt.suptitle('Scatter Matrix')
@@ -380,7 +420,7 @@ canvas.get_tk_widget().pack()
 """
 #----------------------------------------------------------------------Linear Regression
 def click_linear_regression():
-    global X,Y, data,Y_predicted,is_simple_linear_equations,coeff
+    global X,Y, data,Y_predicted,is_simple_linear_equations,coeff,coeff_m
     is_simple_linear_equations = True
     roundoff = 2
     precision = roundoff
@@ -390,6 +430,7 @@ def click_linear_regression():
         coeff = mlr.multi_linear_regression(copy.deepcopy(multi_data.x), copy.deepcopy(multi_data.y))
         equation_str = stats_display(round_off_list(coeff, precision))
         Y_predicted = form_eqn_mlr(copy.deepcopy(coeff))
+        coeff_m = coeff
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT, equation_str)
         
@@ -635,7 +676,7 @@ def click_nlr_poly():
         
     
 # Add button for nonlinear_regression
-polynomial_regression = ttk.Button(mighty2, text="Polynomial Regression", command=click_nlr_poly)   
+polynomial_regression = ttk.Button(mighty2, text="Polynomial Regression", command=click_nlr_poly,width = 26)   
 polynomial_regression.grid(column=0, row=0, sticky='W')
 
 # Order for polynomial_reg
@@ -671,7 +712,7 @@ def click_nlr_sin():
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT, "Sinusoidal Regression works for bivariate data only\n")
 
-sinusoidal_regression = ttk.Button(mighty2, text="Sinusoidal Regression", command=click_nlr_sin,width = 20)   
+sinusoidal_regression = ttk.Button(mighty2, text="Sinusoidal Regression", command=click_nlr_sin,width = 26)   
 sinusoidal_regression.grid(column=0, row=1, sticky='W')
 """
 # Order for sinusoidal_reg
@@ -696,13 +737,40 @@ def click_nlr_exp():
             coefficient_str = [str(i) for i in coefficient ]
         #print(coefficient_str)
         textBox.delete(1.0, tk.END)
-        textBox.insert(tk.INSERT, coefficient_str)
+        textBox.insert(tk.INSERT, coefficient_str[0]+'e^'+coefficient_str[1]+'x')
     else:
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT, "Exponential Regression works for bivariate data only\n")
 
-exponential_regression = ttk.Button(mighty2, text="Exponential Regression", command=click_nlr_exp)   
+exponential_regression = ttk.Button(mighty2, text="Exponential Regression", command=click_nlr_exp,width = 26)   
 exponential_regression.grid(column=0, row=2, sticky='W')
+
+## Exponential Transformation
+
+def click_nlr_exp_trf():
+    global X,Y, data
+    if len(csvHeader) <=2:
+        SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉") # For printing subscript
+        SUP = str.maketrans("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")
+        regression = nlr(X.values,Y.values)
+        #print('regression = ',regression)
+        coefficient = regression.exponentialTransformation(1)
+        if(math.isnan(coefficient[0])):
+            coefficient_str = "The exponential model is not a right fit for this data"
+            print(coefficient_str)
+            #print('coeff = ', coefficient)
+        else:
+            coefficient_str = [str(i) for i in coefficient ]
+        #print(coefficient_str)
+        textBox.delete(1.0, tk.END)
+        textBox.insert(tk.INSERT, coefficient_str[0]+'e^'+coefficient_str[1]+'x')
+    else:
+        textBox.delete(1.0, tk.END)
+        textBox.insert(tk.INSERT, "Exponential Transformation implemented for bivariate data only\n")
+        
+exponential_transformation = ttk.Button(mighty2, text="Exponential Transformation", command=click_nlr_exp_trf,width = 26)   
+exponential_transformation.grid(column=0, row=3, sticky='W')
+
 
 
 """ To be implemented
@@ -832,6 +900,9 @@ anova.grid(column=0, row=4, sticky='W')
 
 #------------------------------------------------------------------------------Comparison
 
+def compare_plot():
+    return ...
+
 def click_comparison():
     if len(csvHeader) <= 2:
 
@@ -875,14 +946,19 @@ def click_comparison():
                        " )"+ " is chosen for Prediction")
         
         predict_model = ["",'linear','poly_2','poly_3', 'poly_4']
+        print("Max_f_table",f_table.index(max(f_table[1:])))
         if(f_table.index(max(f_table[1:])) == 1):
             data.pred_model = data.linear['coeff']
+            data.pred_eqn = data.linear['eqn']
         elif(f_table.index(max(f_table[1:])) == 2):
             data.pred_model = data.poly_2['coeff']
+            data.pred_eqn = data.poly_2['eqn']
         elif(f_table.index(max(f_table[1:])) == 3):
             data.pred_model = data.poly_3['coeff']
+            data.pred_eqn = data.poly_3['eqn']
         elif(f_table.index(max(f_table[1:])) == 4):
             data.pred_model = data.poly_4['coeff']
+            data.pred_eqn = data.poly_4['eqn']
         
     else:
         ...
@@ -896,24 +972,48 @@ lab.grid()
 E1=ttk.Entry(mighty3)
 E1.grid()
 var=tk.StringVar()
-"""
+
 lab1=ttk.Label(mighty3,text="Enter MultiValue for Prediction")
 lab1.grid()
 E2=ttk.Entry(mighty3,textvariable=var)
 E2.grid()
-"""
+
 def predict_value():
     value=E1.get()
+    global coeff_m
     v1=var.get()
     if value != '':
         coeff_list = copy.deepcopy(data.pred_model)
+        
+        for i in range(5 - len(coeff_list)):
+            coeff_list.append(0.)
+        print('Comapre_model:Coeff_list = ', coeff_list)
         pred_x=float(value)
-        pred_y= round (coeff_list[0] + (coeff_list[1]*pred_x) + (coeff_list[2]*(pred_x**2))+ (coeff_list[3]*(pred_x**3)), 2)
+        pred_ans = 0
+        for idx,value in enumerate(coeff_list):
+            exponent = idx
+            base = pred_x
+            pred_ans +=  value * (base**exponent)
+        
+        #pred_ans = [i * (pred_x **  for i in coeff_list]
+        #pred_y= round (coeff_list[0] + (coeff_list[1]*pred_x) + ((coeff_list[2]*(pred_x**2))+ ((coeff_list[3]*(pred_x**3))+ ((coeff_list[4]*(pred_x**4))))), 2)
+        pred_y = round(pred_ans,2)
         textBox.delete(1.0, tk.END)
-        textBox.insert(tk.INSERT, str(pred_y))
+        display_eqn= copy.deepcopy(data.pred_eqn)
+        display_eqn.replace("\n","")
+        textBox.insert(tk.INSERT,"The chosen model is "+'\n'+ display_eqn+ "\nPredicted value is:\n " + str(pred_y)  )
+
+    elif v1 != '':
+        v1 = v1.split()
+        x1=float((v1[0]))
+        x2=float((v1[1]))
+        x3=float((v1[2]))
+        pred_y_m = round(coeff_m[0]+ coeff_m[1]*x1 +coeff_m[2]*x2 + coeff_m[3]*x3, 4)
+        textBox.delete(1.0, tk.END)
+        textBox.insert(tk.INSERT, 'predicted value is \n'+str(pred_y_m))
 
 predict = ttk.Button(mighty3,text="Predict",command=predict_value,width= 26)
-predict.grid(column=0,row=2,sticky='w')
+predict.grid(column=0,row=4,sticky='w')
 
 #----------------------------------------------------------------------------------------------------TIMESERIES
 # LabelFrame using tab2 as the parent - for Time series plot

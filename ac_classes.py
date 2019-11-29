@@ -84,6 +84,11 @@ class BiDataModel(IndivModel):
 
     def pred_model(self):
         self.pred_model = []
+        self.pred_eqn = None
+
+    def outliers(self):
+        self.outlier_x=[]
+        self.outlier_y = []
        
 
 """
@@ -127,6 +132,10 @@ class MultiDataModel():
         self.f = None
         self.p = None
         self.model_confidence = None
+
+    def outliers(self):
+        self.outlier_x=[]
+        self.outlier_y = []
         
         
         
