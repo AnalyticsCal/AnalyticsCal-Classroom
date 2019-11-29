@@ -84,6 +84,7 @@ class BiDataModel(IndivModel):
 
     def pred_model(self):
         self.pred_model = []
+        self.pred_eqn = None
        
 
 """
