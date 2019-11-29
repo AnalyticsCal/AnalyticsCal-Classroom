@@ -1,13 +1,6 @@
-from tkinter import simpledialog
-
-import numpy as np
-from matplotlib import pyplot as plt
-from statsmodels.regression import yule_walker
-from statsmodels.tsa.ar_model import AR
-from statsmodels.tsa.stattools import innovations_algo, acovf
-
+from statsmodels.tsa.innovations.arma_innovations import arma_innovations
 from arima.auto_regression import AutoRegression
-from arima.moving_average import MovingAverage
+from matplotlib import pyplot as plt
 from data_load import load_csv_file
 
 
@@ -95,24 +88,24 @@ def do_diff(ar, period):
 
 def run(csv_list):
 	time, data = get_data(csv_list)
-
+	
 	data_plot(time, data, 'Time', 'Discharge', 'Plot of raw data', n=40)
 	ar = init_ar(time, data)
-
+	
 	raw = ar.auto_correlation(ar.data, 40)
 	data_plot(
 		range(len(raw)), raw, 'Lag', 'Correlation', 'Plot of ACF of raw data',
 		n=40,
 		plt_type='bar',
-		significance=(1.96 / (len(raw))**0.5)
+		significance=(1.96 / (len(raw)) ** 0.5)
 	)
-
+	
 	period = check_seasonality()
 	if period:
 		ar, non_seasonal = do_diff(ar, period)
 	else:
 		non_seasonal = ar.data
-
+	
 	d = 0
 	diff = non_seasonal
 	while True:
@@ -122,40 +115,51 @@ def run(csv_list):
 			ar, diff = do_diff(ar, 1)
 		else:
 			break
-
+	
 	ar.data = diff
-
+	
 	pacf = ar.yule_walker_pacf(100)
 	data_plot(
-		range(len(pacf)), pacf, 'Lags', 'Correlation', 'PACF', plt_type='bar', n=40, significance=(1.96 / (len(pacf)) ** 0.5)
+		range(len(pacf)), pacf, 'Lags', 'Correlation', 'PACF', plt_type='bar', n=40,
+		significance=(1.96 / (len(pacf)) ** 0.5)
 	)
-
+	
 	p = int(input('Enter value of p: '))
 	phi = pacf[:p]
 	print(f'The AR({p}) equation is')
-	print(' + '.join([f'({round(phi_i, 4)}) * y(t-{i+1})' for i, phi_i in enumerate(phi)]), '+ residues')
-
+	print(' + '.join([f'({round(phi_i, 4)}) * y(t-{i + 1})' for i, phi_i in enumerate(phi)]), '+ residues')
+	
 	ar.data = ar.predict(phi)
 	out = ar.difference(period, rev=True)
-
-	print(len(data), len(out))
-
+	
 	plt.plot(time[:len(out)], data[:len(out)])
 	plt.plot(time[:len(out)], out)
 	plt.show()
-
+	
 	# o = AR(data, time)
 	# ou = o.fit()
 	# print(ou.params)
 	# plt.plot(time, data)
 	# plt.plot(time, list(o.predict(ou.params)) + [0] * 15)
 	# plt.show()
+	
+	# ma params
+	q = int(input('Enter value of q: '))
+	
+	if q:
+		ma_params, mse = arma_innovations(out)
+		theta = ma_params[:q]
+		print('MA Equation is:')
+		print(' + '.join([f'({round(theta_i, 4)}) * e(t-{i + 1})' for i, theta_i in enumerate(theta)]))
+		
+		# Calculate Error
+		residues = []
+		
+		for y, y_cap in zip(data, out):
+			residues.append(abs(y - y_cap))
+		
+		data_plot(time[:len(residues)], residues, 'Time', 'Residues', 'Plot of residues', n=40)
 
-	# ma = MovingAverage(time, data, 100)
-	# theta = ma.innovations_algorithm(3)
-	# ma_params = [theta[i, :i] for i in range(1, 3 + 1)]
-	# print(ma_params)
 
-
-csv = load_csv_file('/home/vishnudev/Desktop/khanapur_flow.csv')
+csv = load_csv_file('E:\Github/khanapur_flow.csv')
 run(csv)
