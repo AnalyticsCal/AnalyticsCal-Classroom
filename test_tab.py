@@ -85,7 +85,7 @@ def open_file():
         print(multi_df[multi_df.isnull().any(axis=1)][null_columns].head())
     create_data_list() # creates a separate 
     """
-    database function has to be called here instead of the one in line 66
+    database function has to be called here 
     """
     #csvList = load.load_csv_file(file_name)
 
@@ -114,7 +114,40 @@ menu_bar.add_cascade(label="Help", menu=help_menu)
 
 #-----------------------------------------------------------------------
 
-#-----------------------------------------------------------------------
+#-----------------------------------------------------------------------Team2 -Outlier
+def median(a, l, r): 
+    n1 = r - l + 1
+    n1 = (n1 + 1)/ 2 - 1; 
+    return int(n1 + l) 
+
+def get_outLiers(x1):
+    n=len(x1)  
+    x1.sort() 
+    mid_index = median(x1, 0, n) 
+    Q1 = x1[median(x1, 0, mid_index)] 
+    Q3 = x1[median(x1, mid_index + 1, n)] 
+    IQR= Q3 - Q1
+    Lower_bound = Q1 -(1.5 * IQR) 
+    Upper_bound = Q3 +(1.5 * IQR) 
+    print(Lower_bound,Upper_bound)
+    outlier_list = list(filter(lambda i: float(i) >Upper_bound or float(i)<Lower_bound, x1))
+    return outlier_list
+
+def display_outliers():
+    global data
+    outlier_list_x = get_outLiers(copy.deepcopy(data.x.values))
+    data.outlier_x = outlier_list_x
+    outlier_list_y = get_outLiers(copy.deepcopy(data.y.values))
+    data.outlier_y = outlier_list_y
+    textBox.delete(1.0, tk.END)
+    #textBox.insert(tk.INSERT, 'Outliers for x'+ str(data.outlier_x)+'\n')
+    display_list_out = list(zip(data.outlier_x, data.outlier_y))
+    if display_list_out != []:
+        textBox.insert(tk.INSERT, 'Outliers are '+ str(display_list_out)+'\n')
+    else:
+        """No outliers"""
+        ...
+#-----------------------------------------------------------------------team 3
 basic_statistics = []
 
 tabControl = ttk.Notebook(win)          # Create Tab Control
@@ -157,6 +190,7 @@ def create_data_list():
             X = imodel(x)
             Y = imodel(y)
             data = bdmodel(X, Y)
+
             create_instance()
         elif len(csvHeader) > 2:
             X = []
@@ -185,6 +219,7 @@ def create_instance():
         data.anova()
         data.models()
         data.pred_model()
+        data.outliers()
     else:
         multi_data.x_stats()
         multi_data.y_stats()
@@ -213,6 +248,7 @@ def click_stats(textBox):
         #textBox.insert(tk.INSERT, 'Cov(x, y) ='+ str(data.cov())+'\n')
         textBox.insert(tk.INSERT, 'Correlation coeeficient ='+ str(round(data.corr_coeff, precision))+'\n')
         """
+        display_outliers()
         table=[["Mean",round(X.mean, precision),round(Y.mean, precision)],["Variance",round(X.var,precision),round(Y.var, precision)],["Std.Deviation",round(math.sqrt(X.var), precision),round(math.sqrt(Y.var),precision)],["Corel Coeff(X,Y)",round(data.corr_coeff, precision)]]
         headers= ["","X","Y"]
         textBox.insert(tk.INSERT,tabulate(table,headers,tablefmt="fancy_grid", floatfmt=".2f")) # decimal precision 2
@@ -691,7 +727,7 @@ def click_nlr_exp():
             coefficient_str = [str(i) for i in coefficient ]
         #print(coefficient_str)
         textBox.delete(1.0, tk.END)
-        textBox.insert(tk.INSERT, coefficient_str)
+        textBox.insert(tk.INSERT, coefficient_str[0]+'e^'+coefficient_str[1]+'x')
     else:
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT, "Exponential Regression works for bivariate data only\n")
