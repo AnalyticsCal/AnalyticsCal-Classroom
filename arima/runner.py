@@ -1,6 +1,8 @@
 from statsmodels.tsa.innovations.arma_innovations import arma_innovations
 from arima.auto_regression import AutoRegression
 from matplotlib import pyplot as plt
+
+from arima.utils import lag
 from data_load import load_csv_file
 
 
@@ -86,6 +88,26 @@ def do_diff(ar, period):
 	return ar, diffed
 
 
+def predict_using_arima(data_list, phi, residue_list, theta):
+	theta_values = []
+	final_values = []
+	phi_values = []
+	
+	for i, phi_i in enumerate(phi):
+		lag_data = ([0] * i) + lag(data_list, i)
+		phi_values.append([phi_i * x for x in lag_data])
+	
+	for i, theta_i in enumerate(theta):
+		lag_data = ([0] * i) + lag(residue_list, i)
+		theta_values.append([theta_i * x for x in lag_data])
+	
+	for pi, ti in zip(phi_values, theta_values):
+		final_values.append(sum(pi) - sum(ti))
+	
+	# output = [abs(sum(elements)) for elements in zip(*value)]
+	return final_values
+
+
 def run(csv_list):
 	time, data = get_data(csv_list)
 	
@@ -156,9 +178,13 @@ def run(csv_list):
 		residues = []
 		
 		for y, y_cap in zip(data, out):
-			residues.append(abs(y - y_cap))
+			residues.append(y - y_cap)
 		
 		data_plot(time[:len(residues)], residues, 'Time', 'Residues', 'Plot of residues', n=40)
+		
+		# Final Predicted Output
+		# final_output = predict_using_arima(data, phi, residues, theta)
+		pass
 
 
 csv = load_csv_file('E:\Github/khanapur_flow.csv')

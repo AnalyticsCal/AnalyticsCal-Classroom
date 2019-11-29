@@ -1,18 +1,9 @@
-import matplotlib.pyplot as plt
-import numpy as np
-from numpy.linalg import inv, solve
-from numpy.testing import assert_allclose
-from scipy import linalg
-from statsmodels.regression import yule_walker
-from statsmodels.tsa.stattools import acf, pacf_yw
-from statsmodels.tsa.tsatools import lagmat
-
-from linear_algebra import LinearAlgebra
-from arima.utils import correlation, toeplitz, lag, mean, auto_covariance
+from arima.utils import correlation, toeplitz, lag
+from numpy.linalg import inv
 
 
 class AutoRegression:
-
+	
 	def __init__(self, index=None, data=None, lags=None):
 		"""
 		Constructor for auto regression
@@ -24,19 +15,19 @@ class AutoRegression:
 			self.data = data
 		else:
 			raise ValueError('Provide input for data as list')
-
+		
 		if index and isinstance(index, list):
 			self.index = index
 		else:
 			raise ValueError('Provide input for index as list')
-
+		
 		self.lags = lags if lags else len(self.data)
-
+		
 		self.phi_estimates = []
-
+	
 	def __str__(self):
 		print(self.output)
-
+	
 	def auto_correlation(self, data, lags):
 		"""
 		Compute Auto Correlation on the data
@@ -48,12 +39,12 @@ class AutoRegression:
 		for cur_lag in range(lags):
 			corr_values.append(correlation(lag(data, cur_lag), lag(data, -1 * cur_lag)))
 		return corr_values
-
+	
 	def difference(self, n, rev=False):
 		a = self.data
 		b = a[n:]
 		return [(y - x) if not rev else (y + x) for x, y in zip(a, b)]
-
+	
 	def seasonal_difference(self, time_period=None, rev=False):
 		"""
 		Compute seasonal differencing of the data
@@ -67,13 +58,13 @@ class AutoRegression:
 				diff = (self.data[i + time_period] + val) if rev else (self.data[i + time_period] - val)
 				non_seasonal.append(diff)
 		return non_seasonal
-
+	
 	def yule_walker_pacf(self, order):
 		pacf = [1]
 		for k in range(1, order + 1):
 			pacf.append(self.yule_walker_estimate(k)[-1])
 		return pacf
-
+	
 	def yule_walker_estimate(self, p):
 		"""
 		Yule Walker estimation of coefficients of AR model
@@ -93,9 +84,9 @@ class AutoRegression:
 		for k in range(1, p + 1):
 			r[k] = sum(x * y for x, y in zip(self.data[0:-k], self.data[k:])) / len(self.data)
 		r_upper = toeplitz(r[:-1])
-		r = r[1: p+1]
+		r = r[1: p + 1]
 		return inv(r_upper).dot(r)
-
+	
 	def predict(self, phi):
 		value = []
 		for i, phi_i in enumerate(phi):
@@ -118,6 +109,7 @@ def test():
 	params = ar.yule_walker_pacf(6)
 	print(ar.predict(params))
 	print(ar.data)
+	
 	# print(pacf_yw(ar.data, 6))
 	# values = ar.auto_correlation(num_lags=40)
 	# ar.plot(range(len(values)), values, 'bar')
@@ -133,8 +125,8 @@ def test():
 	# plt.axhline(y=significance)
 	# plt.axhline(y=-significance)
 	# plt.show()
+	pass
 
 
 if __name__ == '__main__':
 	test()
-
