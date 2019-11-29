@@ -26,6 +26,7 @@ from scipy import stats
 
 
 import stats_team3 as st
+#import Partial_Correlation_Coeff_XYZ as pcc_xyz
 import multilinear_regression as mlr
 import data_load as load
 import file_upload as upload
@@ -240,6 +241,9 @@ def click_stats(textBox):
         std_dev_table = ["Std.Deviation"]
         std_dev_table.extend(round_off_list(multi_data.x_std_dev, precision))
         std_dev_table.append(round(multi_data.y_std_dev,precision))
+
+        #pcc_table = ["Partial \n Correlation\n Coeff ryx,"]
+        #pcc_table.append(pcc_xyz.PartialcorrelationCoefficientXY_Z(multi_data.x[0]))
 
         #correlation_coeff_table = ["Correlation Coeffecient"]
         headers = [""]
@@ -626,7 +630,7 @@ def click_nlr_poly():
         
     
 # Add button for nonlinear_regression
-polynomial_regression = ttk.Button(mighty2, text="Polynomial Regression", command=click_nlr_poly)   
+polynomial_regression = ttk.Button(mighty2, text="Polynomial Regression", command=click_nlr_poly,width = 26)   
 polynomial_regression.grid(column=0, row=0, sticky='W')
 
 # Order for polynomial_reg
@@ -662,7 +666,7 @@ def click_nlr_sin():
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT, "Sinusoidal Regression works for bivariate data only\n")
 
-sinusoidal_regression = ttk.Button(mighty2, text="Sinusoidal Regression", command=click_nlr_sin,width = 20)   
+sinusoidal_regression = ttk.Button(mighty2, text="Sinusoidal Regression", command=click_nlr_sin,width = 26)   
 sinusoidal_regression.grid(column=0, row=1, sticky='W')
 """
 # Order for sinusoidal_reg
@@ -692,8 +696,35 @@ def click_nlr_exp():
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT, "Exponential Regression works for bivariate data only\n")
 
-exponential_regression = ttk.Button(mighty2, text="Exponential Regression", command=click_nlr_exp)   
+exponential_regression = ttk.Button(mighty2, text="Exponential Regression", command=click_nlr_exp,width = 26)   
 exponential_regression.grid(column=0, row=2, sticky='W')
+
+## Exponential Transformation
+
+def click_nlr_exp_trf():
+    global X,Y, data
+    if len(csvHeader) <=2:
+        SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉") # For printing subscript
+        SUP = str.maketrans("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")
+        regression = nlr(X.values,Y.values)
+        #print('regression = ',regression)
+        coefficient = regression.exponentialTransformation(1)
+        if(math.isnan(coefficient[0])):
+            coefficient_str = "The exponential model is not a right fit for this data"
+            print(coefficient_str)
+            #print('coeff = ', coefficient)
+        else:
+            coefficient_str = [str(i) for i in coefficient ]
+        #print(coefficient_str)
+        textBox.delete(1.0, tk.END)
+        textBox.insert(tk.INSERT, coefficient_str[0]+'e^'+coefficient_str[1]+'x')
+    else:
+        textBox.delete(1.0, tk.END)
+        textBox.insert(tk.INSERT, "Exponential Transformation implemented for bivariate data only\n")
+        
+exponential_transformation = ttk.Button(mighty2, text="Exponential Transformation", command=click_nlr_exp_trf,width = 26)   
+exponential_transformation.grid(column=0, row=3, sticky='W')
+
 
 
 """ To be implemented
