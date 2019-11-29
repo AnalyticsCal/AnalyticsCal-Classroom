@@ -183,6 +183,7 @@ def create_instance():
         data.nlr_coef()
         data.anova()
         data.models()
+        data.pred_model()
     else:
         multi_data.x_stats()
         multi_data.y_stats()
@@ -349,7 +350,7 @@ def click_plot():
         #labels = []
         #for i in range(len(multi_data.y)):
         #    labels.append(labels1[i % 5])
-        
+            
         #g = pd.plotting.scatter_matrix(multi_df, figsize=(10,10), marker = 'o', hist_kwds = {'bins': 10}, s = 60, alpha = 0.8,cmap=matplotlib.colors.ListedColormap(colors),c = labels)
         g = pd.plotting.scatter_matrix(multi_df, figsize=(10,10), marker = 'o', hist_kwds = {'bins': 10}, s = 60, alpha = 0.8)
         plt.suptitle('Scatter Matrix')
@@ -371,7 +372,7 @@ canvas.get_tk_widget().pack()
 """
 #----------------------------------------------------------------------Linear Regression
 def click_linear_regression():
-    global X,Y, data,Y_predicted,is_simple_linear_equations,coeff
+    global X,Y, data,Y_predicted,is_simple_linear_equations,coeff,coeff_m
     is_simple_linear_equations = True
     roundoff = 2
     precision = roundoff
@@ -381,6 +382,7 @@ def click_linear_regression():
         coeff = mlr.multi_linear_regression(copy.deepcopy(multi_data.x), copy.deepcopy(multi_data.y))
         equation_str = stats_display(round_off_list(coeff, precision))
         Y_predicted = form_eqn_mlr(copy.deepcopy(coeff))
+        coeff_m = coeff
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT, equation_str)
         
@@ -804,6 +806,9 @@ anova.grid(column=0, row=4, sticky='W')
 
 #------------------------------------------------------------------------------Comparison
 
+def compare_plot():
+    return ...
+
 def click_comparison():
     if len(csvHeader) <= 2:
 
@@ -847,14 +852,19 @@ def click_comparison():
                        " )"+ " is chosen for Prediction")
         
         predict_model = ["",'linear','poly_2','poly_3', 'poly_4']
+        print("Max_f_table",f_table.index(max(f_table[1:])))
         if(f_table.index(max(f_table[1:])) == 1):
             data.pred_model = data.linear['coeff']
+            data.pred_eqn = data.linear['eqn']
         elif(f_table.index(max(f_table[1:])) == 2):
             data.pred_model = data.poly_2['coeff']
+            data.pred_eqn = data.poly_2['eqn']
         elif(f_table.index(max(f_table[1:])) == 3):
             data.pred_model = data.poly_3['coeff']
+            data.pred_eqn = data.poly_3['eqn']
         elif(f_table.index(max(f_table[1:])) == 4):
             data.pred_model = data.poly_4['coeff']
+            data.pred_eqn = data.poly_4['eqn']
         
     else:
         ...
@@ -868,24 +878,48 @@ lab.grid()
 E1=ttk.Entry(mighty3)
 E1.grid()
 var=tk.StringVar()
-"""
+
 lab1=ttk.Label(mighty3,text="Enter MultiValue for Prediction")
 lab1.grid()
 E2=ttk.Entry(mighty3,textvariable=var)
 E2.grid()
-"""
+
 def predict_value():
     value=E1.get()
+    global coeff_m
     v1=var.get()
     if value != '':
         coeff_list = copy.deepcopy(data.pred_model)
+        
+        for i in range(5 - len(coeff_list)):
+            coeff_list.append(0.)
+        print('Comapre_model:Coeff_list = ', coeff_list)
         pred_x=float(value)
-        pred_y= round (coeff_list[0] + (coeff_list[1]*pred_x) + (coeff_list[2]*(pred_x**2))+ (coeff_list[3]*(pred_x**3)), 2)
+        pred_ans = 0
+        for idx,value in enumerate(coeff_list):
+            exponent = idx
+            base = pred_x
+            pred_ans +=  value * (base**exponent)
+        
+        #pred_ans = [i * (pred_x **  for i in coeff_list]
+        #pred_y= round (coeff_list[0] + (coeff_list[1]*pred_x) + ((coeff_list[2]*(pred_x**2))+ ((coeff_list[3]*(pred_x**3))+ ((coeff_list[4]*(pred_x**4))))), 2)
+        pred_y = round(pred_ans,2)
         textBox.delete(1.0, tk.END)
-        textBox.insert(tk.INSERT, str(pred_y))
+        display_eqn= copy.deepcopy(data.pred_eqn)
+        display_eqn.replace("\n","")
+        textBox.insert(tk.INSERT,"The chosen model is "+'\n'+ display_eqn+ "\nPredicted value is:\n " + str(pred_y)  )
+
+    elif v1 != '':
+        v1 = v1.split()
+        x1=float((v1[0]))
+        x2=float((v1[1]))
+        x3=float((v1[2]))
+        pred_y_m = round(coeff_m[0]+ coeff_m[1]*x1 +coeff_m[2]*x2 + coeff_m[3]*x3, 4)
+        textBox.delete(1.0, tk.END)
+        textBox.insert(tk.INSERT, 'predicted value is \n'+str(pred_y_m))
 
 predict = ttk.Button(mighty3,text="Predict",command=predict_value,width= 26)
-predict.grid(column=0,row=2,sticky='w')
+predict.grid(column=0,row=4,sticky='w')
 
 #----------------------------------------------------------------------------------------------------TIMESERIES
 # LabelFrame using tab2 as the parent - for Time series plot
