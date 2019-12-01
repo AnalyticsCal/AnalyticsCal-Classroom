@@ -135,6 +135,8 @@ def get_outLiers(x1):
 
 def display_outliers():
     global data
+    #data.x.values = [1,58,639,2,3,100000,5]
+    #data.y.values = [1,58,69,8,5,899999,84]
     outlier_list_x = get_outLiers(copy.deepcopy(data.x.values))
     data.outlier_x = outlier_list_x
     outlier_list_y = get_outLiers(copy.deepcopy(data.y.values))
