@@ -1,0 +1,792 @@
+commit a89e887fc0e8fcc0dd7e2ab087e510e2bd646f89
+Author: knn <kn.neelalohitha@gmail.com>
+Date:   Mon Dec 2 15:52:02 2019 +0530
+
+    Update test_tab.py,Add latest_diff.txt
+    
+    Signed-off-by: knn <kn.neelalohitha@gmail.com>
+
+diff --git a/latest_diff.txt b/latest_diff.txt
+new file mode 100644
+index 0000000..db9b450
+--- /dev/null
++++ b/latest_diff.txt
+@@ -0,0 +1,389 @@
++diff --git a/test_tab.py b/test_tab.py
++index 3490ce4..3aa765a 100644
++--- a/test_tab.py
+++++ b/test_tab.py
++@@ -57,7 +57,7 @@ def reg_plot(x_plot,y_plot,y_predicted, equation_str, title, x_label, y_label, c
++     plt.title(title)					
++     plt.xlabel(x_label)					
++     plt.ylabel(y_label)
++-    plt.legend((raw_plot, predict_plot),('Raw Data', 'Prediction equation = ' + equation_str),loc=(-0.05,-0.20), scatterpoints=1, ncol=3, fontsize=8)
+++    plt.legend((raw_plot, predict_plot),('Observed Data', 'Prediction equation = ' + equation_str),loc=(-0.05,-0.20), scatterpoints=1, ncol=3, fontsize=8)
++     plt.tight_layout()
++     plt.show()
++     
++@@ -170,11 +170,11 @@ mighty1 = ttk.LabelFrame(tab1, text=' Output Console')
++ mighty1.grid(column=1, row=0,sticky=tk.N+tk.S, padx=8, pady=4, columnspan=3, rowspan = 6)
++ 
++ mighty2 = ttk.LabelFrame(tab1, text=' Non Linear Regression ')
++-mighty2.grid(column = 0, row=1, padx=2, pady=1)
+++mighty2.grid(column = 0, row=1, padx=10, pady=2)
++ #mighty2.grid_columnconfigure(0, weight=1)
++ 
++ mighty3 = ttk.LabelFrame(tab1,text='Prediction')
++-mighty3.grid(column=0,row=2,padx=2,pady=1)
+++mighty3.grid(column=0,row=2,padx=15,pady=4)
++ 
++ # Add big textbox
++ text_h= 35
++@@ -367,7 +367,7 @@ def _destroyWindow():
++ mighty_width = 26
++ # Add button to output basic statistics
++ Statistics = ttk.Button(mighty, text="Statistics", command= lambda : click_stats(textBox), width = mighty_width)   
++-Statistics.grid(column=0, row=0, sticky='W')
+++Statistics.grid(column=0, row=0, sticky='W', padx = 10,pady = 2)
++ #----------------------------------------------------------------------Basic Plot
++ # Modified Button Click Plot
++ def click_plot():
++@@ -402,7 +402,7 @@ def click_plot():
++         #sns.pairplot(multi_df, diag_kind ='kde')
++ # Add button for plot
++ plot = ttk.Button(mighty, text="Plot", command=click_plot, width = mighty_width)   
++-plot.grid(column=0, row=1, sticky='W')
+++plot.grid(column=0, row=1, sticky='W', padx = 10,pady = 2)
++ 
++ # Multi plot
++ """
++@@ -426,8 +426,9 @@ def click_linear_regression():
++         Y_predicted = form_eqn_mlr(copy.deepcopy(coeff))
++         coeff_m = coeff
++         textBox.delete(1.0, tk.END)
++-        textBox.insert(tk.INSERT, equation_str)
++-        
+++        textBox.insert(tk.INSERT,"The linear regression Equation is\n " + equation_str)
+++        #textBox.tag_add("one", "1.0", "1.8")
+++        #textBox.tag_config("one", background="yellow")
++ 
++     else:
++         global reg_order
++@@ -438,7 +439,9 @@ def click_linear_regression():
++         Y_predicted = form_eqn_mlr(copy.deepcopy(coeff))
++         textBox.delete(1.0, tk.END)
++         print(equation_str)
++-        textBox.insert(tk.INSERT, equation_str)
+++        textBox.insert(tk.INSERT,"The linear regression Equation is\n " + equation_str)
+++        #textBox.tag_add("one", "1.0", "1.8")
+++        #textBox.tag_config("one", background="yellow")
++         """coeff_list =copy.deepcopy(coeff)
++         Y_predicted = form_eqn(copy.deepcopy(coeff))
++         coefficient_str = ''
++@@ -466,7 +469,7 @@ def click_linear_regression():
++         textBox.delete(1.0, tk.END)
++         textBox.insert(tk.INSERT, equation_str)
++         """
++-        title= "predicted vs actual"					
+++        title= "predicted vs observed"					
++         x_label= 'X'					
++         y_label= 'Y'
++         reg_plot(X.values, Y.values, Y_predicted, equation_str, title, x_label, y_label, 'g')
++@@ -574,7 +577,7 @@ def stats_display(coeff):
++         textBox.delete(1.0, tk.END)
++         textBox.insert(tk.INSERT,'The linear model is \n' + equation_str)
++         data.linear['eqn'] = equation_str
++-        title= "predicted vs actual"					
+++        title= "Predicted vs Observed"					
++         x_label= 'X'					
++         y_label= 'Y'
++         reg_plot(X.values, Y.values, Y_predicted, equation_str, title, x_label, y_label, 'g')
++@@ -592,7 +595,7 @@ def form_eqn_mlr(coeff):
++ 
++ # Add button to Regression
++ linear_Regression = ttk.Button(mighty, text="Linear Regression", command=click_linear_regression,width = mighty_width)   
++-linear_Regression.grid(column=0, row=2, sticky='W')
+++linear_Regression.grid(column=0, row=2, sticky='W', padx = 10,pady = 2)
++ 
++ #-----------------------------------------------------------------------Non Linear Regerssion
++ 
++@@ -654,7 +657,7 @@ def click_nlr_poly():
++         #raw_plot = plt.scatter(X.values, Y.values, color = 'r')
++         #plt.plot(X.values, round (coeff_list[0] + (coeff_list[1]*X.values) + (coeff_list[2]*(X.values**2))+ (coeff_list[3]*(X.values**3)), 4),'-')
++         #predict_plot = plt.plot(X.values, Y_predicted, '-')
++-        title= "predicted vs actual"					
+++        title= "Predicted vs Observed"					
++         x_label= 'X'					
++         y_label= 'Y'
++         #plt.legend((raw_plot, predict_plot),('Raw Data', 'Predicted'),scatterpoints=1, ncol=3, fontsize=8)
++@@ -669,7 +672,7 @@ def click_nlr_poly():
++     
++ # Add button for nonlinear_regression
++ polynomial_regression = ttk.Button(mighty2, text="Polynomial Regression", command=click_nlr_poly,width = 26)   
++-polynomial_regression.grid(column=0, row=0, sticky='W')
+++polynomial_regression.grid(column=0, row=0, sticky='W',padx = 9,pady =3 )
++ 
++ # Order for polynomial_reg
++ number_poly = tk.IntVar()
++@@ -705,7 +708,7 @@ def click_nlr_sin():
++         textBox.insert(tk.INSERT, "Sinusoidal Regression works for bivariate data only\n")
++ 
++ sinusoidal_regression = ttk.Button(mighty2, text="Sinusoidal Regression", command=click_nlr_sin,width = 26)   
++-sinusoidal_regression.grid(column=0, row=1, sticky='W')
+++sinusoidal_regression.grid(column=0, row=1, sticky='W',padx=10,pady = 2)
++ """
++ # Order for sinusoidal_reg
++ number_sin = tk.StringVar()
++@@ -735,7 +738,7 @@ def click_nlr_exp():
++         textBox.insert(tk.INSERT, "Exponential Regression works for bivariate data only\n")
++ 
++ exponential_regression = ttk.Button(mighty2, text="Exponential Regression", command=click_nlr_exp,width = 26)   
++-exponential_regression.grid(column=0, row=2, sticky='W')
+++exponential_regression.grid(column=0, row=2, sticky='W',padx = 10,pady = 2)
++ 
++ ## Exponential Transformation
++ 
++@@ -761,7 +764,7 @@ def click_nlr_exp_trf():
++         textBox.insert(tk.INSERT, "Exponential Transformation implemented for bivariate data only\n")
++         
++ exponential_transformation = ttk.Button(mighty2, text="Exponential Transformation", command=click_nlr_exp_trf,width = 26)   
++-exponential_transformation.grid(column=0, row=3, sticky='W')
+++exponential_transformation.grid(column=0, row=3, sticky='W', padx = 10,pady = 2)
++ 
++ 
++ 
++@@ -871,7 +874,7 @@ def click_anova():
++ 
++ # Add button for ANOVA
++ anova = ttk.Button(mighty, text="ANOVA", command=click_anova,width = mighty_width)   
++-anova.grid(column=0, row=4, sticky='W')
+++anova.grid(column=0, row=4, sticky='W', padx = 10,pady = 2)
++ 
++ #------------------------------------------------------------------------------Comparison
++ 
++@@ -911,47 +914,103 @@ def click_comparison():
++ 
++         textBox.delete(1.0, tk.END) # clear anything previously present
++         textBox.insert(tk.INSERT,tabulate(table,headers,tablefmt="fancy_grid", floatfmt=".2f"))
+++        textBox.tag_add("one,one", "2.12", "2.32")
+++        textBox.tag_add("one,two", "3.12", "3.32")
+++        
+++        textBox.tag_add("two,1", "2.33", "2.49")
+++        textBox.tag_add("two,2", "3.33", "3.49")
+++        textBox.tag_add("two,3", "4.33", "4.49")
+++        textBox.tag_add("two,4", "5.33", "5.49")
+++        textBox.tag_add("two,5", "6.33", "6.49")
+++        textBox.tag_add("two,6", "7.33", "7.49")
+++        textBox.tag_add("two,7", "8.33", "8.49")
+++        textBox.tag_add("two,8", "9.33", "9.49")
+++        textBox.tag_add("two,9", "10.33", "10.49")
+++        textBox.tag_add("two,10", "11.33", "11.49")
+++        #textBox.tag_add("one,11", "13.12", "2.32")
+++        
++ 
++-        print(f_table)
++-        model_choice = ["","Linear Model", "Polynomial model of order 2","Polynomial model of order 3",
++-                        "Polynomial model of order 4"]
++-        textBox.insert(tk.INSERT,"\n CONCLUSION: \n" + model_choice[f_table.index(max(f_table[1:]))] + " : ("+\
++-                       eqn_table[f_table.index(max(f_table[1:]))].replace('\n','')+ " ) " + " is better fit for given data.\n" +\
++-                       model_choice[f_table.index(max(f_table[1:]))] + " : (" + eqn_table[f_table.index(max(f_table[1:]))].replace('\n','')+\
++-                       " )"+ " is chosen for Prediction")
+++        textBox.tag_add("three,one", "2.50", "2.64")
+++        textBox.tag_add("three,two", "3.50", "3.64")
+++
+++        textBox.tag_add("four,one", "2.65", "2.81")
+++        textBox.tag_add("four,two", "3.65", "3.81")
++         
++-        predict_model = ["",'linear','poly_2','poly_3', 'poly_4']
++-        print("Max_f_table",f_table.index(max(f_table[1:])))
++         if(f_table.index(max(f_table[1:])) == 1):
++             data.pred_model = data.linear['coeff']
++             data.pred_eqn = data.linear['eqn']
+++            textBox.tag_config("one,one", background="yellow")
+++            textBox.tag_config("one,two", background="yellow")
+++            
++         elif(f_table.index(max(f_table[1:])) == 2):
++             data.pred_model = data.poly_2['coeff']
++             data.pred_eqn = data.poly_2['eqn']
+++            textBox.tag_config("two,1", background="yellow")
+++            textBox.tag_config("two,2", background="yellow")
+++            textBox.tag_config("two,3", background="yellow")
+++            textBox.tag_config("two,4", background="red")
+++            textBox.tag_config("two,5", background="red")
+++            textBox.tag_config("two,6", background="red")
+++            textBox.tag_config("two,7", background="yellow")
+++            textBox.tag_config("two,8", background="yellow")
+++            textBox.tag_config("two,9", background="yellow")
+++            textBox.tag_config("two,10", background="yellow")
+++            
++         elif(f_table.index(max(f_table[1:])) == 3):
++             data.pred_model = data.poly_3['coeff']
++             data.pred_eqn = data.poly_3['eqn']
+++            textBox.tag_config("three,one", background="yellow")
+++            textBox.tag_config("three,two", background="yellow")
+++            
++         elif(f_table.index(max(f_table[1:])) == 4):
++             data.pred_model = data.poly_4['coeff']
++             data.pred_eqn = data.poly_4['eqn']
++-        
++-    else:
++-        ...
+++            textBox.tag_config("four,one", background="yellow")
+++            textBox.tag_config("four,two", background="yellow")
+++    #textBox.tag_add("one", "1.0", "1.8")
+++    #textBox.tag_config("one", background="yellow")
++ 
+++        print(f_table)
+++        model_choice = ["","Linear Model", "Polynomial model of order 2","Polynomial model of order 3",
+++                        "Polynomial model of order 4"]
+++        textBox.insert(tk.INSERT,"\n CONCLUSION: \n" + model_choice[f_table.index(max(f_table[1:]))] + " : ("+\
+++                       eqn_table[f_table.index(max(f_table[1:]))].replace('\n','')+ " ) " + " is better fit for given data.\n" +\
+++                       model_choice[f_table.index(max(f_table[1:]))] + " : (" + eqn_table[f_table.index(max(f_table[1:]))].replace('\n','')+\
+++                       " )"+ " is chosen for Prediction")
+++        
+++        predict_model = ["",'linear','poly_2','poly_3', 'poly_4']
+++        print("Max_f_table",f_table.index(max(f_table[1:])))
+++    """
+++            if(f_table.index(max(f_table[1:])) == 1):
+++                data.pred_model = data.linear['coeff']
+++                data.pred_eqn = data.linear['eqn']
+++            elif(f_table.index(max(f_table[1:])) == 2):
+++                data.pred_model = data.poly_2['coeff']
+++                data.pred_eqn = data.poly_2['eqn']
+++            elif(f_table.index(max(f_table[1:])) == 3):
+++                data.pred_model = data.poly_3['coeff']
+++                data.pred_eqn = data.poly_3['eqn']
+++            elif(f_table.index(max(f_table[1:])) == 4):
+++                data.pred_model = data.poly_4['coeff']
+++                data.pred_eqn = data.poly_4['eqn']
+++           
+++            else:
+++            ...
+++    """
++ comparison_button = ttk.Button(mighty, text="Compare Models", command=click_comparison,width = mighty_width)   
++-comparison_button.grid(column=0, row=5, sticky='W')
+++comparison_button.grid(column=0, row=5, sticky='W',padx = 10,pady = 2)
++ 
++ #------------------------------------------------------------------------------------------------Prediction
++ lab=ttk.Label(mighty3,text="Enter Value for Prediction")
++-lab.grid()
+++lab.grid(pady = 2,padx = 5)
++ E1=ttk.Entry(mighty3)
++-E1.grid()
+++E1.grid(pady = 2,padx = 5)
++ var=tk.StringVar()
++ 
++ lab1=ttk.Label(mighty3,text="Enter MultiValue for Prediction")
++-lab1.grid()
+++lab1.grid(pady = 2,padx = 5)
++ E2=ttk.Entry(mighty3,textvariable=var)
++-E2.grid()
+++E2.grid(pady = 2,padx = 5)
++ 
++ def predict_value():
++     value=E1.get()
++@@ -988,9 +1047,10 @@ def predict_value():
++         textBox.insert(tk.INSERT, 'predicted value is \n'+str(pred_y_m))
++ 
++ predict = ttk.Button(mighty3,text="Predict",command=predict_value,width= 26)
++-predict.grid(column=0,row=4,sticky='w')
+++predict.grid(column=0,row=4,sticky='w',padx = 10,pady = 2)
++ 
++ #----------------------------------------------------------------------------------------------------TIMESERIES
+++"""
++ # LabelFrame using tab2 as the parent - for Time series plot
++ mighty_t1 = ttk.LabelFrame(tab2, text=' PLOT')
++ mighty_t1.grid(column=0, row=0, padx=8, pady=4)
++@@ -1069,10 +1129,105 @@ def click_Calculate_ARIMA():
++ # Add button for ARIMA
++ Calculate_ARIMA = ttk.Button(mighty_t2, text="ARIMA", command= lambda : click_Calculate_ARIMA(), width = 8)   
++ Calculate_ARIMA.grid(column=1, row=4, sticky='W')
+++"""
+++
+++# LabelFrame using tab2 as the parent - for Stationary
+++mighty_t1 = ttk.LabelFrame(tab2, text=' Stationarity')
+++mighty_t1.grid(column=0, row=1, padx=8, pady=2, sticky = 'N')
+++
+++# LabelFrame using tab2 as the parent - for ARMA/ARIMA
+++mighty_t2 = ttk.LabelFrame(tab2, text= 'ARIMA')
+++mighty_t2.grid(column=0, row=2, padx=8, pady=2,sticky = 'N')
+++
+++# LabelFrame using tab2 as the parent - for output console
+++mighty_t3 = ttk.LabelFrame(tab2, text=' Output Console')
+++mighty_t3.grid(column=1, row=0,sticky=tk.N+tk.S, padx=8, pady=4, rowspan = 6)
+++
+++button_width = 15
+++
+++def click_upload_data_ts():
+++    ...
+++
+++upload_data_ts = ttk.Button(tab2, text="Load Data", command= lambda : click_upload_data_ts, width = button_width,compound=tk.LEFT)
+++#upload_data_ts.pack(side = tk.LEFT)
+++#upload_data_ts.place(x=0,y=1) 
+++upload_data_ts.grid(column=0, row=0, padx=22, pady=2,sticky='W')
+++
+++def click_seasonal_diff():
+++    #lags = int(tk.simpledialog.askstring('Lags', 'Enter the number of lags:'))
+++    lags = tk.simpledialog.askstring('Lags', 'Enter the number of lags:') # removed int
+++
+++    if lags == None:# user clicked  cancel
+++        print('Seas_diff None')
+++    else:# user has input and clicked 'OK'
+++        print('Seas_diff lags',int(lags))
+++    print('seas_diff lags=',lags)
+++    ...
+++button_width = 20
+++seasonal_diff = ttk.Button(mighty_t1, text="Seasonal Difference", command= lambda : click_seasonal_diff(), width = button_width)
+++#seasonal_diff.config(justify=tk.LEFT)
+++seasonal_diff.grid(column=0, row=0, sticky='W',padx = 15,pady =3)
+++
+++def click_normal_diff():
+++    lags = tk.simpledialog.askstring('Lags', 'Enter the number of lags:')
+++    if lags == None:
+++        print('Seas_diff None')
+++    else:
+++        print('Seas_diff lags',int(lags))
+++    ...
+++
+++normal_diff = ttk.Button(mighty_t1, text="Normal Difference", command= lambda : click_normal_diff(), width = button_width)   
+++normal_diff.grid(column=0, row=1, sticky='W',padx = 15,pady =3)
+++
+++def click_auto_regression():
+++    #lags = int(tk.simpledialog.askstring('Lags', 'Enter the number of lags:'))
+++    lags = tk.simpledialog.askstring('Lags', 'Enter the number of lags:') # removed int
+++
+++    if lags == None:# user clicked  cancel
+++        print('Seas_diff None')
+++    else:# user has input and clicked 'OK'
+++        print('Seas_diff lags',int(lags))
+++    print('seas_diff lags=',lags)
+++    ...
+++button_width = 18
+++
+++auto_regression = ttk.Button(mighty_t2, text="Auto Regression", command= lambda : click_auto_regression(), width = button_width)
+++auto_regression.grid(column=0, row=0, sticky='W',padx = 22,pady =3)
+++
+++def click_moving_average():
+++    #lags = int(tk.simpledialog.askstring('Lags', 'Enter the number of lags:'))
+++    lags = tk.simpledialog.askstring('Lags', 'Enter the number of lags:') # removed int
+++
+++    if lags == None:# user clicked  cancel
+++        print('User clicked None')
+++    else:# user has input and clicked 'OK'
+++        print('Seas_diff lags',int(lags))
+++    print('User has input something lags=',lags)
+++    ...
+++
+++moving_average = ttk.Button(mighty_t2, text="Moving Average", command= lambda : click_moving_average(), width = button_width)
+++moving_average.grid(column=0, row=1, sticky='W',padx = 22,pady =3)
+++
+++def click_predictions():
+++    print('click_predictions')
+++    ...
+++
+++predictions = ttk.Button(tab2, text="Predictions", command= lambda : click_predictions(), width = 15)
+++predictions.grid(column=0, row=3, sticky='W' + 'N' ,padx = 22,pady =2)
+++
+++
+++def click_reset_data():
+++    print('click_reset_data')
+++    ...
+++
+++reset_data = ttk.Button(tab2, text="Reset to Original Data", command= lambda : click_reset_data(), width = 25)
+++reset_data.grid(column=0, row=4, sticky='W' + 'N',padx = 22,pady =2)
+++
+++
++ 
++ # Add big textbox for time series
++ text_h= 35
++-text_w = 75
+++text_w = 90
++ textBox_t1 = tk.Text(mighty_t3, height = text_h, width = text_w,wrap=tk.WORD)
++ textBox_t1.grid(column=0, row=5, sticky=tk.N+tk.S)
++ 
+diff --git a/test_tab.py b/test_tab.py
+index 3490ce4..3aa765a 100644
+--- a/test_tab.py
++++ b/test_tab.py
+@@ -57,7 +57,7 @@ def reg_plot(x_plot,y_plot,y_predicted, equation_str, title, x_label, y_label, c
+     plt.title(title)					
+     plt.xlabel(x_label)					
+     plt.ylabel(y_label)
+-    plt.legend((raw_plot, predict_plot),('Raw Data', 'Prediction equation = ' + equation_str),loc=(-0.05,-0.20), scatterpoints=1, ncol=3, fontsize=8)
++    plt.legend((raw_plot, predict_plot),('Observed Data', 'Prediction equation = ' + equation_str),loc=(-0.05,-0.20), scatterpoints=1, ncol=3, fontsize=8)
+     plt.tight_layout()
+     plt.show()
+     
+@@ -170,11 +170,11 @@ mighty1 = ttk.LabelFrame(tab1, text=' Output Console')
+ mighty1.grid(column=1, row=0,sticky=tk.N+tk.S, padx=8, pady=4, columnspan=3, rowspan = 6)
+ 
+ mighty2 = ttk.LabelFrame(tab1, text=' Non Linear Regression ')
+-mighty2.grid(column = 0, row=1, padx=2, pady=1)
++mighty2.grid(column = 0, row=1, padx=10, pady=2)
+ #mighty2.grid_columnconfigure(0, weight=1)
+ 
+ mighty3 = ttk.LabelFrame(tab1,text='Prediction')
+-mighty3.grid(column=0,row=2,padx=2,pady=1)
++mighty3.grid(column=0,row=2,padx=15,pady=4)
+ 
+ # Add big textbox
+ text_h= 35
+@@ -367,7 +367,7 @@ def _destroyWindow():
+ mighty_width = 26
+ # Add button to output basic statistics
+ Statistics = ttk.Button(mighty, text="Statistics", command= lambda : click_stats(textBox), width = mighty_width)   
+-Statistics.grid(column=0, row=0, sticky='W')
++Statistics.grid(column=0, row=0, sticky='W', padx = 10,pady = 2)
+ #----------------------------------------------------------------------Basic Plot
+ # Modified Button Click Plot
+ def click_plot():
+@@ -402,7 +402,7 @@ def click_plot():
+         #sns.pairplot(multi_df, diag_kind ='kde')
+ # Add button for plot
+ plot = ttk.Button(mighty, text="Plot", command=click_plot, width = mighty_width)   
+-plot.grid(column=0, row=1, sticky='W')
++plot.grid(column=0, row=1, sticky='W', padx = 10,pady = 2)
+ 
+ # Multi plot
+ """
+@@ -426,8 +426,9 @@ def click_linear_regression():
+         Y_predicted = form_eqn_mlr(copy.deepcopy(coeff))
+         coeff_m = coeff
+         textBox.delete(1.0, tk.END)
+-        textBox.insert(tk.INSERT, equation_str)
+-        
++        textBox.insert(tk.INSERT,"The linear regression Equation is\n " + equation_str)
++        #textBox.tag_add("one", "1.0", "1.8")
++        #textBox.tag_config("one", background="yellow")
+ 
+     else:
+         global reg_order
+@@ -438,7 +439,9 @@ def click_linear_regression():
+         Y_predicted = form_eqn_mlr(copy.deepcopy(coeff))
+         textBox.delete(1.0, tk.END)
+         print(equation_str)
+-        textBox.insert(tk.INSERT, equation_str)
++        textBox.insert(tk.INSERT,"The linear regression Equation is\n " + equation_str)
++        #textBox.tag_add("one", "1.0", "1.8")
++        #textBox.tag_config("one", background="yellow")
+         """coeff_list =copy.deepcopy(coeff)
+         Y_predicted = form_eqn(copy.deepcopy(coeff))
+         coefficient_str = ''
+@@ -466,7 +469,7 @@ def click_linear_regression():
+         textBox.delete(1.0, tk.END)
+         textBox.insert(tk.INSERT, equation_str)
+         """
+-        title= "predicted vs actual"					
++        title= "predicted vs observed"					
+         x_label= 'X'					
+         y_label= 'Y'
+         reg_plot(X.values, Y.values, Y_predicted, equation_str, title, x_label, y_label, 'g')
+@@ -574,7 +577,7 @@ def stats_display(coeff):
+         textBox.delete(1.0, tk.END)
+         textBox.insert(tk.INSERT,'The linear model is \n' + equation_str)
+         data.linear['eqn'] = equation_str
+-        title= "predicted vs actual"					
++        title= "Predicted vs Observed"					
+         x_label= 'X'					
+         y_label= 'Y'
+         reg_plot(X.values, Y.values, Y_predicted, equation_str, title, x_label, y_label, 'g')
+@@ -592,7 +595,7 @@ def form_eqn_mlr(coeff):
+ 
+ # Add button to Regression
+ linear_Regression = ttk.Button(mighty, text="Linear Regression", command=click_linear_regression,width = mighty_width)   
+-linear_Regression.grid(column=0, row=2, sticky='W')
++linear_Regression.grid(column=0, row=2, sticky='W', padx = 10,pady = 2)
+ 
+ #-----------------------------------------------------------------------Non Linear Regerssion
+ 
+@@ -654,7 +657,7 @@ def click_nlr_poly():
+         #raw_plot = plt.scatter(X.values, Y.values, color = 'r')
+         #plt.plot(X.values, round (coeff_list[0] + (coeff_list[1]*X.values) + (coeff_list[2]*(X.values**2))+ (coeff_list[3]*(X.values**3)), 4),'-')
+         #predict_plot = plt.plot(X.values, Y_predicted, '-')
+-        title= "predicted vs actual"					
++        title= "Predicted vs Observed"					
+         x_label= 'X'					
+         y_label= 'Y'
+         #plt.legend((raw_plot, predict_plot),('Raw Data', 'Predicted'),scatterpoints=1, ncol=3, fontsize=8)
+@@ -669,7 +672,7 @@ def click_nlr_poly():
+     
+ # Add button for nonlinear_regression
+ polynomial_regression = ttk.Button(mighty2, text="Polynomial Regression", command=click_nlr_poly,width = 26)   
+-polynomial_regression.grid(column=0, row=0, sticky='W')
++polynomial_regression.grid(column=0, row=0, sticky='W',padx = 9,pady =3 )
+ 
+ # Order for polynomial_reg
+ number_poly = tk.IntVar()
+@@ -705,7 +708,7 @@ def click_nlr_sin():
+         textBox.insert(tk.INSERT, "Sinusoidal Regression works for bivariate data only\n")
+ 
+ sinusoidal_regression = ttk.Button(mighty2, text="Sinusoidal Regression", command=click_nlr_sin,width = 26)   
+-sinusoidal_regression.grid(column=0, row=1, sticky='W')
++sinusoidal_regression.grid(column=0, row=1, sticky='W',padx=10,pady = 2)
+ """
+ # Order for sinusoidal_reg
+ number_sin = tk.StringVar()
+@@ -735,7 +738,7 @@ def click_nlr_exp():
+         textBox.insert(tk.INSERT, "Exponential Regression works for bivariate data only\n")
+ 
+ exponential_regression = ttk.Button(mighty2, text="Exponential Regression", command=click_nlr_exp,width = 26)   
+-exponential_regression.grid(column=0, row=2, sticky='W')
++exponential_regression.grid(column=0, row=2, sticky='W',padx = 10,pady = 2)
+ 
+ ## Exponential Transformation
+ 
+@@ -761,7 +764,7 @@ def click_nlr_exp_trf():
+         textBox.insert(tk.INSERT, "Exponential Transformation implemented for bivariate data only\n")
+         
+ exponential_transformation = ttk.Button(mighty2, text="Exponential Transformation", command=click_nlr_exp_trf,width = 26)   
+-exponential_transformation.grid(column=0, row=3, sticky='W')
++exponential_transformation.grid(column=0, row=3, sticky='W', padx = 10,pady = 2)
+ 
+ 
+ 
+@@ -871,7 +874,7 @@ def click_anova():
+ 
+ # Add button for ANOVA
+ anova = ttk.Button(mighty, text="ANOVA", command=click_anova,width = mighty_width)   
+-anova.grid(column=0, row=4, sticky='W')
++anova.grid(column=0, row=4, sticky='W', padx = 10,pady = 2)
+ 
+ #------------------------------------------------------------------------------Comparison
+ 
+@@ -911,47 +914,103 @@ def click_comparison():
+ 
+         textBox.delete(1.0, tk.END) # clear anything previously present
+         textBox.insert(tk.INSERT,tabulate(table,headers,tablefmt="fancy_grid", floatfmt=".2f"))
++        textBox.tag_add("one,one", "2.12", "2.32")
++        textBox.tag_add("one,two", "3.12", "3.32")
++        
++        textBox.tag_add("two,1", "2.33", "2.49")
++        textBox.tag_add("two,2", "3.33", "3.49")
++        textBox.tag_add("two,3", "4.33", "4.49")
++        textBox.tag_add("two,4", "5.33", "5.49")
++        textBox.tag_add("two,5", "6.33", "6.49")
++        textBox.tag_add("two,6", "7.33", "7.49")
++        textBox.tag_add("two,7", "8.33", "8.49")
++        textBox.tag_add("two,8", "9.33", "9.49")
++        textBox.tag_add("two,9", "10.33", "10.49")
++        textBox.tag_add("two,10", "11.33", "11.49")
++        #textBox.tag_add("one,11", "13.12", "2.32")
++        
+ 
+-        print(f_table)
+-        model_choice = ["","Linear Model", "Polynomial model of order 2","Polynomial model of order 3",
+-                        "Polynomial model of order 4"]
+-        textBox.insert(tk.INSERT,"\n CONCLUSION: \n" + model_choice[f_table.index(max(f_table[1:]))] + " : ("+\
+-                       eqn_table[f_table.index(max(f_table[1:]))].replace('\n','')+ " ) " + " is better fit for given data.\n" +\
+-                       model_choice[f_table.index(max(f_table[1:]))] + " : (" + eqn_table[f_table.index(max(f_table[1:]))].replace('\n','')+\
+-                       " )"+ " is chosen for Prediction")
++        textBox.tag_add("three,one", "2.50", "2.64")
++        textBox.tag_add("three,two", "3.50", "3.64")
++
++        textBox.tag_add("four,one", "2.65", "2.81")
++        textBox.tag_add("four,two", "3.65", "3.81")
+         
+-        predict_model = ["",'linear','poly_2','poly_3', 'poly_4']
+-        print("Max_f_table",f_table.index(max(f_table[1:])))
+         if(f_table.index(max(f_table[1:])) == 1):
+             data.pred_model = data.linear['coeff']
+             data.pred_eqn = data.linear['eqn']
++            textBox.tag_config("one,one", background="yellow")
++            textBox.tag_config("one,two", background="yellow")
++            
+         elif(f_table.index(max(f_table[1:])) == 2):
+             data.pred_model = data.poly_2['coeff']
+             data.pred_eqn = data.poly_2['eqn']
++            textBox.tag_config("two,1", background="yellow")
++            textBox.tag_config("two,2", background="yellow")
++            textBox.tag_config("two,3", background="yellow")
++            textBox.tag_config("two,4", background="red")
++            textBox.tag_config("two,5", background="red")
++            textBox.tag_config("two,6", background="red")
++            textBox.tag_config("two,7", background="yellow")
++            textBox.tag_config("two,8", background="yellow")
++            textBox.tag_config("two,9", background="yellow")
++            textBox.tag_config("two,10", background="yellow")
++            
+         elif(f_table.index(max(f_table[1:])) == 3):
+             data.pred_model = data.poly_3['coeff']
+             data.pred_eqn = data.poly_3['eqn']
++            textBox.tag_config("three,one", background="yellow")
++            textBox.tag_config("three,two", background="yellow")
++            
+         elif(f_table.index(max(f_table[1:])) == 4):
+             data.pred_model = data.poly_4['coeff']
+             data.pred_eqn = data.poly_4['eqn']
+-        
+-    else:
+-        ...
++            textBox.tag_config("four,one", background="yellow")
++            textBox.tag_config("four,two", background="yellow")
++    #textBox.tag_add("one", "1.0", "1.8")
++    #textBox.tag_config("one", background="yellow")
+ 
++        print(f_table)
++        model_choice = ["","Linear Model", "Polynomial model of order 2","Polynomial model of order 3",
++                        "Polynomial model of order 4"]
++        textBox.insert(tk.INSERT,"\n CONCLUSION: \n" + model_choice[f_table.index(max(f_table[1:]))] + " : ("+\
++                       eqn_table[f_table.index(max(f_table[1:]))].replace('\n','')+ " ) " + " is better fit for given data.\n" +\
++                       model_choice[f_table.index(max(f_table[1:]))] + " : (" + eqn_table[f_table.index(max(f_table[1:]))].replace('\n','')+\
++                       " )"+ " is chosen for Prediction")
++        
++        predict_model = ["",'linear','poly_2','poly_3', 'poly_4']
++        print("Max_f_table",f_table.index(max(f_table[1:])))
++    """
++            if(f_table.index(max(f_table[1:])) == 1):
++                data.pred_model = data.linear['coeff']
++                data.pred_eqn = data.linear['eqn']
++            elif(f_table.index(max(f_table[1:])) == 2):
++                data.pred_model = data.poly_2['coeff']
++                data.pred_eqn = data.poly_2['eqn']
++            elif(f_table.index(max(f_table[1:])) == 3):
++                data.pred_model = data.poly_3['coeff']
++                data.pred_eqn = data.poly_3['eqn']
++            elif(f_table.index(max(f_table[1:])) == 4):
++                data.pred_model = data.poly_4['coeff']
++                data.pred_eqn = data.poly_4['eqn']
++           
++            else:
++            ...
++    """
+ comparison_button = ttk.Button(mighty, text="Compare Models", command=click_comparison,width = mighty_width)   
+-comparison_button.grid(column=0, row=5, sticky='W')
++comparison_button.grid(column=0, row=5, sticky='W',padx = 10,pady = 2)
+ 
+ #------------------------------------------------------------------------------------------------Prediction
+ lab=ttk.Label(mighty3,text="Enter Value for Prediction")
+-lab.grid()
++lab.grid(pady = 2,padx = 5)
+ E1=ttk.Entry(mighty3)
+-E1.grid()
++E1.grid(pady = 2,padx = 5)
+ var=tk.StringVar()
+ 
+ lab1=ttk.Label(mighty3,text="Enter MultiValue for Prediction")
+-lab1.grid()
++lab1.grid(pady = 2,padx = 5)
+ E2=ttk.Entry(mighty3,textvariable=var)
+-E2.grid()
++E2.grid(pady = 2,padx = 5)
+ 
+ def predict_value():
+     value=E1.get()
+@@ -988,9 +1047,10 @@ def predict_value():
+         textBox.insert(tk.INSERT, 'predicted value is \n'+str(pred_y_m))
+ 
+ predict = ttk.Button(mighty3,text="Predict",command=predict_value,width= 26)
+-predict.grid(column=0,row=4,sticky='w')
++predict.grid(column=0,row=4,sticky='w',padx = 10,pady = 2)
+ 
+ #----------------------------------------------------------------------------------------------------TIMESERIES
++"""
+ # LabelFrame using tab2 as the parent - for Time series plot
+ mighty_t1 = ttk.LabelFrame(tab2, text=' PLOT')
+ mighty_t1.grid(column=0, row=0, padx=8, pady=4)
+@@ -1069,10 +1129,105 @@ def click_Calculate_ARIMA():
+ # Add button for ARIMA
+ Calculate_ARIMA = ttk.Button(mighty_t2, text="ARIMA", command= lambda : click_Calculate_ARIMA(), width = 8)   
+ Calculate_ARIMA.grid(column=1, row=4, sticky='W')
++"""
++
++# LabelFrame using tab2 as the parent - for Stationary
++mighty_t1 = ttk.LabelFrame(tab2, text=' Stationarity')
++mighty_t1.grid(column=0, row=1, padx=8, pady=2, sticky = 'N')
++
++# LabelFrame using tab2 as the parent - for ARMA/ARIMA
++mighty_t2 = ttk.LabelFrame(tab2, text= 'ARIMA')
++mighty_t2.grid(column=0, row=2, padx=8, pady=2,sticky = 'N')
++
++# LabelFrame using tab2 as the parent - for output console
++mighty_t3 = ttk.LabelFrame(tab2, text=' Output Console')
++mighty_t3.grid(column=1, row=0,sticky=tk.N+tk.S, padx=8, pady=4, rowspan = 6)
++
++button_width = 15
++
++def click_upload_data_ts():
++    ...
++
++upload_data_ts = ttk.Button(tab2, text="Load Data", command= lambda : click_upload_data_ts, width = button_width,compound=tk.LEFT)
++#upload_data_ts.pack(side = tk.LEFT)
++#upload_data_ts.place(x=0,y=1) 
++upload_data_ts.grid(column=0, row=0, padx=22, pady=2,sticky='W')
++
++def click_seasonal_diff():
++    #lags = int(tk.simpledialog.askstring('Lags', 'Enter the number of lags:'))
++    lags = tk.simpledialog.askstring('Lags', 'Enter the number of lags:') # removed int
++
++    if lags == None:# user clicked  cancel
++        print('Seas_diff None')
++    else:# user has input and clicked 'OK'
++        print('Seas_diff lags',int(lags))
++    print('seas_diff lags=',lags)
++    ...
++button_width = 20
++seasonal_diff = ttk.Button(mighty_t1, text="Seasonal Difference", command= lambda : click_seasonal_diff(), width = button_width)
++#seasonal_diff.config(justify=tk.LEFT)
++seasonal_diff.grid(column=0, row=0, sticky='W',padx = 15,pady =3)
++
++def click_normal_diff():
++    lags = tk.simpledialog.askstring('Lags', 'Enter the number of lags:')
++    if lags == None:
++        print('Seas_diff None')
++    else:
++        print('Seas_diff lags',int(lags))
++    ...
++
++normal_diff = ttk.Button(mighty_t1, text="Normal Difference", command= lambda : click_normal_diff(), width = button_width)   
++normal_diff.grid(column=0, row=1, sticky='W',padx = 15,pady =3)
++
++def click_auto_regression():
++    #lags = int(tk.simpledialog.askstring('Lags', 'Enter the number of lags:'))
++    lags = tk.simpledialog.askstring('Lags', 'Enter the number of lags:') # removed int
++
++    if lags == None:# user clicked  cancel
++        print('Seas_diff None')
++    else:# user has input and clicked 'OK'
++        print('Seas_diff lags',int(lags))
++    print('seas_diff lags=',lags)
++    ...
++button_width = 18
++
++auto_regression = ttk.Button(mighty_t2, text="Auto Regression", command= lambda : click_auto_regression(), width = button_width)
++auto_regression.grid(column=0, row=0, sticky='W',padx = 22,pady =3)
++
++def click_moving_average():
++    #lags = int(tk.simpledialog.askstring('Lags', 'Enter the number of lags:'))
++    lags = tk.simpledialog.askstring('Lags', 'Enter the number of lags:') # removed int
++
++    if lags == None:# user clicked  cancel
++        print('User clicked None')
++    else:# user has input and clicked 'OK'
++        print('Seas_diff lags',int(lags))
++    print('User has input something lags=',lags)
++    ...
++
++moving_average = ttk.Button(mighty_t2, text="Moving Average", command= lambda : click_moving_average(), width = button_width)
++moving_average.grid(column=0, row=1, sticky='W',padx = 22,pady =3)
++
++def click_predictions():
++    print('click_predictions')
++    ...
++
++predictions = ttk.Button(tab2, text="Predictions", command= lambda : click_predictions(), width = 15)
++predictions.grid(column=0, row=3, sticky='W' + 'N' ,padx = 22,pady =2)
++
++
++def click_reset_data():
++    print('click_reset_data')
++    ...
++
++reset_data = ttk.Button(tab2, text="Reset to Original Data", command= lambda : click_reset_data(), width = 25)
++reset_data.grid(column=0, row=4, sticky='W' + 'N',padx = 22,pady =2)
++
++
+ 
+ # Add big textbox for time series
+ text_h= 35
+-text_w = 75
++text_w = 90
+ textBox_t1 = tk.Text(mighty_t3, height = text_h, width = text_w,wrap=tk.WORD)
+ textBox_t1.grid(column=0, row=5, sticky=tk.N+tk.S)
+ 
