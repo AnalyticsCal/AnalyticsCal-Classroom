@@ -178,7 +178,7 @@ mighty3.grid(column=0,row=2,padx=15,pady=4)
 
 # Add big textbox
 text_h= 35
-text_w = 90
+text_w = 95
 textBox = tk.Text(mighty1, height = text_h, width = text_w,wrap=tk.WORD)
 textBox.grid(column=0, row=5, sticky=tk.N+tk.S)
 
@@ -428,20 +428,22 @@ def click_linear_regression():
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT,"The linear regression Equation is\n " + equation_str)
         #textBox.tag_add("one", "1.0", "1.8")
-        #textBox.tag_config("one", background="yellow")
+        #textBox.tag_config("one", background="yellow"_norm)
 
     else:
         global reg_order
         reg_order =1 
         coeff = mlr.multi_linear_regression([X.values], Y.values)
+        
         data.linear['coeff'] = [round(coeff[i], precision) for i in range(len(coeff))]
         equation_str = stats_display(round_off_list(coeff, precision))
+        
         Y_predicted = form_eqn_mlr(copy.deepcopy(coeff))
         textBox.delete(1.0, tk.END)
         print(equation_str)
         textBox.insert(tk.INSERT,"The linear regression Equation is\n " + equation_str)
         #textBox.tag_add("one", "1.0", "1.8")
-        #textBox.tag_config("one", background="yellow")
+        #textBox.tag_config("one", background="yellow"_norm)
         """coeff_list =copy.deepcopy(coeff)
         Y_predicted = form_eqn(copy.deepcopy(coeff))
         coefficient_str = ''
@@ -576,7 +578,8 @@ def stats_display(coeff):
             
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT,'The linear model is \n' + equation_str)
-        data.linear['eqn'] = equation_str
+        str_1 = '\n'.join(list(chunkstring(equation_str, 14)))
+        data.linear['eqn'] = str_1
         title= "Predicted vs Observed"					
         x_label= 'X'					
         y_label= 'Y'
@@ -819,7 +822,7 @@ def click_anova():
         textBox.insert(tk.INSERT, 'f = '+ str(round(data.f, 4))  + '\n')
         textBox.insert(tk.INSERT, 'p = '+ str(round(data.p,4)) + '\n')
         """
-        table=[["msr",data.msr],["mse",data.mse],["ssr",data.ssr],["sse",data.sse],["f",data.f],["p",data.p]]
+        table=[["msr",data.msr],["mse",data.mse],["ssr",data.ssr],["sse",data.sse],["f",data.f],["p",data.p],["Model Confidence",data.model_confidence]]
         headers= ["ANOVA","Values"]
         textBox.insert(tk.INSERT,tabulate(table,headers,tablefmt="fancy_grid",floatfmt=".2f"))
 
@@ -878,6 +881,169 @@ anova.grid(column=0, row=4, sticky='W', padx = 10,pady = 2)
 
 #------------------------------------------------------------------------------Comparison
 
+def table_highlight (is_clear = True,max_f_table = None):
+
+    if(is_clear):
+        bg_color_norm = "white"
+        bg_color_eqn = bg_color_norm
+        max_f_table = 0
+        #.tag_remove(tagName, index1, index2=None) remove tag
+        textBox.tag_remove("1,1", "2.12", "2.29")
+        textBox.tag_remove("1,2", "3.12", "3.29")
+        textBox.tag_remove("1,3", "4.12", "4.29")
+        textBox.tag_remove("1,4", "5.12", "5.29")
+        textBox.tag_remove("1,5", "6.12", "6.29")
+        textBox.tag_remove("1,6", "7.12", "7.29")
+        textBox.tag_remove("1,7", "8.12", "8.29")
+        textBox.tag_remove("1,8", "9.12", "9.29")
+        textBox.tag_remove("1,9", "10.12", "10.29")
+        textBox.tag_remove("1,10", "11.12", "11.29")
+
+        textBox.tag_remove("two,1", "2.30", "2.49")
+        textBox.tag_remove("two,2", "3.30", "3.49")
+        textBox.tag_remove("two,3", "4.30", "4.49")
+        textBox.tag_remove("two,4", "5.30", "5.49")
+        textBox.tag_remove("two,5", "6.30", "6.49")
+        textBox.tag_remove("two,6", "7.30", "7.49")
+        textBox.tag_remove("two,7", "8.30", "8.49")
+        textBox.tag_remove("two,8", "9.30", "9.49")
+        textBox.tag_remove("two,9", "10.30", "10.49")
+        textBox.tag_remove("two,10", "11.30", "11.49")
+        #textBox.tag_remove("one,11", "13.12", "2.32")
+
+        textBox.tag_remove("3,1", "2.50", "2.68")
+        textBox.tag_remove("3,2", "3.50", "3.68")
+        textBox.tag_remove("3,3", "4.50", "4.68")
+        textBox.tag_remove("3,4", "5.50", "5.68")
+        textBox.tag_remove("3,5", "6.50", "6.68")
+        textBox.tag_remove("3,6", "7.50", "7.68")
+        textBox.tag_remove("3,7", "8.50", "8.68")
+        textBox.tag_remove("3,8", "9.50", "9.68")
+        textBox.tag_remove("3,9", "10.50", "10.68")
+        textBox.tag_remove("3,10", "11.50", "11.68")
+
+        textBox.tag_remove("4,1", "2.69", "2.89")
+        textBox.tag_remove("4,2", "3.69", "3.89")
+        textBox.tag_remove("4,3", "4.69", "4.89")
+        textBox.tag_remove("4,4", "5.69", "5.89")
+        textBox.tag_remove("4,5", "6.69", "6.89")
+        textBox.tag_remove("4,6", "7.69", "7.89")
+        textBox.tag_remove("4,7", "8.69", "8.89")
+        textBox.tag_remove("4,8", "9.69", "9.89")
+        textBox.tag_remove("4,9", "10.69", "10.89")
+        textBox.tag_remove("4,10", "11.69", "11.89")
+        print("removed tag")
+
+    else:
+        bg_color_norm = "yellow"
+        bg_color_eqn = "red"
+    
+        textBox.tag_add("1,1", "2.12", "2.29")
+        textBox.tag_add("1,2", "3.12", "3.29")
+        textBox.tag_add("1,3", "4.12", "4.29")
+        textBox.tag_add("1,4", "5.12", "5.29")
+        textBox.tag_add("1,5", "6.12", "6.29")
+        textBox.tag_add("1,6", "7.12", "7.29")
+        textBox.tag_add("1,7", "8.12", "8.29")
+        textBox.tag_add("1,8", "9.12", "9.29")
+        textBox.tag_add("1,9", "10.12", "10.29")
+        textBox.tag_add("1,10", "11.12", "11.29")
+
+        textBox.tag_add("two,1", "2.30", "2.49")
+        textBox.tag_add("two,2", "3.30", "3.49")
+        textBox.tag_add("two,3", "4.30", "4.49")
+        textBox.tag_add("two,4", "5.30", "5.49")
+        textBox.tag_add("two,5", "6.30", "6.49")
+        textBox.tag_add("two,6", "7.30", "7.49")
+        textBox.tag_add("two,7", "8.30", "8.49")
+        textBox.tag_add("two,8", "9.30", "9.49")
+        textBox.tag_add("two,9", "10.30", "10.49")
+        textBox.tag_add("two,10", "11.30", "11.49")
+        #textBox.tag_add("one,11", "13.12", "2.32")
+
+        textBox.tag_add("3,1", "2.50", "2.68")
+        textBox.tag_add("3,2", "3.50", "3.68")
+        textBox.tag_add("3,3", "4.50", "4.68")
+        textBox.tag_add("3,4", "5.50", "5.68")
+        textBox.tag_add("3,5", "6.50", "6.68")
+        textBox.tag_add("3,6", "7.50", "7.68")
+        textBox.tag_add("3,7", "8.50", "8.68")
+        textBox.tag_add("3,8", "9.50", "9.68")
+        textBox.tag_add("3,9", "10.50", "10.68")
+        textBox.tag_add("3,10", "11.50", "11.68")
+
+        textBox.tag_add("4,1", "2.69", "2.89")
+        textBox.tag_add("4,2", "3.69", "3.89")
+        textBox.tag_add("4,3", "4.69", "4.89")
+        textBox.tag_add("4,4", "5.69", "5.89")
+        textBox.tag_add("4,5", "6.69", "6.89")
+        textBox.tag_add("4,6", "7.69", "7.89")
+        textBox.tag_add("4,7", "8.69", "8.89")
+        textBox.tag_add("4,8", "9.69", "9.89")
+        textBox.tag_add("4,9", "10.69", "10.89")
+        textBox.tag_add("4,10", "11.69", "11.89")
+
+        if(max_f_table == 1):
+            data.pred_model = data.linear['coeff']
+            data.pred_eqn = data.linear['eqn']
+            textBox.tag_config("1,1", background=bg_color_norm)
+            textBox.tag_config("1,2", background=bg_color_norm)
+            textBox.tag_config("1,3", background=bg_color_norm)
+            textBox.tag_config("1,4", background=bg_color_eqn)
+            textBox.tag_config("1,5", background=bg_color_eqn)
+            textBox.tag_config("1,6", background=bg_color_eqn)
+            textBox.tag_config("1,7", background=bg_color_norm)
+            textBox.tag_config("1,8", background=bg_color_norm)
+            textBox.tag_config("1,9", background=bg_color_norm)
+            textBox.tag_config("1,10", background=bg_color_norm)
+
+            
+        elif(max_f_table == 2):
+            data.pred_model = data.poly_2['coeff']
+            data.pred_eqn = data.poly_2['eqn']
+            textBox.tag_config("two,1", background=bg_color_norm)
+            textBox.tag_config("two,2", background=bg_color_norm)
+            textBox.tag_config("two,3", background=bg_color_norm)
+            textBox.tag_config("two,4", background=bg_color_eqn)
+            textBox.tag_config("two,5", background=bg_color_eqn)
+            textBox.tag_config("two,6", background=bg_color_eqn)
+            textBox.tag_config("two,7", background=bg_color_norm)
+            textBox.tag_config("two,8", background=bg_color_norm)
+            textBox.tag_config("two,9", background=bg_color_norm)
+            textBox.tag_config("two,10", background=bg_color_norm)
+            
+        elif(max_f_table == 3):
+            data.pred_model = data.poly_3['coeff']
+            data.pred_eqn = data.poly_3['eqn']
+            textBox.tag_config("3,1", background=bg_color_norm)
+            textBox.tag_config("3,2", background=bg_color_norm)
+            textBox.tag_config("3,3", background=bg_color_norm)
+            textBox.tag_config("3,4", background=bg_color_eqn)
+            textBox.tag_config("3,5", background=bg_color_eqn)
+            textBox.tag_config("3,6", background=bg_color_eqn)
+            textBox.tag_config("3,7", background=bg_color_norm)
+            textBox.tag_config("3,8", background=bg_color_norm)
+            textBox.tag_config("3,9", background=bg_color_norm)
+            textBox.tag_config("3,10", background=bg_color_norm)
+
+            
+        elif(max_f_table == 4):
+            data.pred_model = data.poly_4['coeff']
+            data.pred_eqn = data.poly_4['eqn']
+            textBox.tag_config("4,1", background=bg_color_norm)
+            textBox.tag_config("4,2", background=bg_color_norm)
+            textBox.tag_config("4,3", background=bg_color_norm)
+            textBox.tag_config("4,4", background=bg_color_norm)
+            textBox.tag_config("4,5", background=bg_color_norm)
+            textBox.tag_config("4,6", background=bg_color_norm)
+            textBox.tag_config("4,7", background=bg_color_norm)
+            textBox.tag_config("4,8", background=bg_color_norm)
+            textBox.tag_config("4,9", background=bg_color_norm)
+            textBox.tag_config("4,10", background=bg_color_norm)
+            textBox.tag_config("four,two", background=bg_color_norm)
+        #textBox.tag_add("one", "1.0", "1.8")
+        #textBox.tag_config("one", background=`_norm)
+
 def compare_plot():
     return ...
 
@@ -907,90 +1073,39 @@ def click_comparison():
         table.append(f_table)
         table.append(p_table)
 
-        headers = ["Linear \n Model", "Polynomial \n Degree 2", "Polynomial \n Degree 3","Polynomial \n Degree 4"]
+        headers = ["Linear       \n Model", "Polynomial     \n Degree 2", "Polynomial    \n Degree 3","Polynomial      \n Degree 4"]
         #headers.extend(csvHeader[1:])
         #headers.append(csvHeader[0])
 
 
         textBox.delete(1.0, tk.END) # clear anything previously present
         textBox.insert(tk.INSERT,tabulate(table,headers,tablefmt="fancy_grid", floatfmt=".2f"))
-        textBox.tag_add("one,one", "2.12", "2.32")
-        textBox.tag_add("one,two", "3.12", "3.32")
-        
-        textBox.tag_add("two,1", "2.33", "2.49")
-        textBox.tag_add("two,2", "3.33", "3.49")
-        textBox.tag_add("two,3", "4.33", "4.49")
-        textBox.tag_add("two,4", "5.33", "5.49")
-        textBox.tag_add("two,5", "6.33", "6.49")
-        textBox.tag_add("two,6", "7.33", "7.49")
-        textBox.tag_add("two,7", "8.33", "8.49")
-        textBox.tag_add("two,8", "9.33", "9.49")
-        textBox.tag_add("two,9", "10.33", "10.49")
-        textBox.tag_add("two,10", "11.33", "11.49")
-        #textBox.tag_add("one,11", "13.12", "2.32")
-        
 
-        textBox.tag_add("three,one", "2.50", "2.64")
-        textBox.tag_add("three,two", "3.50", "3.64")
+        max_f_table = f_table.index(max(f_table[1:]))
 
-        textBox.tag_add("four,one", "2.65", "2.81")
-        textBox.tag_add("four,two", "3.65", "3.81")
-        
-        if(f_table.index(max(f_table[1:])) == 1):
-            data.pred_model = data.linear['coeff']
-            data.pred_eqn = data.linear['eqn']
-            textBox.tag_config("one,one", background="yellow")
-            textBox.tag_config("one,two", background="yellow")
-            
-        elif(f_table.index(max(f_table[1:])) == 2):
-            data.pred_model = data.poly_2['coeff']
-            data.pred_eqn = data.poly_2['eqn']
-            textBox.tag_config("two,1", background="yellow")
-            textBox.tag_config("two,2", background="yellow")
-            textBox.tag_config("two,3", background="yellow")
-            textBox.tag_config("two,4", background="red")
-            textBox.tag_config("two,5", background="red")
-            textBox.tag_config("two,6", background="red")
-            textBox.tag_config("two,7", background="yellow")
-            textBox.tag_config("two,8", background="yellow")
-            textBox.tag_config("two,9", background="yellow")
-            textBox.tag_config("two,10", background="yellow")
-            
-        elif(f_table.index(max(f_table[1:])) == 3):
-            data.pred_model = data.poly_3['coeff']
-            data.pred_eqn = data.poly_3['eqn']
-            textBox.tag_config("three,one", background="yellow")
-            textBox.tag_config("three,two", background="yellow")
-            
-        elif(f_table.index(max(f_table[1:])) == 4):
-            data.pred_model = data.poly_4['coeff']
-            data.pred_eqn = data.poly_4['eqn']
-            textBox.tag_config("four,one", background="yellow")
-            textBox.tag_config("four,two", background="yellow")
-    #textBox.tag_add("one", "1.0", "1.8")
-    #textBox.tag_config("one", background="yellow")
+        table_highlight(is_clear = False, max_f_table = max_f_table)
 
         print(f_table)
         model_choice = ["","Linear Model", "Polynomial model of order 2","Polynomial model of order 3",
                         "Polynomial model of order 4"]
-        textBox.insert(tk.INSERT,"\n CONCLUSION: \n" + model_choice[f_table.index(max(f_table[1:]))] + " : ("+\
-                       eqn_table[f_table.index(max(f_table[1:]))].replace('\n','')+ " ) " + " is better fit for given data.\n" +\
-                       model_choice[f_table.index(max(f_table[1:]))] + " : (" + eqn_table[f_table.index(max(f_table[1:]))].replace('\n','')+\
+        textBox.insert(tk.INSERT,"\n CONCLUSION: \n" + model_choice[max_f_table] + " : ("+\
+                       eqn_table[max_f_table].replace('\n','')+ " ) " + " is better fit for given data.\n" +\
+                       model_choice[max_f_table] + " : (" + eqn_table[max_f_table].replace('\n','')+\
                        " )"+ " is chosen for Prediction")
         
         predict_model = ["",'linear','poly_2','poly_3', 'poly_4']
-        print("Max_f_table",f_table.index(max(f_table[1:])))
+        print("Max_f_table",max_f_table)
     """
-            if(f_table.index(max(f_table[1:])) == 1):
+            if(max_f_table == 1):
                 data.pred_model = data.linear['coeff']
                 data.pred_eqn = data.linear['eqn']
-            elif(f_table.index(max(f_table[1:])) == 2):
+            elif(max_f_table == 2):
                 data.pred_model = data.poly_2['coeff']
                 data.pred_eqn = data.poly_2['eqn']
-            elif(f_table.index(max(f_table[1:])) == 3):
+            elif(max_f_table == 3):
                 data.pred_model = data.poly_3['coeff']
                 data.pred_eqn = data.poly_3['eqn']
-            elif(f_table.index(max(f_table[1:])) == 4):
+            elif(max_f_table == 4):
                 data.pred_model = data.poly_4['coeff']
                 data.pred_eqn = data.poly_4['eqn']
            
@@ -999,6 +1114,13 @@ def click_comparison():
     """
 comparison_button = ttk.Button(mighty, text="Compare Models", command=click_comparison,width = mighty_width)   
 comparison_button.grid(column=0, row=5, sticky='W',padx = 10,pady = 2)
+
+def click_clear():
+    table_highlight()
+    textBox.delete(1.0, tk.END)
+
+clear_button = ttk.Button(tab1, text="CLEAR", command=click_clear,width = mighty_width)   
+clear_button.grid(column=0, row=4, sticky='W',padx = 10,pady = 2)
 
 #------------------------------------------------------------------------------------------------Prediction
 lab=ttk.Label(mighty3,text="Enter Value for Prediction")
@@ -1220,8 +1342,8 @@ def click_reset_data():
     print('click_reset_data')
     ...
 
-reset_data = ttk.Button(tab2, text="Reset to Original Data", command= lambda : click_reset_data(), width = 25)
-reset_data.grid(column=0, row=4, sticky='W' + 'N',padx = 22,pady =2)
+reset_data_ts = ttk.Button(tab2, text="Reset to Original Data", command= lambda : click_reset_data(), width = 25)
+reset_data_ts.grid(column=0, row=4, sticky='W' + 'N',padx = 22,pady =2)
 
 
 
