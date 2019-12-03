@@ -122,6 +122,7 @@ class MultiDataModel():
 
     def linear_regression_coeff(self):
         self.lin_reg_coeff = []
+        self.lin_reg_eqn = ""
 
     def anova(self):
         self.msr = None

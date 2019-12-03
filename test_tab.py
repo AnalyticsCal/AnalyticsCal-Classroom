@@ -557,7 +557,8 @@ def stats_display(coeff):
             equation_str = "".join(temp)
         multi_data.lin_reg_coeff = []
         multi_data.lin_reg_coeff  = [round(coeff[i], roundoff) for i in range(n)]
-        #print('hi',equation_str)
+        multi_data.lin_reg_eqn = equation_str
+        print('hi',equation_str)
         return equation_str
         #textBox.delete(1.0, tk.END)
         #textBox.insert(tk.INSERT, equation_str)
@@ -1183,7 +1184,7 @@ def predict_value():
         display_eqn = display_eqn.split("\n")
         display_eqn = "".join(display_eqn)
         E1.delete(0, 'end')# clear text entry window
-        textBox.insert(tk.INSERT,"The chosen model is "+'\n'+ display_eqn+ "\nPredicted value is:\n " + str(pred_y))
+        textBox.insert(tk.INSERT,"The chosen model is "+'\n'+ display_eqn+ "\nPredicted value for x = "+ str(pred_x)+" is:\n " + str(pred_y))
         
     elif vari == 3:
         #v1 = v1.split()
@@ -1193,7 +1194,7 @@ def predict_value():
         pred_y_m = round(coeff_m[0]+ coeff_m[1]*x1 +coeff_m[2]*x2 + coeff_m[3]*x3, 4)
         E1.delete(0, 'end') # clear text entry window
         textBox.delete(1.0, tk.END)
-        textBox.insert(tk.INSERT, 'The predicted value for\n'+'x1=' +value[0]+', x2=' +value[1]+ ',x3=' +value[2]+ ' is \n'+str(pred_y_m))
+        textBox.insert(tk.INSERT,"The linear model is \n"+multi_data.lin_reg_eqn + '\nThe predicted value for\n'+'x1=' +value[0]+', x2=' +value[1]+ ',x3=' +value[2]+ ' is \n'+str(pred_y_m))
 """        
     #v1=var.get()
     if value != '':
