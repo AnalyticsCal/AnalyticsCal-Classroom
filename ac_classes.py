@@ -135,3 +135,8 @@ class MultiDataModel():
     def outliers(self):
         self.outlier_x=[]
         self.outlier_y = []
+
+class Ts_Model():
+    def __init__(self,header,values):
+        self.header = header
+        self.values = values
