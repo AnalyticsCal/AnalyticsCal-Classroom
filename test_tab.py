@@ -1267,10 +1267,24 @@ mighty_t3.grid(column=1, row=0,sticky=tk.N+tk.S, padx=8, pady=4, rowspan = 6)
 
 button_width = 15
 
-def click_upload_data_ts():
-    ...
+global csvList_ts,file_name_ts,csvHeader_ts
 
-upload_data_ts = ttk.Button(tab2, text="Load Data", command= lambda : click_upload_data_ts, width = button_width,compound=tk.LEFT)
+def click_upload_data_ts():
+    global csvList_ts,file_name_ts,csvHeader_ts
+    global values_list_ts, header_list_ts
+    #global multi_df
+    file_ts = fd.askopenfile(mode='r', filetypes=[('CSV Files', '*.csv')]) # gets the filename as string
+    if file_ts:
+        file_name_ts = file_ts.name
+    print(file_name_ts)
+    csvHeader_ts, csvList_ts = upload.preprocess_csv(file_name_ts)
+    #values_list_ts = [[float(j) for j in i] for i in csvList_ts] # i is the element of csvList_ts -- which itself is a list, j is the member of i(j is the member\
+                                                                # of list present in csvList_ts)
+    values_list_ts = [list(map(float, i)) for i in csvList_ts] # convert all the elements of csvList into floats
+    #values_list_ts = list(map(float,csvList_ts))
+    header_list_ts = copy.deepcopy(csvHeader_ts)
+
+upload_data_ts = ttk.Button(tab2, text="Load Data", command= lambda: click_upload_data_ts(), width = button_width,compound=tk.LEFT)
 #upload_data_ts.pack(side = tk.LEFT)
 #upload_data_ts.place(x=0,y=1) 
 upload_data_ts.grid(column=0, row=0, padx=22, pady=2,sticky='W')
