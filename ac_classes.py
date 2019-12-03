@@ -1,6 +1,4 @@
 import stats_team3 as st
-import data_load as load
-import file_upload as upload
 from nonlinear_regression import NonLinearRegression as nlr
 
 import math
@@ -32,23 +30,23 @@ class BiDataModel(IndivModel):
     #global x_bar, y_bar
     def x_bar(self):
     #    global x_bar
-        self.x_bar = x.mean
+        self.x_bar = self.x.mean
      #   x_bar = self.x_bar
         return self.x_bar
         #return self.x_bar
 
     def y_bar(self):
      #   global y_bar
-        self.y_bar = y.mean
+        self.y_bar = self.y.mean
       #  y_bar = self.y_bar
         return self.y_bar
 
     def x_var(self):
-        self.x_var = x.var
+        self.x_var = self.x.var
         return self.x_var
 
     def y_var(self):
-        self.y_var = y.var
+        self.y_var = self.y.var
         return self.y_var
 
     def cov(self):
@@ -64,6 +62,7 @@ class BiDataModel(IndivModel):
         self.poly_coeff = []
         self.exp_coeff = []
         self.sin_coeff = []
+        self.exp_transf = []
 
     def anova(self):
         self.msr = None
@@ -77,10 +76,10 @@ class BiDataModel(IndivModel):
         self.t_c=None
 
     def models(self):
-        self.linear = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None,'coeff':None}
-        self.poly_2 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None,'coeff':None}
-        self.poly_3 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None,'coeff':None}
-        self.poly_4 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None,'coeff':None}
+        self.linear = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None,'coeff':None,'y_pred' : [] }
+        self.poly_2 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None,'coeff':None,'y_pred' : []}
+        self.poly_3 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None,'coeff':None,'y_pred' : []}
+        self.poly_4 = {'eqn' : '','msr': None, 'mse': None,'ssr':None, 'sse': None,'f':None,'p':None,'coeff':None,'y_pred' : []}
 
     def pred_model(self):
         self.pred_model = []
@@ -136,9 +135,3 @@ class MultiDataModel():
     def outliers(self):
         self.outlier_x=[]
         self.outlier_y = []
-        
-        
-        
-
-    
-    

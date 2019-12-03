@@ -77,6 +77,7 @@ def open_file():
     if file:
         file_name = file.name
     print(file_name)
+    click_clear()
     csvHeader, csvList = upload.preprocess_csv(file_name)
     if len(csvHeader) > 2: # Multinomial
         multi_df = pd.read_csv(file_name)
@@ -426,22 +427,30 @@ def click_linear_regression():
         Y_predicted = form_eqn_mlr(copy.deepcopy(coeff))
         coeff_m = coeff
         textBox.delete(1.0, tk.END)
-        textBox.insert(tk.INSERT,"The linear regression Equation is\n " + equation_str)
+        textBox.insert(tk.INSERT,"The Linear Regression Equation is\n " + equation_str)
         #textBox.tag_add("one", "1.0", "1.8")
         #textBox.tag_config("one", background="yellow"_norm)
 
     else:
-        global reg_order
+        global reg_order,is_bivariate
+        is_bivariate = True
         reg_order =1 
         coeff = mlr.multi_linear_regression([X.values], Y.values)
+        print('click_linear coeff',coeff)
+        data.linear['coeff'] = round_off_list(coeff, roundoff)
+        print("data.lnear['coeff'] in click_linear",data.linear['coeff'])
         
-        data.linear['coeff'] = [round(coeff[i], precision) for i in range(len(coeff))]
         equation_str = stats_display(round_off_list(coeff, precision))
-        
+        print("BBBBB     eequation_str",equation_str)
         Y_predicted = form_eqn_mlr(copy.deepcopy(coeff))
-        textBox.delete(1.0, tk.END)
-        print(equation_str)
-        textBox.insert(tk.INSERT,"The linear regression Equation is\n " + equation_str)
+        #textBox.delete(1.0, tk.END)
+        #print("BBBBB     eequation_str",equation_str)
+        #data.linear['eqn'] = equation_str
+        
+        #print("data.pred_model",data.pred_model)
+        #textBox.insert(tk.INSERT,"The linear regression Equation is\n " + equation_str)
+
+        
         #textBox.tag_add("one", "1.0", "1.8")
         #textBox.tag_config("one", background="yellow"_norm)
         """coeff_list =copy.deepcopy(coeff)
@@ -471,7 +480,7 @@ def click_linear_regression():
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT, equation_str)
         """
-        title= "predicted vs observed"					
+        title= "Predicted vs Observed"					
         x_label= 'X'					
         y_label= 'Y'
         reg_plot(X.values, Y.values, Y_predicted, equation_str, title, x_label, y_label, 'g')
@@ -516,6 +525,8 @@ def stats_display(coeff):
     global csvHeader
     global multi_data,textBox
     global Y_predicted
+    global is_bivariate
+    
     roundoff = 2
     SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉") # For printing subscript
     SUP = str.maketrans("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")
@@ -551,6 +562,7 @@ def stats_display(coeff):
         #textBox.delete(1.0, tk.END)
         #textBox.insert(tk.INSERT, equation_str)
     else:
+        is_bivariate = True
         Y_predicted = form_eqn(copy.deepcopy(coeff))
         coefficient_str = ''
         n = len(coeff)
@@ -580,6 +592,8 @@ def stats_display(coeff):
         textBox.insert(tk.INSERT,'The linear model is \n' + equation_str)
         str_1 = '\n'.join(list(chunkstring(equation_str, 14)))
         data.linear['eqn'] = str_1
+        data.pred_eqn = data.linear['eqn']
+        data.pred_model = data.linear['coeff']
         title= "Predicted vs Observed"					
         x_label= 'X'					
         y_label= 'Y'
@@ -606,8 +620,9 @@ linear_Regression.grid(column=0, row=2, sticky='W', padx = 10,pady = 2)
 
 # Poly_reg:Modified Button Click Function
 def click_nlr_poly():
-    global Y_predicted,is_simple_linear_equations
+    global Y_predicted,is_simple_linear_equations,is_bivariate
     is_simple_linear_equations=False
+    is_bivariate = True
     if len(csvHeader) <= 2:
         SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉") # For printing subscript
         SUP = str.maketrans("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")
@@ -644,19 +659,25 @@ def click_nlr_poly():
         data.poly_coeff = [round(coefficient[i], precision) for i in range(n)]
             
         textBox.delete(1.0, tk.END)
-        textBox.insert(tk.INSERT, equation_str)
+        textBox.insert(tk.INSERT,"The Polynomial model of order "+str(reg_order) +" :\n"+equation_str)
         if reg_order == 2:
             str_2 = '\n'.join(list(chunkstring(equation_str, 14)))
             data.poly_2['eqn'] = str_2 # 12 harcoded for this textbox width = 90
             data.poly_2['coeff'] = [round(coefficient[i], precision) for i in range(n)]
+            data.pred_model = data.poly_2['coeff']
+            data.pred_eqn = data.poly_2['eqn']
         elif reg_order == 3:
             str_3 = '\n'.join(list(chunkstring(equation_str, 14)))
             data.poly_3['eqn'] = str_3
             data.poly_3['coeff'] = [round(coefficient[i], precision) for i in range(n)]
+            data.pred_model = data.poly_3['coeff']
+            data.pred_eqn = data.poly_3['eqn']
         elif reg_order == 4:
             str_4 = '\n'.join(list(chunkstring(equation_str, 14)))
             data.poly_4['eqn'] = str_4
             data.poly_4['coeff'] = [round(coefficient[i], precision) for i in range(n)]
+            data.pred_model = data.poly_4['coeff']
+            data.pred_eqn = data.poly_4['eqn']
         #raw_plot = plt.scatter(X.values, Y.values, color = 'r')
         #plt.plot(X.values, round (coeff_list[0] + (coeff_list[1]*X.values) + (coeff_list[2]*(X.values**2))+ (coeff_list[3]*(X.values**3)), 4),'-')
         #predict_plot = plt.plot(X.values, Y_predicted, '-')
@@ -798,21 +819,9 @@ def click_anova():
         data.p = anova_dict['p']
         
         data.model_confidence=anova_class_2.model_confidence
-        if(is_simple_linear_equations):
-            anova_CI=AnovaConfidenceInterval(X.values,Y.values,Y_predicted,len(csvHeader))
-            ci_rtn=anova_CI.cal_CI_tm_tc(95)
-            data.t_m=ci_rtn["tm"]
-            data.t_c=ci_rtn["tc"]
-            textBox.insert(tk.INSERT, "\n\n Confidence Interval:\n")
-            ci_table=[
-                        ["m",str(round(coeff[1] - data.t_m,4)),str(round(coeff[1] + data.t_m,4))],
-                        ["c",str(round(coeff[0] - data.t_c,4)),str(round(coeff[0] + data.t_c,4))]
-                    ]
-            textBox.insert(tk.INSERT,tabulate(ci_table,["Coeffient","min","max"],tablefmt="fancy_grid", floatfmt=".2f"))
-
-
         
-        textBox.delete(1.0, tk.END)
+        #textBox.delete(1.0, tk.END)
+        textBox.insert(tk.INSERT,"\n")
         """
         textBox.insert(tk.INSERT, 'ANOVA'+ '\n')
         textBox.insert(tk.INSERT, 'msr = '+ str(round(data.msr, 4)) + '\n')
@@ -827,22 +836,25 @@ def click_anova():
         textBox.insert(tk.INSERT,tabulate(table,headers,tablefmt="fancy_grid",floatfmt=".2f"))
 
         if(is_simple_linear_equations):
+            anova_CI=AnovaConfidenceInterval(X.values,Y.values,Y_predicted,len(csvHeader))
+            ci_rtn=anova_CI.cal_CI_tm_tc(95)
+            data.t_m=ci_rtn["tm"]
+            data.t_c=ci_rtn["tc"]
             textBox.insert(tk.INSERT, "\n\n Confidence Interval:\n")
             ci_table=[
                         ["m",str(round(coeff[1] - data.t_m,4)),str(round(coeff[1] + data.t_m,4))],
                         ["c",str(round(coeff[0] - data.t_c,4)),str(round(coeff[0] + data.t_c,4))]
                     ]
             textBox.insert(tk.INSERT,tabulate(ci_table,["Coeffient","min","max"],tablefmt="fancy_grid", floatfmt=".2f"))
-
         if reg_order == 2:
             #str_2 = '\n'.join(list(chunkstring(equation_str, 12)))
             data.poly_2['f'] = round(data.f, precision)  
             data.poly_2['p'] = round(data.p, precision) 
+
         elif reg_order == 3:
-            #str_3 = '\n'.join(list(chunkstring(equation_str, 12)))
-            data.poly_3['f'] = round(data.f, precision)  
+            data.poly_3['f'] = round(data.f, precision)
             data.poly_3['p'] = round(data.p, precision) 
-        
+
         elif reg_order == 4:
             #str_4 = '\n'.join(list(chunkstring(equation_str, 14)))
             data.poly_4['f'] = round(data.f, precision)    
@@ -851,7 +863,16 @@ def click_anova():
         elif reg_order == 1:
             data.linear['f'] = round(data.f, precision)  
             data.linear['p'] = round(data.p, precision) 
-        
+
+
+        #if(is_simple_linear_equations):
+         #   textBox.insert(tk.INSERT, "\n\n Confidence Interval:\n")
+          #  ci_table=[
+           #             ["m",str(round(coeff[1] - data.t_m,4)),str(round(coeff[1] + data.t_m,4))],
+            #            ["c",str(round(coeff[0] - data.t_c,4)),str(round(coeff[0] + data.t_c,4))]
+             #       ]
+            #textBox.insert(tk.INSERT,tabulate(ci_table,["Coeffient","min","max"],tablefmt="fancy_grid", floatfmt=".2f"))
+    
     else:
         # Add the code for multiple linear regression
         anova_class_2 = Anova_class(Y.values, Y_predicted, len(csvHeader))
@@ -1119,8 +1140,8 @@ def click_clear():
     table_highlight()
     textBox.delete(1.0, tk.END)
 
-clear_button = ttk.Button(tab1, text="CLEAR", command=click_clear,width = mighty_width)   
-clear_button.grid(column=0, row=4, sticky='W',padx = 10,pady = 2)
+clear_button = ttk.Button(tab1, text="CLEAR", command=click_clear,width = 20)   
+clear_button.grid(column=0, row=4, sticky='E'+'W',padx = (20,0),pady = 2)
 
 #------------------------------------------------------------------------------------------------Prediction
 lab=ttk.Label(mighty3,text="Enter Value for Prediction")
@@ -1128,16 +1149,53 @@ lab.grid(pady = 2,padx = 5)
 E1=ttk.Entry(mighty3)
 E1.grid(pady = 2,padx = 5)
 var=tk.StringVar()
-
+"""
 lab1=ttk.Label(mighty3,text="Enter MultiValue for Prediction")
 lab1.grid(pady = 2,padx = 5)
 E2=ttk.Entry(mighty3,textvariable=var)
 E2.grid(pady = 2,padx = 5)
-
+"""
 def predict_value():
+    global data,coeff_m
     value=E1.get()
-    global coeff_m
-    v1=var.get()
+    print('predict_value E1',value)
+    print('type =',type(value))
+    value=value.split()
+    print('predict_value E1 after split ',value)
+    vari=len(value)
+    print("vari",vari)
+    if vari == 1:
+        #Bivariate data
+        coeff_list = copy.deepcopy(data.pred_model)
+        
+        for i in range(5 - len(coeff_list)):
+            coeff_list.append(0.)
+        print('Comapre_model:Coeff_list = ', coeff_list)
+        pred_x=float(value[0])
+        pred_ans = 0
+        for idx,value in enumerate(coeff_list):
+            exponent = idx
+            base = pred_x
+            pred_ans +=  value * (base**exponent)
+        pred_y = round(pred_ans,2)
+        textBox.delete(1.0, tk.END)
+        display_eqn= copy.deepcopy(data.pred_eqn)
+        display_eqn = display_eqn.split("\n")
+        display_eqn = "".join(display_eqn)
+        E1.delete(0, 'end')# clear text entry window
+        textBox.insert(tk.INSERT,"The chosen model is "+'\n'+ display_eqn+ "\nPredicted value is:\n " + str(pred_y))
+        
+    elif vari == 3:
+        #v1 = v1.split()
+        x1=float((value[0]))
+        x2=float((value[1]))
+        x3=float((value[2]))
+        pred_y_m = round(coeff_m[0]+ coeff_m[1]*x1 +coeff_m[2]*x2 + coeff_m[3]*x3, 4)
+        E1.delete(0, 'end') # clear text entry window
+        textBox.delete(1.0, tk.END)
+        textBox.insert(tk.INSERT, 'The predicted value for\n'+'x1=' +value[0]+', x2=' +value[1]+ ',x3=' +value[2]+ ' is \n'+str(pred_y_m))
+"""        
+    #v1=var.get()
     if value != '':
         coeff_list = copy.deepcopy(data.pred_model)
         
@@ -1150,25 +1208,16 @@ def predict_value():
             exponent = idx
             base = pred_x
             pred_ans +=  value * (base**exponent)
-        
+        """
         #pred_ans = [i * (pred_x **  for i in coeff_list]
         #pred_y= round (coeff_list[0] + (coeff_list[1]*pred_x) + ((coeff_list[2]*(pred_x**2))+ ((coeff_list[3]*(pred_x**3))+ ((coeff_list[4]*(pred_x**4))))), 2)
-        pred_y = round(pred_ans,2)
-        textBox.delete(1.0, tk.END)
-        display_eqn= copy.deepcopy(data.pred_eqn)
-        display_eqn.replace("\n","")
-        textBox.insert(tk.INSERT,"The chosen model is "+'\n'+ display_eqn+ "\nPredicted value is:\n " + str(pred_y)  )
+        #pred_y = round(pred_ans,2)
+        #textBox.delete(1.0, tk.END)
+        #display_eqn= copy.deepcopy(data.pred_eqn)
+        #display_eqn.replace("\n","")
+        #textBox.insert(tk.INSERT,"The chosen model is "+'\n'+ display_eqn+ "\nPredicted value is:\n " + str(pred_y)  )
 
-    elif v1 != '':
-        v1 = v1.split()
-        x1=float((v1[0]))
-        x2=float((v1[1]))
-        x3=float((v1[2]))
-        pred_y_m = round(coeff_m[0]+ coeff_m[1]*x1 +coeff_m[2]*x2 + coeff_m[3]*x3, 4)
-        textBox.delete(1.0, tk.END)
-        textBox.insert(tk.INSERT, 'predicted value is \n'+str(pred_y_m))
-
-predict = ttk.Button(mighty3,text="Predict",command=predict_value,width= 26)
+predict = ttk.Button(mighty3,text="Predict",command=predict_value,width= 22)
 predict.grid(column=0,row=4,sticky='w',padx = 10,pady = 2)
 
 #----------------------------------------------------------------------------------------------------TIMESERIES
@@ -1344,12 +1393,12 @@ def click_moving_average():
 moving_average = ttk.Button(mighty_t2, text="Moving Average", command= lambda : click_moving_average(), width = button_width)
 moving_average.grid(column=0, row=1, sticky='W',padx = 22,pady =3)
 
-def click_predictions():
+def click_predictions_ts():
     print('click_predictions')
     ...
 
-predictions = ttk.Button(tab2, text="Predictions", command= lambda : click_predictions(), width = 15)
-predictions.grid(column=0, row=3, sticky='W' + 'N' ,padx = 22,pady =2)
+predictions_ts = ttk.Button(tab2, text="Predictions", command= lambda : click_predictions(), width = 15)
+predictions_ts.grid(column=0, row=3, sticky='W' + 'N' ,padx = 22,pady =2)
 
 
 def click_reset_data():
