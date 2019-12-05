@@ -201,3 +201,89 @@ class NonLinearRegression(object):
          Length of coefficient list is same as order
         """
         pass
+    
+    def exponentialTransformation(self, order):
+        """
+            :param order:
+            :return: list of coefficient - [B0, B1].
+             Length of coefficient list is same as order
+        """
+        print('Inside exp')
+        # check the order
+        if order != 1:
+            return 'Permissible value for order in exponentialTransformation model is 1'
+
+        # below method returns number after decimal point
+        def num_after_point(a): #a is float or string value
+            s = str(a)
+            if not '.' in s:
+                return 0
+            return len(s) - s.index('.') - 1
+
+        import numpy
+        #import linearRegression
+
+        num_after_decimal = num_after_point(self.Yin[0])
+        #Convert Yin into LogYin with round upto decimal as input values
+        lnYin = [round(numpy.log(float(y)),num_after_decimal) for y in self.Yin]
+
+        #round Xin values upto decimal same as input values
+        round_Xin = [round(float(x),num_after_decimal) for x in self.Xin]
+
+        #Call linearRegression function here--------------
+        self.Xin = round_Xin
+        self.Yin = lnYin
+        coefficient1 = self.polynomial(1)
+
+        coefficient_list = []
+        i = 0
+        for coeff in coefficient1:
+            if i == 0:
+                #convert B0 to original form
+                coefficient_list.append(round(numpy.exp(float(coeff)),num_after_decimal)) 
+                i += 1
+            else:
+                coefficient_list.append(round(float(coeff),num_after_decimal))
+
+        return coefficient_list
+
+    #Nonlinear to linear transformation using scaling factor
+    #For scaling negative data points in the dataset (Xin,Yin)
+    def findMin(inp):
+        min = 0
+        for i in inp:
+            if i < min and i < 0:
+                min = i
+        return min
+
+    def scaleFactor(Xin,Yin):
+        if len(x)==len(y):
+            xMin = findMin(Xin)
+            yMin = findMin(Yin)
+            k = xMin
+            if yMin<xMin:
+                k = yMin
+            return mod_number(k)
+        return 0
+    
+    def mod_number(x):
+        if x < 0:
+            strVal = str(x)
+            substrVal = strVal[1:]
+            return int(substrVal)
+        return 0
+
+    def applyScaleFactorToDataPoints():
+        k = scaleFactor(x,y)
+        #print('Scale Factor:',k)
+        if k > 0:
+            i=0;
+            while i < len(x):
+                self.Xin[i]+=k
+                i+=1
+            #print(self.Xin)
+            i=0
+            while i < len(y):
+                self.Yin[i]+=k
+                i+=1
+            #print(self.Yin)
