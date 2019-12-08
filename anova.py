@@ -96,7 +96,7 @@ def main(x, y, coefficients):
     # Update the starter dictionary with actual data to start with
     anova['x'] = x
     anova['y'] = y
-    anova['coefficients'] = coefficients
+    anova['coefficients'] = coefficients[::-1]
     # The coefficients are reversed here in order to get it in the right form
     # Actual line : anova['coefficients'] = coefficients
     anova['degrees_of_freedom'] = 2

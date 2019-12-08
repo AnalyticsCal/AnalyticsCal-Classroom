@@ -1,0 +1,113 @@
+commit 1f1257f69358334543e1bd1b24fee5b5fecf0605
+Author: knn <kn.neelalohitha@gmail.com>
+Date:   Tue Dec 3 21:24:25 2019 +0530
+
+    Update ac_classes.py -- add time series model
+    
+    Signed-off-by: knn <kn.neelalohitha@gmail.com>
+
+M	ac_classes.py
+
+commit 8fd1d7ada9841fbac1eb8a371f990c1db8790612
+Author: knn <kn.neelalohitha@gmail.com>
+Date:   Tue Dec 3 21:21:16 2019 +0530
+
+    Update test_tab.py, ac_classes, .gitignore
+    
+    Signed-off-by: knn <kn.neelalohitha@gmail.com>
+
+M	.gitignore
+M	__pycache__/ac_classes.cpython-37.pyc
+M	ac_classes.py
+M	test_tab.py
+
+commit f65365020b69b2f6e5c909f7cd2b0b881f9e4092
+Author: knn <kn.neelalohitha@gmail.com>
+Date:   Tue Dec 3 16:06:51 2019 +0530
+
+    Update test_tab.py -- Add upload functionality to time series UI
+    
+    Signed-off-by: knn <kn.neelalohitha@gmail.com>
+
+M	test_tab.py
+
+commit 7200f177fbe95abb396cd8f4c37a6a3fec196198
+Author: knn <kn.neelalohitha@gmail.com>
+Date:   Mon Dec 2 19:50:45 2019 +0530
+
+    Update test_tab.py -- Fix bug that highlighted the previous input's best model
+    
+    Signed-off-by: knn <kn.neelalohitha@gmail.com>
+
+M	Latest_changes/commit_summary.txt
+M	Latest_changes/latest_diff.txt
+M	test_tab.py
+
+commit 04d117df12bcf72fadd5e3cbd44df9a58d1b6b1c
+Author: knn <kn.neelalohitha@gmail.com>
+Date:   Mon Dec 2 19:13:59 2019 +0530
+
+    Update test_tab.py
+    
+    Signed-off-by: knn <kn.neelalohitha@gmail.com>
+
+M	test_tab.py
+
+commit 1c2aebee92b3994aa3dc2b9b95855237ec740c23
+Author: knn <kn.neelalohitha@gmail.com>
+Date:   Mon Dec 2 16:00:18 2019 +0530
+
+    Add commit_summary.txt -- Include latest changes
+    
+    Signed-off-by: knn <kn.neelalohitha@gmail.com>
+
+A	Latest_changes/commit_summary.txt
+A	Latest_changes/latest_diff.txt
+D	latest_diff.txt
+
+commit a89e887fc0e8fcc0dd7e2ab087e510e2bd646f89
+Author: knn <kn.neelalohitha@gmail.com>
+Date:   Mon Dec 2 15:52:02 2019 +0530
+
+    Update test_tab.py,Add latest_diff.txt
+    
+    Signed-off-by: knn <kn.neelalohitha@gmail.com>
+
+A	latest_diff.txt
+M	test_tab.py
+
+commit 0483062ac218e2b5676117e25e93c6324bd2e148
+Author: knn <kn.neelalohitha@gmail.com>
+Date:   Mon Dec 2 12:49:54 2019 +0530
+
+    Add .gitignore file
+    
+    Signed-off-by: knn <kn.neelalohitha@gmail.com>
+
+A	.gitignore
+
+commit f5e33f52285911e0ee10caa843819dbd04458abc
+Author: knn <kn.neelalohitha@gmail.com>
+Date:   Sun Dec 1 13:05:10 2019 +0530
+
+    Update test_tab.py -- Add dummy data to demo outlier funtionality
+    
+    Signed-off-by: knn <kn.neelalohitha@gmail.com>
+
+M	__pycache__/ac_classes.cpython-37.pyc
+M	__pycache__/anova.cpython-37.pyc
+M	__pycache__/anova_CI.cpython-37.pyc
+M	__pycache__/anova_class.cpython-37.pyc
+A	__pycache__/computed_values.cpython-37.pyc
+M	__pycache__/data_load.cpython-37.pyc
+M	__pycache__/nonlinear_regression.cpython-37.pyc
+M	test_tab.py
+
+commit 4cd819b5b7d1ffad85eff224210d9c5fe254dfdf
+Merge: 5c343d1 2ea7f2f
+Author: kn-neelalohitha <kn.neelalohitha@gmail.com>
+Date:   Sat Nov 30 00:05:58 2019 +0530
+
+    Merge pull request #35 from kn-neelalohitha/dev_test
+    
+    update test_tab.py, ac_classes.py
