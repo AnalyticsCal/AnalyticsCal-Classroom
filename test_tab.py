@@ -29,6 +29,7 @@ from tabulate import tabulate   # for table
 import pandas as pd
 import numpy as np
 from scipy import stats
+import seaborn as sns
 
 
 import stats_team3 as st
@@ -40,7 +41,7 @@ from ac_classes import IndivModel as imodel
 from ac_classes import BiDataModel as bdmodel
 from ac_classes import MultiDataModel as mdmodel
 from nonlinear_regression import NonLinearRegression as nlr
-# from anova import main as anova_main
+from anova import main as anova_main
 from anova_CI import AnovaConfidenceInterval
 from anova_class import Anova as Anova_class
 
@@ -374,7 +375,7 @@ def _destroyWindow():
 mighty_width = 26
 # Add button to output basic statistics
 Statistics = ttk.Button(mighty, text="Statistics", command= lambda : click_stats(textBox), width = mighty_width)   
-Statistics.grid(column=0, row=0, sticky='W', padx = 10,pady = 2)
+Statistics.grid(column=0, row=1, sticky='W', padx = 10,pady = 2)
 #----------------------------------------------------------------------Basic Plot
 # Modified Button Click Plot
 def click_plot():
@@ -409,7 +410,7 @@ def click_plot():
         #sns.pairplot(multi_df, diag_kind ='kde')
 # Add button for plot
 plot = ttk.Button(mighty, text="Plot", command=click_plot, width = mighty_width)   
-plot.grid(column=0, row=1, sticky='W', padx = 10,pady = 2)
+plot.grid(column=0, row=0, sticky='W', padx = 10,pady = 2)
 
 # Multi plot
 """
@@ -838,7 +839,7 @@ def click_anova():
         textBox.insert(tk.INSERT, 'f = '+ str(round(data.f, 4))  + '\n')
         textBox.insert(tk.INSERT, 'p = '+ str(round(data.p,4)) + '\n')
         """
-        table=[["msr",data.msr],["mse",data.mse],["ssr",data.ssr],["sse",data.sse],["f",data.f],["p",data.p],["Model Confidence",data.model_confidence]]
+        table=[["MSR",data.msr],["MSE",data.mse],["SSR",data.ssr],["SSE",data.sse],["f",data.f],["p",data.p],["Model Confidence",data.model_confidence]]
         headers= ["ANOVA","Values"]
         textBox.insert(tk.INSERT,tabulate(table,headers,tablefmt="fancy_grid",floatfmt=".2f"))
 
@@ -1197,7 +1198,7 @@ def predict_value():
         x1=float((value[0]))
         x2=float((value[1]))
         x3=float((value[2]))
-        pred_y_m = round(coeff_m[0]+ coeff_m[1]*x1 +coeff_m[2]*x2 + coeff_m[3]*x3, 4)
+        pred_y_m = round(coeff_m[0]+ coeff_m[1]*x1 +coeff_m[2]*x2 + coeff_m[3]*x3, 2)
         E1.delete(0, 'end') # clear text entry window
         textBox.delete(1.0, tk.END)
         textBox.insert(tk.INSERT,"The linear model is \n"+multi_data.lin_reg_eqn + '\nThe predicted value for\n'+'x1=' +value[0]+', x2=' +value[1]+ ',x3=' +value[2]+ ' is \n'+str(pred_y_m))
@@ -1541,6 +1542,25 @@ reset_data_ts.grid(column=0, row=4, sticky='W' + 'N', padx=22, pady=2)
 ###################################################
 #               TIME SERIES END                   #
 ###################################################
+
+#----------------------------------------------------------------------------------------------------Synthetic Data Generation
+# LabelFrame using tab2 as the parent - for Synthetic Data Generation
+mighty_t4 = ttk.LabelFrame(tab2, text=' Synthetic Data Generation')
+mighty_t4.grid(column=0, row=5, padx=8, pady=2, sticky = 'N')
+
+lab=ttk.Label(mighty_t4,text="Enter the number of data point to generate")
+lab.grid(pady = 2,padx = 5)
+G1=ttk.Entry(mighty_t4)
+G1.grid(pady = 2,padx = 5)
+num =tk.StringVar()
+
+def click_Generate():
+    ...
+    
+button_width = 18
+Generate = ttk.Button(mighty_t4, text="Generate", command= lambda : click_Generate(), width = button_width)
+Generate.grid(column=0, row=2, sticky='W'+'N',padx = 50,pady =2)
+
 
 
 # GUI Main Loop
