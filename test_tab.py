@@ -12,7 +12,14 @@ from tkinter import messagebox as msg
 import os
 import math
 import copy
+from tkinter.messagebox import askquestion, showinfo, showwarning, showerror
+from tkinter.simpledialog import askstring, askinteger
+
 import matplotlib
+
+from arima.moving_average import MovingAverage
+from arima.runner import init_ar, check_seasonality, do_diff, predict_using_arima
+
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
@@ -20,7 +27,6 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from tabulate import tabulate   # for table
 import pandas as pd
-import seaborn as sns
 import numpy as np
 from scipy import stats
 
@@ -34,7 +40,7 @@ from ac_classes import IndivModel as imodel
 from ac_classes import BiDataModel as bdmodel
 from ac_classes import MultiDataModel as mdmodel
 from nonlinear_regression import NonLinearRegression as nlr
-from anova import main as anova_main
+# from anova import main as anova_main
 from anova_CI import AnovaConfidenceInterval
 from anova_class import Anova as Anova_class
 
@@ -1221,204 +1227,321 @@ def predict_value():
 predict = ttk.Button(mighty3,text="Predict",command=predict_value,width= 22)
 predict.grid(column=0,row=4,sticky='w',padx = 10,pady = 2)
 
-#----------------------------------------------------------------------------------------------------TIMESERIES
-"""
-# LabelFrame using tab2 as the parent - for Time series plot
-mighty_t1 = ttk.LabelFrame(tab2, text=' PLOT')
-mighty_t1.grid(column=0, row=0, padx=8, pady=4)
+#################################################################
+#                       TIME SERIES                             #
+#################################################################
 
-# LabelFrame using tab2 as the parent - for ARMA/ARIMA
-mighty_t2 = ttk.LabelFrame(tab2, text=' ARMA/ARIMA')
-mighty_t2.grid(column=0, row=1, padx=8, pady=4)
 
-# LabelFrame using tab2 as the parent - for ARIMA
-#mighty_t3 = ttk.LabelFrame(tab2, text=' ARIMA')
-#mighty_t3.grid(column=0, row=2, padx=8, pady=4)
+# Generic data plotting function for time series
+def data_plot(x, y, x_label, y_label, title, n=None, plt_type='line', significance=None):
 
-# LabelFrame using tab2 as the parent - for output console
-mighty_t3 = ttk.LabelFrame(tab2, text=' Output Console')
-mighty_t3.grid(column=1, row=0,sticky=tk.N+tk.S, padx=8, pady=4, columnspan=3, rowspan = 6)
+    plt.clf()  # Clear old graph
+    plt.ion()  # Non-blocking IO
 
-def click_Line_Plot():
-    ...
-mighty_width = 18
-# Add buttons for RAW Line Plot
-Line_Plot = ttk.Button(mighty_t1, text="Line Plot", command= lambda : click_Line_Plot(), width = mighty_width)   
-Line_Plot.grid(column=0, row=0, sticky='W')
+    n = n if n else len(x)
 
-def click_ACF_Plot():
-    ...
-mighty_width = 18
-# Add buttons for ACF Bar Plot
-ACF_Plot = ttk.Button(mighty_t1, text="ACF Plot", command= lambda : click_ACF_Plot(), width = mighty_width)   
-ACF_Plot.grid(column=0, row=1, sticky='W')
+    if plt_type == 'line':
+        plt.plot(x[:n], y[:n])
+    elif plt_type == 'bar':
+        plt.bar(x[:n], y[:n])
+    else:
+        raise NotImplementedError
+    plt.title(title)
+    plt.xticks(x[:n], rotation=90)
+    plt.tick_params(labelsize=10)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.grid(True)
+    if significance:
+        plt.axhline(significance)
+        plt.axhline(-1 * significance)
+    plt.show()
 
-def ARMA():
-    ...
-# Textbox to input seanonal difference value
-ttk.Label(mighty_t2, text="N:  ").grid(column=0, row=0)
-
-# Adding a Text box Entry widget
-N_Value = tk.StringVar()
-N_Value_entered = ttk.Entry(mighty_t2, width=8, textvariable=N_Value)
-N_Value_entered.grid(column=1, row=0)
-
-# Textbox to input P value
-ttk.Label(mighty_t2, text="P:  ").grid(column=0, row=1)
-
-# Adding a Text box Entry widget
-P_Value = tk.StringVar()
-P_Value_entered = ttk.Entry(mighty_t2, width=8, textvariable=P_Value)
-P_Value_entered.grid(column=1, row=1)
-
-# Textbox to input D value
-ttk.Label(mighty_t2, text="D:  ").grid(column=0, row=2)
-
-# Adding a Text box Entry widget
-D_Value = tk.StringVar()
-D_Value_entered = ttk.Entry(mighty_t2, width=8, textvariable=D_Value)
-D_Value_entered.grid(column=1, row=2)
-
-# Textbox to input Q value
-ttk.Label(mighty_t2, text="Q:  ").grid(column=0, row=3)
-
-# Adding a Text box Entry widget
-Q_Value = tk.StringVar()
-Q_Value_entered = ttk.Entry(mighty_t2, width=8, textvariable=Q_Value)
-Q_Value_entered.grid(column=1, row=3)
-
-#Adding a button to submit the values
-def click_Calculate_ARMA():
-    ...
-#mighty_width = 18
-# Add button for ARMA
-Calculate_ARMA = ttk.Button(mighty_t2, text="ARMA", command= lambda : click_Calculate_ARMA(), width = 8)   
-Calculate_ARMA.grid(column=0, row=4, sticky='W')
-
-def click_Calculate_ARIMA():
-    ...
-#mighty_width = 18
-# Add button for ARIMA
-Calculate_ARIMA = ttk.Button(mighty_t2, text="ARIMA", command= lambda : click_Calculate_ARIMA(), width = 8)   
-Calculate_ARIMA.grid(column=1, row=4, sticky='W')
-"""
 
 # LabelFrame using tab2 as the parent - for Stationary
-mighty_t1 = ttk.LabelFrame(tab2, text=' Stationarity')
-mighty_t1.grid(column=0, row=1, padx=8, pady=2, sticky = 'N')
+mighty_t1 = ttk.LabelFrame(tab2, text='Stationarity')
+mighty_t1.grid(column=0, row=1, padx=8, pady=2, sticky='N')
 
-# LabelFrame using tab2 as the parent - for ARMA/ARIMA
-mighty_t2 = ttk.LabelFrame(tab2, text= 'ARIMA')
-mighty_t2.grid(column=0, row=2, padx=8, pady=2,sticky = 'N')
+# LabelFrame using tab2 as the parent - for ARIMA
+mighty_t2 = ttk.LabelFrame(tab2, text='ARIMA - Model Fit')
+mighty_t2.grid(column=0, row=2, padx=8, pady=2, sticky='N')
 
 # LabelFrame using tab2 as the parent - for output console
-mighty_t3 = ttk.LabelFrame(tab2, text=' Output Console')
-mighty_t3.grid(column=1, row=0,sticky=tk.N+tk.S, padx=8, pady=4, rowspan = 6)
+mighty_t3 = ttk.LabelFrame(tab2, text='Output Console')
+mighty_t3.grid(column=1, row=0, sticky=tk.N+tk.S, padx=8, pady=4, rowspan=6)
+
+# Add big textbox for time series
+text_h = 35
+text_w = 90
+textBox_t1 = tk.Text(mighty_t3, height=text_h, width=text_w, wrap=tk.WORD, font=("Helvetica", 10))
+textBox_t1.grid(column=0, row=5, sticky=tk.N+tk.S)
 
 button_width = 15
 
-global csvList_ts,file_name_ts,csvHeader_ts
+values_list_ts = []
+time_list_ts = []
+ar_obj = None
+ma_obj = None
+lags = None
+plot = None
+
 
 def click_upload_data_ts():
-    global csvList_ts,file_name_ts,csvHeader_ts
-    global values_list_ts, header_list_ts
-    #global multi_df
-    file_ts = fd.askopenfile(mode='r', filetypes=[('CSV Files', '*.csv')]) # gets the filename as string
-    if file_ts:
-        file_name_ts = file_ts.name
-    print(file_name_ts)
-    csvHeader_ts, csvList_ts = upload.preprocess_csv(file_name_ts)
-    #values_list_ts = [[float(j) for j in i] for i in csvList_ts] # i is the element of csvList_ts -- which itself is a list, j is the member of i(j is the member\
-                                                                # of list present in csvList_ts)
-    values_list_ts = [list(map(float, i)) for i in csvList_ts] # convert all the elements of csvList into floats
-    #values_list_ts = list(map(float,csvList_ts))
-    header_list_ts = copy.deepcopy(csvHeader_ts)
+    """
+    Loads file for time series processing
+    """
+    global values_list_ts, time_list_ts
+    global ar_obj, lags, plot
 
-upload_data_ts = ttk.Button(tab2, text="Load Data", command= lambda: click_upload_data_ts(), width = button_width,compound=tk.LEFT)
-#upload_data_ts.pack(side = tk.LEFT)
-#upload_data_ts.place(x=0,y=1) 
-upload_data_ts.grid(column=0, row=0, padx=22, pady=2,sticky='W')
+    try:
+        # Gets the filename as string
+        file_ts = fd.askopenfile(mode='r', filetypes=[('CSV Files', '*.csv')])
+
+        if not file_ts:
+            raise Exception('Provide input file')
+
+        csv_header_ts, csv_list_ts = upload.preprocess_csv(file_ts.name)
+
+        if len(csv_list_ts) > 2:
+            raise Exception('A file with first column as date index and second column as data expected')
+
+        values_list_ts = copy.deepcopy(list(map(float, csv_list_ts[1])))
+        time_list_ts = copy.deepcopy(csv_list_ts[0])
+
+        data_shape = f'Data Loaded! Has {len(values_list_ts)} data points\n\n'
+        textBox_t1.insert(tk.INSERT, data_shape)
+
+        lags = askinteger('Lags', 'Enter the number of lags to consider:')
+        ar_obj = init_ar(time_list_ts, values_list_ts, lags)
+        data_plot(
+            time_list_ts, values_list_ts, 'Time', 'Data', 'Plot of raw data', n=lags
+        )
+        textBox_t1.insert(tk.INSERT, f'[LAGS] Number of lags: {lags}\n\n')
+    except Exception as ex:
+        showerror('ERROR', ex)
+
+
+upload_data_ts = ttk.Button(
+    tab2, text="Load Data",
+    command=lambda: click_upload_data_ts(),
+    width=button_width,
+    compound=tk.LEFT
+)
+upload_data_ts.grid(column=0, row=0, padx=22, pady=2, sticky='W')
+
 
 def click_seasonal_diff():
-    #lags = int(tk.simpledialog.askstring('Lags', 'Enter the number of lags:'))
-    lags = tk.simpledialog.askstring('Lags', 'Enter the number of lags:') # removed int
+    """
+    Applies Seasonal differencing on series and plots the ACF after sesonality is removed
+    """
+    try:
+        plt.clf()
+        global ar_obj
 
-    if lags == None:# user clicked  cancel
-        print('Seas_diff None')
-    else:# user has input and clicked 'OK'
-        print('Seas_diff lags',int(lags))
-    print('seas_diff lags=',lags)
-    ...
+        if ar_obj is not None:
+
+            raw = ar_obj.auto_correlation(ar_obj.data, lags)
+            data_plot(
+                range(len(raw)), raw, 'Lag', 'Correlation', 'Plot of ACF of raw data',
+                n=40,
+                plt_type='bar',
+                significance=(1.96 / (len(raw)) ** 0.5)
+            )
+
+            response = askquestion('Seasonality', 'Is the data seasonal?')
+            print(response)
+            if response == 'yes':
+                seasonal_period = askinteger('Seasonality', 'Enter seasonality period: ')
+                ar_obj.sp = seasonal_period
+            elif response == 'no':
+                seasonal_period = None
+            else:
+                raise ValueError('Invalid response!')
+
+            ar_obj, _ = do_diff(ar_obj, seasonal_period)
+    except Exception as ex:
+        print(ex)
+        showwarning('ERROR', 'Invalid Operation')
+
+
 button_width = 20
-seasonal_diff = ttk.Button(mighty_t1, text="Seasonal Difference", command= lambda : click_seasonal_diff(), width = button_width)
-#seasonal_diff.config(justify=tk.LEFT)
-seasonal_diff.grid(column=0, row=0, sticky='W',padx = 15,pady =3)
+seasonal_diff = ttk.Button(
+    mighty_t1,
+    text="Seasonal Difference",
+    command=lambda: click_seasonal_diff(),
+    width=button_width
+)
+seasonal_diff.grid(column=0, row=0, sticky='W', padx=15, pady=3)
+
 
 def click_normal_diff():
-    lags = tk.simpledialog.askstring('Lags', 'Enter the number of lags:')
-    if lags == None:
-        print('Seas_diff None')
-    else:
-        print('Seas_diff lags',int(lags))
-    ...
+    """
+    Normal Differencing until series is stationary
+    """
+    try:
 
-normal_diff = ttk.Button(mighty_t1, text="Normal Difference", command= lambda : click_normal_diff(), width = button_width)   
-normal_diff.grid(column=0, row=1, sticky='W',padx = 15,pady =3)
+        global ar_obj
+        ar_obj.d = 0
+
+        while True:
+            is_needed = askquestion('Normal Difference', 'Is Normal Differencing needed?')
+            if is_needed == 'yes':
+                ar_obj.d += 1
+                ar_obj, _ = do_diff(ar_obj, 1)
+            else:
+                break
+
+    except Exception as ex:
+        print(ex)
+        showwarning('ERROR', 'Invalid Operation')
+
+
+normal_diff = ttk.Button(mighty_t1, text="Normal Difference", command=lambda: click_normal_diff(), width = button_width)
+normal_diff.grid(column=0, row=1, sticky='W', padx=15, pady=3)
+
 
 def click_auto_regression():
-    #lags = int(tk.simpledialog.askstring('Lags', 'Enter the number of lags:'))
-    lags = tk.simpledialog.askstring('Lags', 'Enter the number of lags:') # removed int
+    """
+    Fits a Auto Regression model
+    Plots the PACF of the stationary data
+    Requests for order of AR(p)
+    """
+    try:
+        global ar_obj, lags
 
-    if lags == None:# user clicked  cancel
-        print('Seas_diff None')
-    else:# user has input and clicked 'OK'
-        print('Seas_diff lags',int(lags))
-    print('seas_diff lags=',lags)
-    ...
+        pacf = ar_obj.yule_walker_pacf(lags)
+
+        data_plot(
+            range(len(pacf)), pacf, 'Lags', 'Correlation', 'PACF', plt_type='bar', n=40,
+            significance=(1.96 / (len(pacf)) ** 0.5)
+        )
+
+        ar_obj.p = askinteger('Auto Regression', 'Enter the value of order of AR(p)')
+
+        phi = pacf[:ar_obj.p]
+
+        ar_output = f"""\n\n
+            The AR({ar_obj.p}) equation is:
+            {' + '.join([f'({round(phi_i, 4)}) * y(t-{i + 1})' for i, phi_i in enumerate(phi)])} + residues
+        """
+
+        textBox_t1.insert(tk.INSERT, ar_output)
+    except Exception as ex:
+        print(ex)
+        showwarning('ERROR', 'Invalid operation')
+
+
 button_width = 18
 
-auto_regression = ttk.Button(mighty_t2, text="Auto Regression", command= lambda : click_auto_regression(), width = button_width)
-auto_regression.grid(column=0, row=0, sticky='W',padx = 22,pady =3)
+auto_regression = ttk.Button(mighty_t2, text="Auto Regression", command=lambda : click_auto_regression(), width = button_width)
+auto_regression.grid(column=0, row=0, sticky='W', padx=22, pady=3)
+
 
 def click_moving_average():
-    #lags = int(tk.simpledialog.askstring('Lags', 'Enter the number of lags:'))
-    lags = tk.simpledialog.askstring('Lags', 'Enter the number of lags:') # removed int
+    """
+    Fit a Moving averages model using residues from AR.
+    Requests value of order of MA(q)
+    """
+    try:
 
-    if lags == None:# user clicked  cancel
-        print('User clicked None')
-    else:# user has input and clicked 'OK'
-        print('Seas_diff lags',int(lags))
-    print('User has input something lags=',lags)
-    ...
+        raw = ar_obj.auto_correlation(ar_obj.data, lags)
+        data_plot(
+            range(len(raw)), raw, 'Lag', 'Correlation', 'Plot of ACF',
+            n=40,
+            plt_type='bar',
+            significance=(1.96 / (len(raw)) ** 0.5)
+        )
 
-moving_average = ttk.Button(mighty_t2, text="Moving Average", command= lambda : click_moving_average(), width = button_width)
-moving_average.grid(column=0, row=1, sticky='W',padx = 22,pady =3)
+        q = askinteger('Moving Averages', 'Enter value of q:')
+
+        if q:
+
+            ma_obj = MovingAverage(time_list_ts, values_list_ts)
+            ma_obj.q = q
+            ma_params, mse = ma_obj.innovations(ar_obj.data)
+            theta = ma_params[:q]
+
+            ma_output = f"""\n\n
+                The MA({ma_obj.q}) equation is:
+                {' + '.join([f'({round(theta_i, 4)}) * e(t-{i + 1})' for i, theta_i in enumerate(theta)])}
+            """
+
+            textBox_t1.insert(tk.INSERT, ma_output)
+
+            # Calculate Error
+            residues = []
+
+            for y, y_cap in zip(values_list_ts, ar_obj.data):
+                residues.append(y - y_cap)
+
+            # data_plot(time_list_ts[:len(residues)], residues, 'Time', 'Residues', 'Plot of residues', n=40)
+    except Exception as ex:
+        print(ex)
+        showwarning('ERROR', 'Invalid Operation')
+
+
+moving_average = ttk.Button(mighty_t2, text="Moving Average", command=lambda : click_moving_average(), width = button_width)
+moving_average.grid(column=0, row=1, sticky='W', padx=22, pady=3)
+
 
 def click_predictions_ts():
-    print('click_predictions')
-    ...
+    """
+    Final in-sample predictions for ARIMA model. Plots actual vs predicted values.
+    """
+    try:
 
-predictions_ts = ttk.Button(tab2, text="Predictions", command= lambda : click_predictions(), width = 15)
-predictions_ts.grid(column=0, row=3, sticky='W' + 'N' ,padx = 22,pady =2)
+        global ar_obj, lags
+        phi = ar_obj.yule_walker_pacf(lags)[:ar_obj.p]
+        ar_obj.data = ar_obj.predict(phi)
+        out = ar_obj.difference(ar_obj.d + ar_obj.sp, rev=True)
+
+        plt.clf()
+        plt.title('Predictions')
+        plt.plot(time_list_ts[:len(out)], values_list_ts[:len(out)])
+        plt.plot(time_list_ts[:len(out)], out)
+        plt.show()
+
+    except Exception as ex:
+        print(ex)
+        showwarning('ERROR', 'Invalid operation')
+
+
+predictions_ts = ttk.Button(tab2, text="Predictions", command=lambda: click_predictions_ts(), width=15)
+predictions_ts.grid(column=0, row=3, sticky='W' + 'N', padx=22, pady=2)
 
 
 def click_reset_data():
-    print('click_reset_data')
-    ...
+    """
+    Reset the data to original file load condition so that user can start over easily
+    """
+    try:
+        global values_list_ts, time_list_ts, lags, ar_obj
 
-reset_data_ts = ttk.Button(tab2, text="Reset to Original Data", command= lambda : click_reset_data(), width = 25)
-reset_data_ts.grid(column=0, row=4, sticky='W' + 'N',padx = 22,pady =2)
+        textBox_t1.delete('1.0', tk.END)
+
+        data_shape = f'Data Loaded! Has {len(values_list_ts)} data points\n\n'
+        textBox_t1.insert(tk.INSERT, data_shape)
+
+        lags = askinteger('Lags', 'Enter the number of lags to consider:')
+        ar_obj = init_ar(time_list_ts, values_list_ts, lags)
+        data_plot(
+            time_list_ts, values_list_ts, 'Time', 'Data', 'Plot of raw data', n=lags
+        )
+        textBox_t1.insert(tk.INSERT, f'[LAGS] Number of lags: {lags}\n\n')
+
+        showinfo('DATA RESET', 'Data reset successfully')
+    except Exception as ex:
+        print(ex)
+        showwarning('ERROR', 'Load Data first')
 
 
+reset_data_ts = ttk.Button(tab2, text="Reset to Original Data", command=lambda: click_reset_data(), width = 25)
+reset_data_ts.grid(column=0, row=4, sticky='W' + 'N', padx=22, pady=2)
 
-# Add big textbox for time series
-text_h= 35
-text_w = 90
-textBox_t1 = tk.Text(mighty_t3, height = text_h, width = text_w,wrap=tk.WORD)
-textBox_t1.grid(column=0, row=5, sticky=tk.N+tk.S)
+###################################################
+#               TIME SERIES END                   #
+###################################################
 
-#name_entered.focus()      # Place cursor into name Entry
-#======================
-# Start GUI
-#======================
+
+# GUI Main Loop
 win.mainloop()
