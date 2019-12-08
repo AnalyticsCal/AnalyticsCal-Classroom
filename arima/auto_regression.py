@@ -22,11 +22,14 @@ class AutoRegression:
 			raise ValueError('Provide input for index as list')
 		
 		self.lags = lags if lags else len(self.data)
-		
+
+		self.sp = 0  # Seasonality Period
+		self.p = None
+		self.d = None
 		self.phi_estimates = []
 	
 	def __str__(self):
-		print(self.output)
+		print(self.phi_estimates)
 	
 	def auto_correlation(self, data, lags):
 		"""
@@ -94,39 +97,3 @@ class AutoRegression:
 			value.append([phi_i * x for x in lag_data])
 		output = [abs(sum(elements)) for elements in zip(*value)]
 		return output
-
-
-def test():
-	import pandas as pd
-	df = pd.read_csv('/home/vishnudev/Documents/khanapur_flow.csv')
-	df['date'] = df['Year'].astype(str) + '-' + df['Month'].astype(str)
-	ar = AutoRegression(index=df['date'].to_list(), data=df['Avg Discharge'].to_list(), lags=5)
-	# print(ar.auto_correlation(ar.data, 5))
-	ar.data = ar.seasonal_difference(time_period=12)
-	# print(ar.data)
-	# print(ar.yule_walker_estimate(10))
-	# print(yule_walker(ar.data, 10))
-	params = ar.yule_walker_pacf(6)
-	print(ar.predict(params))
-	print(ar.data)
-	
-	# print(pacf_yw(ar.data, 6))
-	# values = ar.auto_correlation(num_lags=40)
-	# ar.plot(range(len(values)), values, 'bar')
-	# ar.data = ar.seasonal_difference(time_period=12)
-	# significance = 1.96 / len(ar.data) ** 0.5
-	# values = ar.auto_correlation(num_lags=40)
-	# ar.plot(range(len(values)), values, 'bar', significance)
-	# ar.data = ar.difference(1)
-	# values = ar.auto_correlation(num_lags=40)
-	# ar.plot(range(len(values)), values, 'bar', significance)
-	# plt.bar(range(len(values)), values)
-	# significance = 1.96 / len(ar.data) ** 0.5
-	# plt.axhline(y=significance)
-	# plt.axhline(y=-significance)
-	# plt.show()
-	pass
-
-
-if __name__ == '__main__':
-	test()

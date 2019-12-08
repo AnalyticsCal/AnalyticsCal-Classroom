@@ -1,4 +1,5 @@
 import numpy as np
+from statsmodels.tsa.innovations.arma_innovations import arma_innovations
 
 from arima.utils import covariance, lag
 
@@ -23,6 +24,8 @@ class MovingAverage:
 			raise ValueError('Provide input for index as list')
 
 		self.lags = lags if lags else len(self.data)
+
+		self.q = None
 
 		self.theta_estimates = []
 
@@ -69,3 +72,10 @@ class MovingAverage:
 
 		# ma_params = [theta[i][:i] for i in range(1, q + 1)]
 		return theta[:n, 1:]
+
+	@staticmethod
+	def innovations(data):
+		"""
+		Fallback for MA innovation algorithm
+		"""
+		return arma_innovations(data)

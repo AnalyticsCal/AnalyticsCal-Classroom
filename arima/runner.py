@@ -1,3 +1,5 @@
+from tkinter.simpledialog import askstring
+
 from statsmodels.tsa.innovations.arma_innovations import arma_innovations
 from arima.auto_regression import AutoRegression
 from matplotlib import pyplot as plt
@@ -19,11 +21,8 @@ def get_data(csv_list, precision=3):
 	return time_column, data_column
 
 
-def init_ar(time, data):
-	print(f'Number of data points are {len(data)}')
-	# lags = int(simpledialog.askstring('Enter number of lags to consider: '))
-	# lags = int(input('Enter number of lags to consider: '))
-	lags = 100
+def init_ar(time, data, lags=None):
+	lags = lags if lags else len(data)
 	if 0 <= lags <= len(data):
 		ar = AutoRegression(index=time, data=data, lags=lags)
 	else:
@@ -32,9 +31,9 @@ def init_ar(time, data):
 
 
 def check_seasonality():
-	response = input('Is the data seasonal? (Y/N): ')
+	response = askstring('Seasonality', 'Is the data seasonal? (Y/N): ')
 	if response.upper() == 'Y':
-		seasonal_period = int(input('Enter seasonality period: '))
+		seasonal_period = int(askstring('Seasonality', 'Enter seasonality period: '))
 		return seasonal_period
 	elif response.upper() == 'N':
 		return None
@@ -52,6 +51,7 @@ def data_plot(x, y, x_label, y_label, title, n=None, plt_type='line', significan
 		raise NotImplementedError
 	plt.title(title)
 	plt.xticks(x[:n], rotation=90)
+	plt.tick_params(labelsize=10)
 	plt.xlabel(x_label)
 	plt.ylabel(y_label)
 	plt.grid(True)
@@ -59,6 +59,7 @@ def data_plot(x, y, x_label, y_label, title, n=None, plt_type='line', significan
 		plt.axhline(significance)
 		plt.axhline(-1 * significance)
 	plt.show()
+	return plt
 
 
 def check_diff():
@@ -71,16 +72,27 @@ def check_diff():
 		raise ValueError('Invalid response!')
 
 
+def ordinal(n):
+	try:
+		s = ['st', 'nd', 'rd'][(n - 1) % 10]
+		if (n - 10) % 100 // 10:
+			return str(n) + s
+	except IndexError:
+		pass
+	return str(n) + 'th'
+
+
 def do_diff(ar, period):
 	diffed = ar.difference(period)
 	ar.data = diffed
 	non_seasonal_acf = ar.auto_correlation(diffed, 40)
+	plt.clf()
 	data_plot(
 		x=range(len(non_seasonal_acf)),
 		y=non_seasonal_acf,
 		x_label='Lag',
 		y_label='Correlation',
-		title='Plot of ACF of differenced data',
+		title=f'Plot of ACF of {ordinal(ar.d if ar.d else period)} differenced data',
 		n=50,
 		plt_type='bar',
 		significance=(1.96 / (len(diffed)) ** 0.5)
@@ -186,6 +198,7 @@ def run(csv_list):
 		# final_output = predict_using_arima(data, phi, residues, theta)
 		pass
 
+# arma_innovations
 
-csv = load_csv_file('E:\Github/khanapur_flow.csv')
-run(csv)
+# csv = load_csv_file('E:\Github/khanapur_flow.csv')
+# run(csv)

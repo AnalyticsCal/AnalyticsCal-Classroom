@@ -1,3 +1,7 @@
+from fractions import Fraction
+
+from linear_algebra import LinearAlgebra
+
 
 def mean(x):
     """
